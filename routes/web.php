@@ -13,6 +13,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -56,14 +57,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Payments
     Route::resource('payments', PaymentController::class);
     
-    // Expenses
-    Route::resource('expenses', ExpenseController::class);
-    
-    // POS
-    Route::get('pos', [POSController::class, 'index'])->name('pos.index');
-    Route::post('sales', [POSController::class, 'processSale'])->name('pos.process-sale');
-    Route::get('pos/search-products', [POSController::class, 'searchProducts'])->name('pos.search-products');
-    Route::get('pos/product-by-barcode', [POSController::class, 'getProductByBarcode'])->name('pos.product-by-barcode');
+        // Expenses
+        Route::resource('expenses', ExpenseController::class);
+        
+        // Reports
+        Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('reports/stock', [ReportController::class, 'stockReport'])->name('reports.stock');
+        Route::get('reports/sales', [ReportController::class, 'salesReport'])->name('reports.sales');
+        Route::get('reports/purchases', [ReportController::class, 'purchaseReport'])->name('reports.purchases');
+        Route::get('reports/profit-loss', [ReportController::class, 'profitLossReport'])->name('reports.profit-loss');
+        Route::get('reports/customer-outstanding', [ReportController::class, 'customerOutstandingReport'])->name('reports.customer-outstanding');
+        Route::get('reports/supplier-outstanding', [ReportController::class, 'supplierOutstandingReport'])->name('reports.supplier-outstanding');
+        Route::post('reports/export', [ReportController::class, 'exportReport'])->name('reports.export');
+        
+        // POS
+        Route::get('pos', [POSController::class, 'index'])->name('pos.index');
+        Route::post('sales', [POSController::class, 'processSale'])->name('pos.process-sale');
+        Route::get('pos/search-products', [POSController::class, 'searchProducts'])->name('pos.search-products');
+        Route::get('pos/product-by-barcode', [POSController::class, 'getProductByBarcode'])->name('pos.product-by-barcode');
 });
 
 require __DIR__.'/settings.php';
