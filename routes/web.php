@@ -10,6 +10,9 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ExpenseController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -45,6 +48,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Suppliers
     Route::resource('suppliers', SupplierController::class);
+    
+    // Accounts
+    Route::resource('accounts', AccountController::class);
+    Route::get('accounts/trial-balance', [AccountController::class, 'trialBalance'])->name('accounts.trial-balance');
+    
+    // Payments
+    Route::resource('payments', PaymentController::class);
+    
+    // Expenses
+    Route::resource('expenses', ExpenseController::class);
     
     // POS
     Route::get('pos', [POSController::class, 'index'])->name('pos.index');
