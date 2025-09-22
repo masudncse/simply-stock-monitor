@@ -115,23 +115,9 @@ class ExpenseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Expense $expense)
+    public function update(UpdateExpenseRequest $request, Expense $expense)
     {
-        $this->authorize('edit-expenses');
-
-        $request->validate([
-            'expense_number' => 'required|string|max:50|unique:expenses,expense_number,' . $expense->id,
-            'account_id' => 'required|exists:accounts,id',
-            'expense_date' => 'required|date',
-            'category' => 'required|string|max:100',
-            'description' => 'required|string',
-            'amount' => 'required|numeric|min:0.01',
-            'payment_mode' => 'required|in:cash,bank,cheque,card',
-            'reference_number' => 'nullable|string|max:100',
-            'notes' => 'nullable|string',
-        ]);
-
-        $expense->update($request->all());
+        $this->expenseService->updateExpense($expense, $request->validated());
 
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense updated successfully.');

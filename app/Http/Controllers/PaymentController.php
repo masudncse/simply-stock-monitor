@@ -125,24 +125,9 @@ class PaymentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Payment $payment)
+    public function update(UpdatePaymentRequest $request, Payment $payment)
     {
-        $this->authorize('edit-payments');
-
-        $request->validate([
-            'voucher_number' => 'required|string|max:50|unique:payments,voucher_number,' . $payment->id,
-            'voucher_type' => 'required|in:receipt,payment',
-            'payment_date' => 'required|date',
-            'account_id' => 'required|exists:accounts,id',
-            'reference_type' => 'nullable|in:customer,supplier',
-            'reference_id' => 'nullable|integer',
-            'amount' => 'required|numeric|min:0.01',
-            'payment_mode' => 'required|in:cash,bank,cheque,card',
-            'reference_number' => 'nullable|string|max:100',
-            'notes' => 'nullable|string',
-        ]);
-
-        $payment->update($request->all());
+        $this->paymentService->updatePayment($payment, $request->validated());
 
         return redirect()->route('payments.show', $payment)
             ->with('success', 'Payment updated successfully.');

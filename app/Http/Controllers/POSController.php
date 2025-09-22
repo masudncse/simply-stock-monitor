@@ -8,6 +8,8 @@ use App\Models\SaleItem;
 use App\Models\Customer;
 use App\Models\Warehouse;
 use App\Services\SaleService;
+use App\Http\Requests\ProcessPOSRequest;
+use App\Http\Requests\GetProductByBarcodeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -42,22 +44,8 @@ class POSController extends Controller
     /**
      * Process a sale from POS
      */
-    public function processSale(Request $request)
+    public function processSale(ProcessPOSRequest $request)
     {
-        $this->authorize('create-sales');
-
-        $request->validate([
-            'customer_name' => 'nullable|string|max:255',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.total_price' => 'required|numeric|min:0',
-            'subtotal' => 'required|numeric|min:0',
-            'tax_amount' => 'required|numeric|min:0',
-            'total_amount' => 'required|numeric|min:0',
-        ]);
-
         // Get or create customer
         $customer = null;
         if ($request->customer_name && $request->customer_name !== 'Walk-in Customer') {
@@ -124,14 +112,8 @@ class POSController extends Controller
     /**
      * Get product by barcode
      */
-    public function getProductByBarcode(Request $request)
+    public function getProductByBarcode(GetProductByBarcodeRequest $request)
     {
-        $this->authorize('create-sales');
-
-        $request->validate([
-            'barcode' => 'required|string',
-        ]);
-
         $product = Product::where('barcode', $request->barcode)
             ->where('is_active', true)
             ->select('id', 'name', 'sku', 'price', 'unit')

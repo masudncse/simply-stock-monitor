@@ -8,6 +8,8 @@ use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Services\PurchaseService;
+use App\Http\Requests\StorePurchaseRequest;
+use App\Http\Requests\UpdatePurchaseRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -76,25 +78,9 @@ class PurchaseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePurchaseRequest $request)
     {
-        $this->authorize('create-purchases');
-
-        $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
-            'purchase_date' => 'required|date',
-            'due_date' => 'nullable|date|after:purchase_date',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.batch' => 'nullable|string',
-            'items.*.expiry_date' => 'nullable|date',
-            'notes' => 'nullable|string',
-        ]);
-
-        $purchase = $this->purchaseService->createPurchase($request->all());
+        $purchase = $this->purchaseService->createPurchase($request->validated());
 
         return redirect()->route('purchases.show', $purchase)
             ->with('success', 'Purchase created successfully.');
@@ -137,25 +123,9 @@ class PurchaseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Purchase $purchase)
+    public function update(UpdatePurchaseRequest $request, Purchase $purchase)
     {
-        $this->authorize('edit-purchases');
-
-        $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
-            'purchase_date' => 'required|date',
-            'due_date' => 'nullable|date|after:purchase_date',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.batch' => 'nullable|string',
-            'items.*.expiry_date' => 'nullable|date',
-            'notes' => 'nullable|string',
-        ]);
-
-        $this->purchaseService->updatePurchase($purchase, $request->all());
+        $this->purchaseService->updatePurchase($purchase, $request->validated());
 
         return redirect()->route('purchases.show', $purchase)
             ->with('success', 'Purchase updated successfully.');

@@ -8,6 +8,8 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Services\SaleService;
+use App\Http\Requests\StoreSaleRequest;
+use App\Http\Requests\UpdateSaleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -76,23 +78,9 @@ class SaleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreSaleRequest $request)
     {
-        $this->authorize('create-sales');
-
-        $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
-            'sale_date' => 'required|date',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.batch' => 'nullable|string',
-            'notes' => 'nullable|string',
-        ]);
-
-        $sale = $this->saleService->createSale($request->all());
+        $sale = $this->saleService->createSale($request->validated());
 
         return redirect()->route('sales.show', $sale)
             ->with('success', 'Sale created successfully.');
@@ -135,23 +123,9 @@ class SaleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sale $sale)
+    public function update(UpdateSaleRequest $request, Sale $sale)
     {
-        $this->authorize('edit-sales');
-
-        $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
-            'sale_date' => 'required|date',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.batch' => 'nullable|string',
-            'notes' => 'nullable|string',
-        ]);
-
-        $this->saleService->updateSale($sale, $request->all());
+        $this->saleService->updateSale($sale, $request->validated());
 
         return redirect()->route('sales.show', $sale)
             ->with('success', 'Sale updated successfully.');

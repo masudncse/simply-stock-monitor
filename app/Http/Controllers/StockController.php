@@ -6,6 +6,10 @@ use App\Models\Stock;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Services\StockService;
+use App\Http\Requests\StockAdjustmentRequest;
+use App\Http\Requests\StockTransferRequest;
+use App\Http\Requests\GetProductStockRequest;
+use App\Http\Requests\GetStockHistoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -94,18 +98,8 @@ class StockController extends Controller
     /**
      * Process stock adjustment
      */
-    public function processAdjustment(Request $request)
+    public function processAdjustment(StockAdjustmentRequest $request)
     {
-        $this->authorize('adjust-stock');
-
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
-            'new_quantity' => 'required|numeric|min:0',
-            'batch' => 'nullable|string|max:255',
-            'reason' => 'nullable|string|max:500',
-        ]);
-
         $this->stockService->adjustStock(
             $request->product_id,
             $request->warehouse_id,
@@ -137,18 +131,8 @@ class StockController extends Controller
     /**
      * Process stock transfer
      */
-    public function processTransfer(Request $request)
+    public function processTransfer(StockTransferRequest $request)
     {
-        $this->authorize('transfer-stock');
-
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'from_warehouse_id' => 'required|exists:warehouses,id',
-            'to_warehouse_id' => 'required|exists:warehouses,id|different:from_warehouse_id',
-            'quantity' => 'required|numeric|min:0.01',
-            'batch' => 'nullable|string|max:255',
-        ]);
-
         try {
             $this->stockService->transferStock(
                 $request->product_id,
@@ -169,12 +153,8 @@ class StockController extends Controller
     /**
      * Get stock levels for a product
      */
-    public function getProductStock(Request $request)
+    public function getProductStock(GetProductStockRequest $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-        ]);
-
         $stockLevels = $this->stockService->getProductStock($request->product_id);
 
         return response()->json($stockLevels);
@@ -183,13 +163,8 @@ class StockController extends Controller
     /**
      * Get stock history for a product
      */
-    public function getStockHistory(Request $request)
+    public function getStockHistory(GetStockHistoryRequest $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'warehouse_id' => 'nullable|exists:warehouses,id',
-        ]);
-
         $query = Stock::where('product_id', $request->product_id)
             ->with(['warehouse', 'product']);
 
