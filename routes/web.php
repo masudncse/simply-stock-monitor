@@ -8,6 +8,8 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\SupplierController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -37,6 +39,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Sales
     Route::resource('sales', SaleController::class);
     Route::post('sales/{sale}/process', [SaleController::class, 'process'])->name('sales.process');
+    
+    // Customers
+    Route::resource('customers', CustomerController::class);
+    
+    // Suppliers
+    Route::resource('suppliers', SupplierController::class);
     
     // POS
     Route::get('pos', [POSController::class, 'index'])->name('pos.index');
