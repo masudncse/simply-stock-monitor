@@ -5,6 +5,9 @@ use Inertia\Inertia;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\POSController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SaleController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -26,6 +29,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('stock/transfer', [StockController::class, 'processTransfer'])->name('stock.transfer.process');
     Route::get('stock/product-stock', [StockController::class, 'getProductStock'])->name('stock.product-stock');
     Route::get('stock/history', [StockController::class, 'getStockHistory'])->name('stock.history');
+    
+    // Purchases
+    Route::resource('purchases', PurchaseController::class);
+    Route::post('purchases/{purchase}/approve', [PurchaseController::class, 'approve'])->name('purchases.approve');
+    
+    // Sales
+    Route::resource('sales', SaleController::class);
+    Route::post('sales/{sale}/process', [SaleController::class, 'process'])->name('sales.process');
+    
+    // POS
+    Route::get('pos', [POSController::class, 'index'])->name('pos.index');
+    Route::post('sales', [POSController::class, 'processSale'])->name('pos.process-sale');
+    Route::get('pos/search-products', [POSController::class, 'searchProducts'])->name('pos.search-products');
+    Route::get('pos/product-by-barcode', [POSController::class, 'getProductByBarcode'])->name('pos.product-by-barcode');
 });
 
 require __DIR__.'/settings.php';

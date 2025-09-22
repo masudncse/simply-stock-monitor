@@ -27,10 +27,10 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'cost_price' => 'decimal:2',
-        'tax_rate' => 'decimal:2',
-        'min_stock' => 'decimal:2',
+        'price' => 'float',
+        'cost_price' => 'float',
+        'tax_rate' => 'float',
+        'min_stock' => 'float',
         'is_active' => 'boolean',
     ];
 

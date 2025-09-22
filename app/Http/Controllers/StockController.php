@@ -7,10 +7,13 @@ use App\Models\Product;
 use App\Models\Warehouse;
 use App\Services\StockService;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
 
 class StockController extends Controller
 {
+    use AuthorizesRequests;
+    
     protected StockService $stockService;
 
     public function __construct(StockService $stockService)

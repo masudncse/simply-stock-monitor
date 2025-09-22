@@ -39,6 +39,7 @@ interface LayoutProps {
 
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, href: '/dashboard' },
+  { text: 'POS', icon: <ShoppingCartIcon />, href: '/pos' },
   { text: 'Products', icon: <InventoryIcon />, href: '/products' },
   { text: 'Stock', icon: <StoreIcon />, href: '/stock' },
   { text: 'Purchases', icon: <ShoppingCartIcon />, href: '/purchases' },
