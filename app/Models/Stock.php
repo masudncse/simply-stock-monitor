@@ -20,8 +20,8 @@ class Stock extends Model
     ];
 
     protected $casts = [
-        'qty' => 'decimal:2',
-        'cost_price' => 'decimal:2',
+        'qty' => 'float',
+        'cost_price' => 'float',
         'expiry_date' => 'date',
     ];
 

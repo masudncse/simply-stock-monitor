@@ -24,8 +24,8 @@ class Supplier extends Model
     ];
 
     protected $casts = [
-        'credit_limit' => 'decimal:2',
-        'outstanding_amount' => 'decimal:2',
+        'credit_limit' => 'float',
+        'outstanding_amount' => 'float',
         'is_active' => 'boolean',
     ];
 

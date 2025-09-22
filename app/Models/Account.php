@@ -22,7 +22,7 @@ class Account extends Model
     ];
 
     protected $casts = [
-        'opening_balance' => 'decimal:2',
+        'opening_balance' => 'float',
         'is_active' => 'boolean',
     ];
 

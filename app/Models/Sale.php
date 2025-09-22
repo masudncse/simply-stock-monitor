@@ -29,11 +29,11 @@ class Sale extends Model
 
     protected $casts = [
         'sale_date' => 'date',
-        'subtotal' => 'decimal:2',
-        'tax_amount' => 'decimal:2',
-        'discount_amount' => 'decimal:2',
-        'total_amount' => 'decimal:2',
-        'paid_amount' => 'decimal:2',
+        'subtotal' => 'float',
+        'tax_amount' => 'float',
+        'discount_amount' => 'float',
+        'total_amount' => 'float',
+        'paid_amount' => 'float',
     ];
 
     public function customer(): BelongsTo

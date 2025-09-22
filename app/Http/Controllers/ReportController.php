@@ -175,4 +175,135 @@ class ReportController extends Controller
             'filters' => $request->only(['date_from', 'date_to', 'supplier_id', 'warehouse_id']),
         ]);
     }
+
+    /**
+     * Profit & Loss Report
+     */
+    public function profitLossReport(Request $request)
+    {
+        $this->authorize('view-reports');
+
+        $dateFrom = $request->date_from ?: Carbon::now()->startOfMonth();
+        $dateTo = $request->date_to ?: Carbon::now()->endOfMonth();
+
+        // Calculate revenue
+        $revenue = Sale::whereBetween('sale_date', [$dateFrom, $dateTo])
+            ->sum('total_amount');
+
+        // Calculate cost of goods sold
+        $cogs = Sale::whereBetween('sale_date', [$dateFrom, $dateTo])
+            ->with('saleItems.product')
+            ->get()
+            ->sum(function ($sale) {
+                return $sale->saleItems->sum(function ($item) {
+                    return $item->quantity * $item->product->cost_price;
+                });
+            });
+
+        // Calculate expenses
+        $expenses = Transaction::whereBetween('transaction_date', [$dateFrom, $dateTo])
+            ->whereHas('account', function ($query) {
+                $query->where('type', 'expense');
+            })
+            ->sum('debit');
+
+        // Calculate gross profit
+        $grossProfit = $revenue - $cogs;
+
+        // Calculate net profit
+        $netProfit = $grossProfit - $expenses;
+
+        $summary = [
+            'revenue' => $revenue,
+            'cost_of_goods_sold' => $cogs,
+            'gross_profit' => $grossProfit,
+            'expenses' => $expenses,
+            'net_profit' => $netProfit,
+            'gross_profit_margin' => $revenue > 0 ? ($grossProfit / $revenue) * 100 : 0,
+            'net_profit_margin' => $revenue > 0 ? ($netProfit / $revenue) * 100 : 0,
+        ];
+
+        return Inertia::render('Reports/ProfitLossReport', [
+            'summary' => $summary,
+            'filters' => $request->only(['date_from', 'date_to']),
+        ]);
+    }
+
+    /**
+     * Customer Outstanding Report
+     */
+    public function customerOutstandingReport(Request $request)
+    {
+        $this->authorize('view-reports');
+
+        $query = Customer::with(['sales' => function ($query) {
+            $query->where('payment_status', '!=', 'paid');
+        }]);
+
+        if ($request->filled('customer_id')) {
+            $query->where('id', $request->customer_id);
+        }
+
+        $customers = $query->get()->map(function ($customer) {
+            $outstandingAmount = $customer->sales->sum(function ($sale) {
+                return $sale->total_amount - $sale->paid_amount;
+            });
+
+            return [
+                'customer' => $customer,
+                'outstanding_amount' => $outstandingAmount,
+                'credit_limit' => $customer->credit_limit,
+                'available_credit' => $customer->credit_limit - $outstandingAmount,
+            ];
+        })->filter(function ($item) {
+            return $item['outstanding_amount'] > 0;
+        });
+
+        $totalOutstanding = $customers->sum('outstanding_amount');
+
+        return Inertia::render('Reports/CustomerOutstandingReport', [
+            'customers' => $customers,
+            'totalOutstanding' => $totalOutstanding,
+            'filters' => $request->only(['customer_id']),
+        ]);
+    }
+
+    /**
+     * Supplier Outstanding Report
+     */
+    public function supplierOutstandingReport(Request $request)
+    {
+        $this->authorize('view-reports');
+
+        $query = Supplier::with(['purchases' => function ($query) {
+            $query->where('status', '!=', 'paid');
+        }]);
+
+        if ($request->filled('supplier_id')) {
+            $query->where('id', $request->supplier_id);
+        }
+
+        $suppliers = $query->get()->map(function ($supplier) {
+            $outstandingAmount = $supplier->purchases->sum(function ($purchase) {
+                return $purchase->total_amount - $purchase->paid_amount;
+            });
+
+            return [
+                'supplier' => $supplier,
+                'outstanding_amount' => $outstandingAmount,
+                'credit_limit' => $supplier->credit_limit,
+                'available_credit' => $supplier->credit_limit - $outstandingAmount,
+            ];
+        })->filter(function ($item) {
+            return $item['outstanding_amount'] > 0;
+        });
+
+        $totalOutstanding = $suppliers->sum('outstanding_amount');
+
+        return Inertia::render('Reports/SupplierOutstandingReport', [
+            'suppliers' => $suppliers,
+            'totalOutstanding' => $totalOutstanding,
+            'filters' => $request->only(['supplier_id']),
+        ]);
+    }
 }

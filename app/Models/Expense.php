@@ -25,7 +25,7 @@ class Expense extends Model
 
     protected $casts = [
         'expense_date' => 'date',
-        'amount' => 'decimal:2',
+        'amount' => 'float',
     ];
 
     public function account(): BelongsTo

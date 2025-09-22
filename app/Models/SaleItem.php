@@ -20,9 +20,9 @@ class SaleItem extends Model
     ];
 
     protected $casts = [
-        'quantity' => 'decimal:2',
-        'unit_price' => 'decimal:2',
-        'total_price' => 'decimal:2',
+        'quantity' => 'float',
+        'unit_price' => 'float',
+        'total_price' => 'float',
     ];
 
     public function sale(): BelongsTo

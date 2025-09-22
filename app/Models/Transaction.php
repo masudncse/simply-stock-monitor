@@ -23,8 +23,8 @@ class Transaction extends Model
 
     protected $casts = [
         'transaction_date' => 'date',
-        'debit' => 'decimal:2',
-        'credit' => 'decimal:2',
+        'debit' => 'float',
+        'credit' => 'float',
     ];
 
     public function account(): BelongsTo

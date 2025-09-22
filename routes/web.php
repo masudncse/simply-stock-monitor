@@ -14,6 +14,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettingsController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -69,6 +70,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('reports/customer-outstanding', [ReportController::class, 'customerOutstandingReport'])->name('reports.customer-outstanding');
         Route::get('reports/supplier-outstanding', [ReportController::class, 'supplierOutstandingReport'])->name('reports.supplier-outstanding');
         Route::post('reports/export', [ReportController::class, 'exportReport'])->name('reports.export');
+        
+        // Settings
+        Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
+        Route::get('settings/company', [SettingsController::class, 'company'])->name('settings.company');
+        Route::post('settings/company', [SettingsController::class, 'updateCompany'])->name('settings.company.update');
+        Route::get('settings/system', [SettingsController::class, 'system'])->name('settings.system');
+        Route::post('settings/system', [SettingsController::class, 'updateSystem'])->name('settings.system.update');
+        Route::get('settings/users', [SettingsController::class, 'users'])->name('settings.users');
+        Route::get('settings/roles', [SettingsController::class, 'roles'])->name('settings.roles');
+        Route::get('settings/backup', [SettingsController::class, 'backup'])->name('settings.backup');
+        Route::post('settings/backup', [SettingsController::class, 'createBackup'])->name('settings.backup.create');
         
         // POS
         Route::get('pos', [POSController::class, 'index'])->name('pos.index');
