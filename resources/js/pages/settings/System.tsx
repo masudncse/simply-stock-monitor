@@ -12,7 +12,6 @@ import {
   Grid,
   FormControlLabel,
   Switch,
-  Divider,
   Alert,
 } from '@mui/material';
 import {
@@ -41,7 +40,7 @@ const SystemSettings: React.FC<SystemSettingsProps> = ({ settings }) => {
   const [formData, setFormData] = useState(settings);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

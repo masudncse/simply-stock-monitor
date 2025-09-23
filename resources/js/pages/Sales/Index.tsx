@@ -78,9 +78,9 @@ interface Sale {
 
 interface SalesIndexProps {
   sales: {
-    data: Sale[];
-    links: any[];
-    meta: any;
+  data: Sale[];
+  links: Array<{ url: string | null; label: string; active: boolean }>;
+  meta: { current_page: number; last_page: number; per_page: number; total: number };
   };
   customers: Customer[];
   filters: {
@@ -263,14 +263,14 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
                       <TableCell>
                         <Chip
                           label={sale.status}
-                          color={getStatusColor(sale.status) as any}
+                          color={getStatusColor(sale.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                           size="small"
                         />
                       </TableCell>
                       <TableCell>
                         <Chip
                           label={sale.payment_status}
-                          color={getPaymentStatusColor(sale.payment_status) as any}
+                          color={getPaymentStatusColor(sale.payment_status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                           size="small"
                         />
                       </TableCell>
@@ -315,7 +315,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
             {/* Pagination */}
             {sales.links && (
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                {sales.links.map((link: any, index: number) => (
+                {sales.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
                   <Button
                     key={index}
                     variant={link.active ? 'contained' : 'outlined'}

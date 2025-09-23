@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Box,
@@ -12,8 +12,6 @@ import {
   ListItemText,
   Toolbar,
   Typography,
-  useTheme,
-  useMediaQuery,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -26,9 +24,8 @@ import {
   Assessment as AssessmentIcon,
   Settings as SettingsIcon,
   Add as AddIcon,
-  List as ListIcon,
 } from '@mui/icons-material';
-import { Link, router } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 
 const drawerWidth = 240;
 
@@ -52,16 +49,38 @@ const menuItems = [
 ];
 
 export default function Layout({ children, title = 'Stock Management' }: LayoutProps) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      // Force a re-render when navigating back/forward
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    };
+
+    // Listen for browser back/forward navigation
+    window.addEventListener('popstate', handlePopState);
+
+    // Listen for Inertia navigation events
+    const handleInertiaFinish = () => {
+      // Ensure components are properly rendered after navigation
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 50);
+    };
+
+    document.addEventListener('inertia:finish', handleInertiaFinish);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      document.removeEventListener('inertia:finish', handleInertiaFinish);
+    };
+  }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
-
-  const handleLogout = () => {
-    router.post('/logout');
   };
 
   const drawer = (

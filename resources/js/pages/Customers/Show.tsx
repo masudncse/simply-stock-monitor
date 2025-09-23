@@ -14,7 +14,6 @@ import {
   TableRow,
   Paper,
   Chip,
-  Divider,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -255,14 +254,14 @@ export default function CustomersShow({ customer }: CustomersShowProps) {
                             <TableCell>
                               <Chip
                                 label={sale.status}
-                                color={getStatusColor(sale.status) as any}
+                                color={getStatusColor(sale.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                                 size="small"
                               />
                             </TableCell>
                             <TableCell>
                               <Chip
                                 label={sale.payment_status}
-                                color={getPaymentStatusColor(sale.payment_status) as any}
+                                color={getPaymentStatusColor(sale.payment_status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                                 size="small"
                               />
                             </TableCell>

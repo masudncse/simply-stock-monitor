@@ -52,9 +52,9 @@ interface Account {
 
 interface AccountsIndexProps {
   accounts: {
-    data: Account[];
-    links: any[];
-    meta: any;
+  data: Account[];
+  links: Array<{ url: string | null; label: string; active: boolean }>;
+  meta: { current_page: number; last_page: number; per_page: number; total: number };
   };
   filters: {
     search?: string;
@@ -226,7 +226,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
                       <TableCell>
                         <Chip
                           label={account.type}
-                          color={getTypeColor(account.type) as any}
+                          color={getTypeColor(account.type) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                           size="small"
                         />
                       </TableCell>
@@ -272,7 +272,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
             {/* Pagination */}
             {accounts.links && (
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                {accounts.links.map((link: any, index: number) => (
+                {accounts.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
                   <Button
                     key={index}
                     variant={link.active ? 'contained' : 'outlined'}

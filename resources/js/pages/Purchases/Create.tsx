@@ -117,7 +117,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const updateItem = (index: number, field: keyof PurchaseItem, value: any) => {
+  const updateItem = (index: number, field: keyof PurchaseItem, value: string | number) => {
     const updatedItems = [...items];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
     

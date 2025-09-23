@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link as InertiaLink, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import {
   Box,
   Card,
@@ -58,7 +58,7 @@ const CustomerOutstandingReport: React.FC<CustomerOutstandingReportProps> = ({
 }) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
-  const handleFilterChange = (field: string, value: any) => {
+  const handleFilterChange = (field: string, value: string | number) => {
     setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 

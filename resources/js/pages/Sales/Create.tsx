@@ -112,7 +112,7 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const updateItem = (index: number, field: keyof SaleItem, value: any) => {
+  const updateItem = (index: number, field: keyof SaleItem, value: string | number) => {
     const updatedItems = [...items];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
     

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -124,7 +124,7 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const updateItem = (index: number, field: keyof SaleItem, value: any) => {
+  const updateItem = (index: number, field: keyof SaleItem, value: string | number) => {
     const updatedItems = [...items];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
     

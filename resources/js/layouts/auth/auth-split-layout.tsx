@@ -8,8 +8,6 @@ import {
     Container,
     Typography,
     Link as MuiLink,
-    Paper,
-    Grid,
 } from '@mui/material';
 
 interface AuthLayoutProps {

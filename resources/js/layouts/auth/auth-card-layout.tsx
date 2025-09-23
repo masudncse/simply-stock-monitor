@@ -7,7 +7,6 @@ import {
     Container,
     Typography,
     Link as MuiLink,
-    Paper,
     Card,
     CardContent,
     CardHeader,

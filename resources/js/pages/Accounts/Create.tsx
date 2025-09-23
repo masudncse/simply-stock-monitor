@@ -54,7 +54,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
     }
   };
 
-  const handleSelectChange = (field: string) => (event: any) => {
+  const handleSelectChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, [field]: event.target.value }));
     
     // Clear error when user starts typing

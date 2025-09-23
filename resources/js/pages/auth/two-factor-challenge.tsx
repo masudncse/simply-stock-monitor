@@ -2,7 +2,6 @@ import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
 import AuthLayout from '@/layouts/auth-layout';
 import { store } from '@/routes/two-factor/login';
 import { Form, Head } from '@inertiajs/react';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { useMemo, useState } from 'react';
 import {
     Box,
@@ -11,7 +10,57 @@ import {
     Typography,
     Stack,
 } from '@mui/material';
-import { OTPInput } from '@mui/material-lab';
+// Custom OTP Input component using MUI
+const OTPInput = ({ value, onChange, length, disabled, sx }: {
+    value: string;
+    onChange: (value: string) => void;
+    length: number;
+    disabled?: boolean;
+    sx?: object;
+}) => {
+    const handleChange = (index: number, newValue: string) => {
+        if (newValue.length > 1) return; // Only allow single digit
+        if (!/^\d*$/.test(newValue)) return; // Only allow digits
+        
+        const newCode = value.split('');
+        newCode[index] = newValue;
+        onChange(newCode.join(''));
+        
+        // Auto-focus next input
+        if (newValue && index < length - 1) {
+            const nextInput = document.getElementById(`otp-${index + 1}`);
+            nextInput?.focus();
+        }
+    };
+
+    const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+        if (e.key === 'Backspace' && !value[index] && index > 0) {
+            const prevInput = document.getElementById(`otp-${index - 1}`);
+            prevInput?.focus();
+        }
+    };
+
+    return (
+        <Box sx={{ display: 'flex', gap: 1, ...sx }}>
+            {Array.from({ length }, (_, index) => (
+                <TextField
+                    key={index}
+                    id={`otp-${index}`}
+                    value={value[index] || ''}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    disabled={disabled}
+                    inputProps={{
+                        maxLength: 1,
+                        style: { textAlign: 'center' }
+                    }}
+                    sx={{ width: 48 }}
+                    variant="outlined"
+                />
+            ))}
+        </Box>
+    );
+};
 
 export default function TwoFactorChallenge() {
     const [showRecoveryInput, setShowRecoveryInput] = useState<boolean>(false);
@@ -77,6 +126,7 @@ export default function TwoFactorChallenge() {
                                 </>
                             ) : (
                                 <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                                    <input type="hidden" name="code" value={code} />
                                     <OTPInput
                                         value={code}
                                         onChange={(value) => setCode(value)}

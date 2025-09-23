@@ -79,9 +79,9 @@ interface Purchase {
 
 interface PurchasesIndexProps {
   purchases: {
-    data: Purchase[];
-    links: any[];
-    meta: any;
+  data: Purchase[];
+  links: Array<{ url: string | null; label: string; active: boolean }>;
+  meta: { current_page: number; last_page: number; per_page: number; total: number };
   };
   suppliers: Supplier[];
   filters: {
@@ -248,7 +248,7 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
                       <TableCell>
                         <Chip
                           label={purchase.status}
-                          color={getStatusColor(purchase.status) as any}
+                          color={getStatusColor(purchase.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                           size="small"
                         />
                       </TableCell>
@@ -293,7 +293,7 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
             {/* Pagination */}
             {purchases.links && (
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                {purchases.links.map((link: any, index: number) => (
+                {purchases.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
                   <Button
                     key={index}
                     variant={link.active ? 'contained' : 'outlined'}

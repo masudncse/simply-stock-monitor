@@ -237,7 +237,7 @@ export default function SuppliersShow({ supplier }: SuppliersShowProps) {
                             <TableCell>
                               <Chip
                                 label={purchase.status}
-                                color={getStatusColor(purchase.status) as any}
+                                color={getStatusColor(purchase.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                                 size="small"
                               />
                             </TableCell>

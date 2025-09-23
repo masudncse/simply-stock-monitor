@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link as InertiaLink, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import {
   Box,
   Card,
@@ -77,7 +77,7 @@ const PurchaseReport: React.FC<PurchaseReportProps> = ({
 }) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
-  const handleFilterChange = (field: string, value: any) => {
+  const handleFilterChange = (field: string, value: string | number) => {
     setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 
@@ -316,7 +316,7 @@ const PurchaseReport: React.FC<PurchaseReportProps> = ({
                   <TableCell>
                     <Chip
                       label={purchase.status}
-                      color={getStatusColor(purchase.status) as any}
+                      color={getStatusColor(purchase.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                       size="small"
                     />
                   </TableCell>

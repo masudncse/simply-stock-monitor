@@ -166,7 +166,7 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
                     </Typography>
                     <Chip
                       label={purchase.status}
-                      color={getStatusColor(purchase.status) as any}
+                      color={getStatusColor(purchase.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                       size="small"
                     />
                   </Grid>

@@ -180,7 +180,7 @@ export default function SalesShow({ sale }: SalesShowProps) {
                     </Typography>
                     <Chip
                       label={sale.status}
-                      color={getStatusColor(sale.status) as any}
+                      color={getStatusColor(sale.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                       size="small"
                     />
                   </Grid>
@@ -198,7 +198,7 @@ export default function SalesShow({ sale }: SalesShowProps) {
                     </Typography>
                     <Chip
                       label={sale.payment_status}
-                      color={getPaymentStatusColor(sale.payment_status) as any}
+                      color={getPaymentStatusColor(sale.payment_status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                       size="small"
                     />
                   </Grid>

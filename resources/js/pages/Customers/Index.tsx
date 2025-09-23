@@ -52,9 +52,9 @@ interface Customer {
 
 interface CustomersIndexProps {
   customers: {
-    data: Customer[];
-    links: any[];
-    meta: any;
+  data: Customer[];
+  links: Array<{ url: string | null; label: string; active: boolean }>;
+  meta: { current_page: number; last_page: number; per_page: number; total: number };
   };
   filters: {
     search?: string;
@@ -220,7 +220,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
             {/* Pagination */}
             {customers.links && (
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                {customers.links.map((link: any, index: number) => (
+                {customers.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
                   <Button
                     key={index}
                     variant={link.active ? 'contained' : 'outlined'}
