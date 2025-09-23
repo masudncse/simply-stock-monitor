@@ -1,14 +1,15 @@
 import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
 import { login } from '@/routes';
 import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    TextField,
+    Typography,
+    Link as MuiLink,
+} from '@mui/material';
+import { Link } from '@inertiajs/react';
 
 export default function Register() {
     return (
@@ -21,95 +22,91 @@ export default function Register() {
                 {...RegisteredUserController.store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
-                className="flex flex-col gap-6"
             >
                 {({ processing, errors }) => (
-                    <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="name"
-                                    name="name"
-                                    placeholder="Full name"
-                                />
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
-                            </div>
+                    <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <TextField
+                            id="name"
+                            name="name"
+                            type="text"
+                            label="Name"
+                            required
+                            autoFocus
+                            autoComplete="name"
+                            placeholder="Full name"
+                            error={!!errors.name}
+                            helperText={errors.name}
+                            fullWidth
+                            variant="outlined"
+                        />
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="email"
-                                    name="email"
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
+                        <TextField
+                            id="email"
+                            name="email"
+                            type="email"
+                            label="Email address"
+                            required
+                            autoComplete="email"
+                            placeholder="email@example.com"
+                            error={!!errors.email}
+                            helperText={errors.email}
+                            fullWidth
+                            variant="outlined"
+                        />
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="new-password"
-                                    name="password"
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
+                        <TextField
+                            id="password"
+                            name="password"
+                            type="password"
+                            label="Password"
+                            required
+                            autoComplete="new-password"
+                            placeholder="Password"
+                            error={!!errors.password}
+                            helperText={errors.password}
+                            fullWidth
+                            variant="outlined"
+                        />
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
-                                </Label>
-                                <Input
-                                    id="password_confirmation"
-                                    type="password"
-                                    required
-                                    tabIndex={4}
-                                    autoComplete="new-password"
-                                    name="password_confirmation"
-                                    placeholder="Confirm password"
-                                />
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
-                            </div>
+                        <TextField
+                            id="password_confirmation"
+                            name="password_confirmation"
+                            type="password"
+                            label="Confirm password"
+                            required
+                            autoComplete="new-password"
+                            placeholder="Confirm password"
+                            error={!!errors.password_confirmation}
+                            helperText={errors.password_confirmation}
+                            fullWidth
+                            variant="outlined"
+                        />
 
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full"
-                                tabIndex={5}
-                                data-test="register-user-button"
-                            >
-                                {processing && (
-                                    <LoaderCircle className="h-4 w-4 animate-spin" />
-                                )}
-                                Create account
-                            </Button>
-                        </div>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            disabled={processing}
+                            sx={{ mt: 2 }}
+                            data-test="register-user-button"
+                        >
+                            {processing && (
+                                <CircularProgress size={20} sx={{ mr: 1 }} />
+                            )}
+                            Create account
+                        </Button>
 
-                        <div className="text-center text-sm text-muted-foreground">
+                        <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
                             Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
+                            <MuiLink
+                                component={Link}
+                                href={login()}
+                                sx={{ textDecoration: 'none' }}
+                            >
                                 Log in
-                            </TextLink>
-                        </div>
-                    </>
+                            </MuiLink>
+                        </Typography>
+                    </Box>
                 )}
             </Form>
         </AuthLayout>

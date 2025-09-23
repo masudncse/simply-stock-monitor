@@ -2,14 +2,16 @@
 import PasswordResetLinkController from '@/actions/App/Http/Controllers/Auth/PasswordResetLinkController';
 import { login } from '@/routes';
 import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    TextField,
+    Typography,
+    Alert,
+    Link as MuiLink,
+} from '@mui/material';
+import { Link } from '@inertiajs/react';
 
 export default function ForgotPassword({ status }: { status?: string }) {
     return (
@@ -20,50 +22,57 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <Head title="Forgot password" />
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <Alert severity="success" sx={{ mb: 2 }}>
                     {status}
-                </div>
+                </Alert>
             )}
 
-            <div className="space-y-6">
+            <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <Form {...PasswordResetLinkController.store.form()}>
                     {({ processing, errors }) => (
                         <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    autoComplete="off"
-                                    autoFocus
-                                    placeholder="email@example.com"
-                                />
+                            <TextField
+                                id="email"
+                                name="email"
+                                type="email"
+                                label="Email address"
+                                autoComplete="off"
+                                autoFocus
+                                placeholder="email@example.com"
+                                error={!!errors.email}
+                                helperText={errors.email}
+                                fullWidth
+                                variant="outlined"
+                            />
 
-                                <InputError message={errors.email} />
-                            </div>
-
-                            <div className="my-6 flex items-center justify-start">
-                                <Button
-                                    className="w-full"
-                                    disabled={processing}
-                                    data-test="email-password-reset-link-button"
-                                >
-                                    {processing && (
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                                    )}
-                                    Email password reset link
-                                </Button>
-                            </div>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                fullWidth
+                                disabled={processing}
+                                sx={{ mt: 2 }}
+                                data-test="email-password-reset-link-button"
+                            >
+                                {processing && (
+                                    <CircularProgress size={20} sx={{ mr: 1 }} />
+                                )}
+                                Email password reset link
+                            </Button>
                         </>
                     )}
                 </Form>
 
-                <div className="space-x-1 text-center text-sm text-muted-foreground">
-                    <span>Or, return to</span>
-                    <TextLink href={login()}>log in</TextLink>
-                </div>
-            </div>
+                <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
+                    Or, return to{' '}
+                    <MuiLink
+                        component={Link}
+                        href={login()}
+                        sx={{ textDecoration: 'none' }}
+                    >
+                        log in
+                    </MuiLink>
+                </Typography>
+            </Box>
         </AuthLayout>
     );
 }

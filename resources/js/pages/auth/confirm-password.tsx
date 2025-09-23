@@ -1,11 +1,12 @@
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 import { store } from '@/routes/password/confirm';
 import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    TextField,
+} from '@mui/material';
 
 export default function ConfirmPassword() {
     return (
@@ -17,34 +18,34 @@ export default function ConfirmPassword() {
 
             <Form {...store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
-                    <div className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                name="password"
-                                placeholder="Password"
-                                autoComplete="current-password"
-                                autoFocus
-                            />
+                    <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <TextField
+                            id="password"
+                            name="password"
+                            type="password"
+                            label="Password"
+                            placeholder="Password"
+                            autoComplete="current-password"
+                            autoFocus
+                            error={!!errors.password}
+                            helperText={errors.password}
+                            fullWidth
+                            variant="outlined"
+                        />
 
-                            <InputError message={errors.password} />
-                        </div>
-
-                        <div className="flex items-center">
-                            <Button
-                                className="w-full"
-                                disabled={processing}
-                                data-test="confirm-password-button"
-                            >
-                                {processing && (
-                                    <LoaderCircle className="h-4 w-4 animate-spin" />
-                                )}
-                                Confirm password
-                            </Button>
-                        </div>
-                    </div>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            disabled={processing}
+                            data-test="confirm-password-button"
+                        >
+                            {processing && (
+                                <CircularProgress size={20} sx={{ mr: 1 }} />
+                            )}
+                            Confirm password
+                        </Button>
+                    </Box>
                 )}
             </Form>
         </AuthLayout>

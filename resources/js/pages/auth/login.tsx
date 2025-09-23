@@ -1,15 +1,20 @@
 import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController';
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { request } from '@/routes/password';
 import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import {
+    Box,
+    Button,
+    Checkbox,
+    CircularProgress,
+    FormControlLabel,
+    TextField,
+    Typography,
+    Alert,
+    Link as MuiLink,
+} from '@mui/material';
+import { Link } from '@inertiajs/react';
 
 interface LoginProps {
     status?: string;
@@ -27,88 +32,96 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             <Form
                 {...AuthenticatedSessionController.store.form()}
                 resetOnSuccess={['password']}
-                className="flex flex-col gap-6"
             >
                 {({ processing, errors }) => (
-                    <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="email"
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
+                    <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <TextField
+                            id="email"
+                            name="email"
+                            type="email"
+                            label="Email address"
+                            required
+                            autoFocus
+                            autoComplete="email"
+                            placeholder="email@example.com"
+                            error={!!errors.email}
+                            helperText={errors.email}
+                            fullWidth
+                            variant="outlined"
+                        />
 
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm"
-                                            tabIndex={5}
-                                        >
-                                            Forgot password?
-                                        </TextLink>
-                                    )}
-                                </div>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="current-password"
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
+                        <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            <Box component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Typography variant="body2" component="label" htmlFor="password">
+                                    Password
+                                </Typography>
+                                {canResetPassword && (
+                                    <MuiLink
+                                        component={Link}
+                                        href={request()}
+                                        variant="body2"
+                                        sx={{ textDecoration: 'none', fontSize: '0.875rem' }}
+                                    >
+                                        Forgot password?
+                                    </MuiLink>
+                                )}
+                            </Box>
+                            <TextField
+                                id="password"
+                                name="password"
+                                type="password"
+                                required
+                                autoComplete="current-password"
+                                placeholder="Password"
+                                error={!!errors.password}
+                                helperText={errors.password}
+                                fullWidth
+                                variant="outlined"
+                            />
+                        </Box>
 
-                            <div className="flex items-center space-x-3">
+                        <FormControlLabel
+                            control={
                                 <Checkbox
                                     id="remember"
                                     name="remember"
-                                    tabIndex={3}
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
-                            </div>
+                            }
+                            label="Remember me"
+                        />
 
-                            <Button
-                                type="submit"
-                                className="mt-4 w-full"
-                                tabIndex={4}
-                                disabled={processing}
-                                data-test="login-button"
-                            >
-                                {processing && (
-                                    <LoaderCircle className="h-4 w-4 animate-spin" />
-                                )}
-                                Log in
-                            </Button>
-                        </div>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            disabled={processing}
+                            sx={{ mt: 2 }}
+                            data-test="login-button"
+                        >
+                            {processing && (
+                                <CircularProgress size={20} sx={{ mr: 1 }} />
+                            )}
+                            Log in
+                        </Button>
 
-                        <div className="text-center text-sm text-muted-foreground">
+                        <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
                             Don't have an account?{' '}
-                            <TextLink href={register()} tabIndex={5}>
+                            <MuiLink
+                                component={Link}
+                                href={register()}
+                                sx={{ textDecoration: 'none' }}
+                            >
                                 Sign up
-                            </TextLink>
-                        </div>
-                    </>
+                            </MuiLink>
+                        </Typography>
+                    </Box>
                 )}
             </Form>
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <Alert severity="success" sx={{ mt: 2 }}>
                     {status}
-                </div>
+                </Alert>
             )}
         </AuthLayout>
     );
