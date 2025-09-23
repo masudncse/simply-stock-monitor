@@ -1,4 +1,4 @@
-import { SidebarInset } from '@/components/ui/sidebar';
+import { Box } from '@mui/material';
 import * as React from 'react';
 
 interface AppContentProps extends React.ComponentProps<'main'> {
@@ -11,15 +11,39 @@ export function AppContent({
     ...props
 }: AppContentProps) {
     if (variant === 'sidebar') {
-        return <SidebarInset {...props}>{children}</SidebarInset>;
+        return (
+            <Box
+                component="main"
+                sx={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: 0,
+                }}
+                {...props}
+            >
+                {children}
+            </Box>
+        );
     }
 
     return (
-        <main
-            className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-4 rounded-xl"
+        <Box
+            component="main"
+            sx={{
+                mx: 'auto',
+                display: 'flex',
+                height: '100%',
+                width: '100%',
+                maxWidth: '7xl',
+                flex: 1,
+                flexDirection: 'column',
+                gap: 2,
+                borderRadius: 2,
+            }}
             {...props}
         >
             {children}
-        </main>
+        </Box>
     );
 }

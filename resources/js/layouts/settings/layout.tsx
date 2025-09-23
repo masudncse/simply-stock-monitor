@@ -1,7 +1,5 @@
 import Heading from '@/components/heading';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { Divider, Box, List, ListItem, ListItemButton } from '@mui/material';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editPassword } from '@/routes/password';
 import { edit } from '@/routes/profile';
@@ -42,48 +40,61 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     const currentPath = window.location.pathname;
 
     return (
-        <div className="px-4 py-6">
+        <Box sx={{ p: 3 }}>
             <Heading
                 title="Settings"
                 description="Manage your profile and account settings"
             />
 
-            <div className="flex flex-col lg:flex-row lg:space-x-12">
-                <aside className="w-full max-w-xl lg:w-48">
-                    <nav className="flex flex-col space-y-1 space-x-0">
-                        {sidebarNavItems.map((item, index) => (
-                            <Button
-                                key={`${typeof item.href === 'string' ? item.href : item.href.url}-${index}`}
-                                size="sm"
-                                variant="ghost"
-                                asChild
-                                className={cn('w-full justify-start', {
-                                    'bg-muted':
-                                        currentPath ===
-                                        (typeof item.href === 'string'
-                                            ? item.href
-                                            : item.href.url),
-                                })}
-                            >
-                                <Link href={item.href}>
-                                    {item.icon && (
-                                        <item.icon className="h-4 w-4" />
-                                    )}
-                                    {item.title}
-                                </Link>
-                            </Button>
-                        ))}
-                    </nav>
-                </aside>
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', lg: 'row' }, 
+                gap: 3,
+                mt: 3
+            }}>
+                <Box sx={{ 
+                    width: { xs: '100%', lg: 200 },
+                    maxWidth: { xs: '100%', lg: 200 }
+                }}>
+                    <List component="nav">
+                        {sidebarNavItems.map((item, index) => {
+                            const isActive = currentPath === (typeof item.href === 'string' ? item.href : item.href.url);
+                            return (
+                                <ListItem key={`${typeof item.href === 'string' ? item.href : item.href.url}-${index}`} disablePadding>
+                                    <ListItemButton
+                                        component={Link}
+                                        href={item.href}
+                                        selected={isActive}
+                                        sx={{
+                                            borderRadius: 1,
+                                            mb: 0.5,
+                                            '&.Mui-selected': {
+                                                backgroundColor: 'action.selected',
+                                            }
+                                        }}
+                                    >
+                                        {item.icon && (
+                                            <item.icon style={{ marginRight: 8, width: 16, height: 16 }} />
+                                        )}
+                                        {item.title}
+                                    </ListItemButton>
+                                </ListItem>
+                            );
+                        })}
+                    </List>
+                </Box>
 
-                <Separator className="my-6 lg:hidden" />
+                <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', lg: 'block' } }} />
 
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">
+                <Box sx={{ 
+                    flex: 1,
+                    maxWidth: { md: '600px' }
+                }}>
+                    <Box sx={{ maxWidth: '600px' }}>
                         {children}
-                    </section>
-                </div>
-            </div>
-        </div>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
     );
 }

@@ -1,38 +1,41 @@
-import {
-    SidebarGroup,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from '@/components/ui/sidebar';
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();
     return (
-        <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
-            <SidebarMenu>
+        <Box sx={{ px: 2, py: 0 }}>
+            <Typography variant="overline" sx={{ px: 2, py: 1, color: 'text.secondary' }}>
+                Platform
+            </Typography>
+            <List>
                 {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                            asChild
-                            isActive={page.url.startsWith(
+                    <ListItem key={item.title} disablePadding>
+                        <ListItemButton
+                            component={Link}
+                            href={item.href}
+                            selected={page.url.startsWith(
                                 typeof item.href === 'string'
                                     ? item.href
                                     : item.href.url,
                             )}
-                            tooltip={{ children: item.title }}
+                            sx={{
+                                borderRadius: 1,
+                                mx: 1,
+                                mb: 0.5,
+                            }}
                         >
-                            <Link href={item.href} prefetch>
-                                {item.icon && <item.icon />}
-                                <span>{item.title}</span>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
+                            {item.icon && (
+                                <ListItemIcon>
+                                    <item.icon style={{ width: 16, height: 16 }} />
+                                </ListItemIcon>
+                            )}
+                            <ListItemText primary={item.title} />
+                        </ListItemButton>
+                    </ListItem>
                 ))}
-            </SidebarMenu>
-        </SidebarGroup>
+            </List>
+        </Box>
     );
 }

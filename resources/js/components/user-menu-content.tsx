@@ -1,9 +1,4 @@
-import {
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+import { MenuItem, ListItemIcon, ListItemText, Divider, Box } from '@mui/material';
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
@@ -26,39 +21,23 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
 
     return (
         <>
-            <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <UserInfo user={user} showEmail={true} />
-                </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                    <Link
-                        className="block w-full"
-                        href={edit()}
-                        as="button"
-                        prefetch
-                        onClick={cleanup}
-                    >
-                        <Settings className="mr-2" />
-                        Settings
-                    </Link>
-                </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-                <Link
-                    className="block w-full"
-                    href={logout()}
-                    as="button"
-                    onClick={handleLogout}
-                    data-test="logout-button"
-                >
-                    <LogOut className="mr-2" />
-                    Log out
-                </Link>
-            </DropdownMenuItem>
+            <Box sx={{ p: 1 }}>
+                <UserInfo user={user} showEmail={true} />
+            </Box>
+            <Divider />
+            <MenuItem component={Link} href={edit()} onClick={cleanup}>
+                <ListItemIcon>
+                    <Settings style={{ width: 16, height: 16 }} />
+                </ListItemIcon>
+                <ListItemText>Settings</ListItemText>
+            </MenuItem>
+            <Divider />
+            <MenuItem component={Link} href={logout()} onClick={handleLogout} data-test="logout-button">
+                <ListItemIcon>
+                    <LogOut style={{ width: 16, height: 16 }} />
+                </ListItemIcon>
+                <ListItemText>Log out</ListItemText>
+            </MenuItem>
         </>
     );
 }

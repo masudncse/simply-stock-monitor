@@ -1,11 +1,4 @@
-import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Button, Card, CardContent, CardHeader, Typography, Box, Grid, Chip } from '@mui/material';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 import { Form } from '@inertiajs/react';
 import { Eye, EyeOff, LockKeyhole, RefreshCw } from 'lucide-react';
@@ -55,109 +48,85 @@ export default function TwoFactorRecoveryCodes({
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex gap-3">
-                    <LockKeyhole className="size-4" aria-hidden="true" />
-                    2FA Recovery Codes
-                </CardTitle>
-                <CardDescription>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <LockKeyhole style={{ width: 16, height: 16 }} />
+                    <Typography variant="h6" component="h3">
+                        2FA Recovery Codes
+                    </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
                     Recovery codes let you regain access if you lose your 2FA
                     device. Store them in a secure password manager.
-                </CardDescription>
+                </Typography>
             </CardHeader>
             <CardContent>
-                <div className="flex flex-col gap-3 select-none sm:flex-row sm:items-center sm:justify-between">
+                <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: { xs: 'column', sm: 'row' }, 
+                    gap: 2, 
+                    alignItems: { sm: 'center' },
+                    justifyContent: { sm: 'space-between' },
+                    userSelect: 'none'
+                }}>
                     <Button
                         onClick={toggleCodesVisibility}
-                        className="w-fit"
+                        variant="outlined"
+                        startIcon={<RecoveryCodeIconComponent style={{ width: 16, height: 16 }} />}
                         aria-expanded={codesAreVisible}
                         aria-controls="recovery-codes-section"
                     >
-                        <RecoveryCodeIconComponent
-                            className="size-4"
-                            aria-hidden="true"
-                        />
                         {codesAreVisible ? 'Hide' : 'View'} Recovery Codes
                     </Button>
 
                     {canRegenerateCodes && (
-                        <Form
-                            {...regenerateRecoveryCodes.form()}
-                            options={{ preserveScroll: true }}
-                            onSuccess={fetchRecoveryCodes}
-                        >
+                        <Form {...regenerateRecoveryCodes.form()}>
                             {({ processing }) => (
                                 <Button
-                                    variant="secondary"
                                     type="submit"
+                                    variant="outlined"
+                                    color="warning"
                                     disabled={processing}
-                                    aria-describedby="regenerate-warning"
+                                    startIcon={<RefreshCw style={{ width: 16, height: 16 }} />}
                                 >
-                                    <RefreshCw /> Regenerate Codes
+                                    Regenerate Codes
                                 </Button>
                             )}
                         </Form>
                     )}
-                </div>
-                <div
-                    id="recovery-codes-section"
-                    className={`relative overflow-hidden transition-all duration-300 ${codesAreVisible ? 'h-auto opacity-100' : 'h-0 opacity-0'}`}
-                    aria-hidden={!codesAreVisible}
-                >
-                    <div className="mt-3 space-y-3">
-                        {errors?.length ? (
-                            <AlertError errors={errors} />
-                        ) : (
-                            <>
-                                <div
-                                    ref={codesSectionRef}
-                                    className="grid gap-1 rounded-lg bg-muted p-4 font-mono text-sm"
-                                    role="list"
-                                    aria-label="Recovery codes"
-                                >
-                                    {recoveryCodesList.length ? (
-                                        recoveryCodesList.map((code, index) => (
-                                            <div
-                                                key={index}
-                                                role="listitem"
-                                                className="select-text"
-                                            >
-                                                {code}
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div
-                                            className="space-y-2"
-                                            aria-label="Loading recovery codes"
-                                        >
-                                            {Array.from(
-                                                { length: 8 },
-                                                (_, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="h-4 animate-pulse rounded bg-muted-foreground/20"
-                                                        aria-hidden="true"
-                                                    />
-                                                ),
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
+                </Box>
 
-                                <div className="text-xs text-muted-foreground select-none">
-                                    <p id="regenerate-warning">
-                                        Each recovery code can be used once to
-                                        access your account and will be removed
-                                        after use. If you need more, click{' '}
-                                        <span className="font-bold">
-                                            Regenerate Codes
-                                        </span>{' '}
-                                        above.
-                                    </p>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
+                {errors.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                        <AlertError errors={errors} />
+                    </Box>
+                )}
+
+                {codesAreVisible && (
+                    <Box
+                        ref={codesSectionRef}
+                        id="recovery-codes-section"
+                        sx={{ mt: 3 }}
+                    >
+                        <Typography variant="subtitle2" sx={{ mb: 2 }}>
+                            Recovery Codes:
+                        </Typography>
+                        <Grid container spacing={1}>
+                            {recoveryCodesList.map((code, index) => (
+                                <Grid item xs={6} sm={4} md={3} key={index}>
+                                    <Chip
+                                        label={code}
+                                        variant="outlined"
+                                        sx={{ 
+                                            fontFamily: 'monospace',
+                                            width: '100%',
+                                            justifyContent: 'flex-start'
+                                        }}
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Box>
+                )}
             </CardContent>
         </Card>
     );

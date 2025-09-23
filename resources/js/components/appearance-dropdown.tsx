@@ -1,67 +1,77 @@
-import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useAppearance } from '@/hooks/use-appearance';
+import { Menu, MenuItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
 import { Monitor, Moon, Sun } from 'lucide-react';
-import { HTMLAttributes } from 'react';
+import { useAppearance } from '@/hooks/use-appearance';
+import { HTMLAttributes, useState } from 'react';
 
 export default function AppearanceToggleDropdown({
     className = '',
     ...props
 }: HTMLAttributes<HTMLDivElement>) {
     const { appearance, updateAppearance } = useAppearance();
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
 
     const getCurrentIcon = () => {
         switch (appearance) {
             case 'dark':
-                return <Moon className="h-5 w-5" />;
+                return <Moon style={{ width: 20, height: 20 }} />;
             case 'light':
-                return <Sun className="h-5 w-5" />;
+                return <Sun style={{ width: 20, height: 20 }} />;
             default:
-                return <Monitor className="h-5 w-5" />;
+                return <Monitor style={{ width: 20, height: 20 }} />;
         }
+    };
+
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
     };
 
     return (
         <div className={className} {...props}>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 rounded-md"
-                    >
-                        {getCurrentIcon()}
-                        <span className="sr-only">Toggle theme</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => updateAppearance('light')}>
-                        <span className="flex items-center gap-2">
-                            <Sun className="h-5 w-5" />
-                            Light
-                        </span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => updateAppearance('dark')}>
-                        <span className="flex items-center gap-2">
-                            <Moon className="h-5 w-5" />
-                            Dark
-                        </span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => updateAppearance('system')}
-                    >
-                        <span className="flex items-center gap-2">
-                            <Monitor className="h-5 w-5" />
-                            System
-                        </span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ width: 36, height: 36 }}
+                aria-label="Toggle theme"
+            >
+                {getCurrentIcon()}
+            </IconButton>
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+            >
+                <MenuItem onClick={() => { updateAppearance('light'); handleClose(); }}>
+                    <ListItemIcon>
+                        <Sun style={{ width: 20, height: 20 }} />
+                    </ListItemIcon>
+                    <ListItemText>Light</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={() => { updateAppearance('dark'); handleClose(); }}>
+                    <ListItemIcon>
+                        <Moon style={{ width: 20, height: 20 }} />
+                    </ListItemIcon>
+                    <ListItemText>Dark</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={() => { updateAppearance('system'); handleClose(); }}>
+                    <ListItemIcon>
+                        <Monitor style={{ width: 20, height: 20 }} />
+                    </ListItemIcon>
+                    <ListItemText>System</ListItemText>
+                </MenuItem>
+            </Menu>
         </div>
     );
 }

@@ -15,6 +15,9 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -79,6 +82,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('settings/system', [SettingsController::class, 'updateSystem'])->name('settings.system.update');
         Route::get('settings/users', [SettingsController::class, 'users'])->name('settings.users');
         Route::get('settings/roles', [SettingsController::class, 'roles'])->name('settings.roles');
+        
+        // User Management
+        Route::resource('users', UserController::class);
+        
+        // Role Management
+        Route::resource('roles', RoleController::class);
+        
+        // Permission Management
+        Route::resource('permissions', PermissionController::class);
         Route::get('settings/backup', [SettingsController::class, 'backup'])->name('settings.backup');
         Route::post('settings/backup', [SettingsController::class, 'createBackup'])->name('settings.backup.create');
         

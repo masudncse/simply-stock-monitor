@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, Box, Typography } from '@mui/material';
 import { useInitials } from '@/hooks/use-initials';
 import { type User } from '@/types';
 
@@ -13,20 +13,45 @@ export function UserInfo({
 
     return (
         <>
-            <Avatar className="h-8 w-8 overflow-hidden rounded-full">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                    {getInitials(user.name)}
-                </AvatarFallback>
+            <Avatar 
+                src={user.avatar} 
+                alt={user.name}
+                sx={{ width: 32, height: 32 }}
+            >
+                {getInitials(user.name)}
             </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                flex: 1, 
+                textAlign: 'left',
+                minWidth: 0
+            }}>
+                <Typography 
+                    variant="body2" 
+                    sx={{ 
+                        fontWeight: 500,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    {user.name}
+                </Typography>
                 {showEmail && (
-                    <span className="truncate text-xs text-muted-foreground">
+                    <Typography 
+                        variant="caption" 
+                        color="text.secondary"
+                        sx={{ 
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
                         {user.email}
-                    </span>
+                    </Typography>
                 )}
-            </div>
+            </Box>
         </>
     );
 }

@@ -1,11 +1,4 @@
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+import { Breadcrumbs as MuiBreadcrumbs, Link as MuiLink, Typography } from '@mui/material';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Fragment } from 'react';
@@ -18,31 +11,29 @@ export function Breadcrumbs({
     return (
         <>
             {breadcrumbs.length > 0 && (
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        {breadcrumbs.map((item, index) => {
-                            const isLast = index === breadcrumbs.length - 1;
-                            return (
-                                <Fragment key={index}>
-                                    <BreadcrumbItem>
-                                        {isLast ? (
-                                            <BreadcrumbPage>
-                                                {item.title}
-                                            </BreadcrumbPage>
-                                        ) : (
-                                            <BreadcrumbLink asChild>
-                                                <Link href={item.href}>
-                                                    {item.title}
-                                                </Link>
-                                            </BreadcrumbLink>
-                                        )}
-                                    </BreadcrumbItem>
-                                    {!isLast && <BreadcrumbSeparator />}
-                                </Fragment>
-                            );
-                        })}
-                    </BreadcrumbList>
-                </Breadcrumb>
+                <MuiBreadcrumbs>
+                    {breadcrumbs.map((item, index) => {
+                        const isLast = index === breadcrumbs.length - 1;
+                        return (
+                            <Fragment key={index}>
+                                {isLast ? (
+                                    <Typography color="text.primary">
+                                        {item.title}
+                                    </Typography>
+                                ) : (
+                                    <MuiLink
+                                        component={Link}
+                                        href={item.href}
+                                        color="inherit"
+                                        underline="hover"
+                                    >
+                                        {item.title}
+                                    </MuiLink>
+                                )}
+                            </Fragment>
+                        );
+                    })}
+                </MuiBreadcrumbs>
             )}
         </>
     );
