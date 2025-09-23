@@ -1,5 +1,6 @@
 import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
 import { login } from '@/routes';
+import AuthLayout from '@/layouts/auth-layout';
 import { Form, Head } from '@inertiajs/react';
 import {
     Box,
@@ -30,7 +31,6 @@ export default function Register() {
                             name="name"
                             type="text"
                             label="Name"
-                            required
                             autoFocus
                             autoComplete="name"
                             placeholder="Full name"
@@ -45,7 +45,6 @@ export default function Register() {
                             name="email"
                             type="email"
                             label="Email address"
-                            required
                             autoComplete="email"
                             placeholder="email@example.com"
                             error={!!errors.email}
@@ -59,7 +58,6 @@ export default function Register() {
                             name="password"
                             type="password"
                             label="Password"
-                            required
                             autoComplete="new-password"
                             placeholder="Password"
                             error={!!errors.password}
@@ -73,7 +71,6 @@ export default function Register() {
                             name="password_confirmation"
                             type="password"
                             label="Confirm password"
-                            required
                             autoComplete="new-password"
                             placeholder="Confirm password"
                             error={!!errors.password_confirmation}

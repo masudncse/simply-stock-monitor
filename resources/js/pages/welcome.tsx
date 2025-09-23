@@ -1,9 +1,26 @@
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import {
+    Box,
+    Button,
+    Paper,
+    Typography,
+    Stack,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Link as MuiLink,
+    useTheme,
+} from '@mui/material';
+import {
+    OpenInNew as ExternalLinkIcon,
+} from '@mui/icons-material';
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
+    const theme = useTheme();
 
     return (
         <>
@@ -14,124 +31,356 @@ export default function Welcome() {
                     rel="stylesheet"
                 />
             </Head>
-            <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
-                <header className="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
-                    <nav className="flex items-center justify-end gap-4">
+            <Box
+                sx={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    backgroundColor: '#FDFDFC',
+                    color: '#1b1b18',
+                    p: { xs: 3, lg: 4 },
+                    [theme.breakpoints.up('lg')]: {
+                        justifyContent: 'center',
+                    },
+                }}
+            >
+                <Box
+                    component="header"
+                    sx={{
+                        mb: 3,
+                        width: '100%',
+                        maxWidth: { xs: '335px', lg: '4xl' },
+                        fontSize: '0.875rem',
+                    }}
+                >
+                    <Box
+                        component="nav"
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-end',
+                            gap: 2,
+                        }}
+                    >
                         {auth.user ? (
-                            <Link
-                                href={dashboard()}
-                                className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                            <Button
+                                component={Link}
+                                href={dashboard().url}
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    borderColor: '#19140035',
+                                    color: '#1b1b18',
+                                    '&:hover': {
+                                        borderColor: '#1915014a',
+                                    },
+                                }}
                             >
                                 Dashboard
-                            </Link>
+                            </Button>
                         ) : (
                             <>
-                                <Link
-                                    href={login()}
-                                    className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                                <Button
+                                    component={Link}
+                                    href={login().url}
+                                    variant="text"
+                                    size="small"
+                                    sx={{
+                                        color: '#1b1b18',
+                                        border: '1px solid transparent',
+                                        '&:hover': {
+                                            borderColor: '#19140035',
+                                        },
+                                    }}
                                 >
                                     Log in
-                                </Link>
-                                <Link
-                                    href={register()}
-                                    className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                </Button>
+                                <Button
+                                    component={Link}
+                                    href={register().url}
+                                    variant="outlined"
+                                    size="small"
+                                    sx={{
+                                        borderColor: '#19140035',
+                                        color: '#1b1b18',
+                                        '&:hover': {
+                                            borderColor: '#1915014a',
+                                        },
+                                    }}
                                 >
                                     Register
-                                </Link>
+                                </Button>
                             </>
                         )}
-                    </nav>
-                </header>
-                <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
-                    <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
-                        <div className="flex-1 rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
-                            <h1 className="mb-1 font-medium">
+                    </Box>
+                </Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: 1,
+                        transition: 'opacity 750ms',
+                        [theme.breakpoints.up('lg')]: {
+                            flexGrow: 1,
+                        },
+                    }}
+                >
+                    <Box
+                        component="main"
+                        sx={{
+                            display: 'flex',
+                            width: '100%',
+                            maxWidth: { xs: '335px', lg: '4xl' },
+                            flexDirection: { xs: 'column-reverse', lg: 'row' },
+                        }}
+                    >
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                flex: 1,
+                                backgroundColor: 'white',
+                                p: { xs: 3, lg: 5 },
+                                pb: { xs: 6, lg: 5 },
+                                fontSize: '0.8125rem',
+                                lineHeight: '1.25rem',
+                                border: '1px solid rgba(26,26,0,0.16)',
+                                borderRadius: {
+                                    xs: '0 0 8px 8px',
+                                    lg: '8px 0 0 8px',
+                                },
+                            }}
+                        >
+                            <Typography
+                                variant="h4"
+                                component="h1"
+                                sx={{
+                                    mb: 1,
+                                    fontWeight: 500,
+                                    fontSize: '1.25rem',
+                                }}
+                            >
                                 Let's get started
-                            </h1>
-                            <p className="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    mb: 2,
+                                    color: '#706f6c',
+                                    fontSize: '0.8125rem',
+                                    lineHeight: '1.25rem',
+                                }}
+                            >
                                 Laravel has an incredibly rich ecosystem.
                                 <br />
                                 We suggest starting with the following.
-                            </p>
-                            <ul className="mb-4 flex flex-col lg:mb-6">
-                                <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                    <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                        </span>
-                                    </span>
-                                    <span>
-                                        Read the
-                                        <a
-                                            href="https://laravel.com/docs"
-                                            target="_blank"
-                                            className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                        >
-                                            <span>Documentation</span>
-                                            <svg
-                                                width={10}
-                                                height={11}
-                                                viewBox="0 0 10 11"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-2.5 w-2.5"
-                                            >
-                                                <path
-                                                    d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                    stroke="currentColor"
-                                                    strokeLinecap="square"
-                                                />
-                                            </svg>
-                                        </a>
-                                    </span>
-                                </li>
-                                <li className="relative flex items-center gap-4 py-2 before:absolute before:top-0 before:bottom-1/2 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                    <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                        </span>
-                                    </span>
-                                    <span>
-                                        Watch video tutorials at
-                                        <a
-                                            href="https://laracasts.com"
-                                            target="_blank"
-                                            className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                        >
-                                            <span>Laracasts</span>
-                                            <svg
-                                                width={10}
-                                                height={11}
-                                                viewBox="0 0 10 11"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-2.5 w-2.5"
-                                            >
-                                                <path
-                                                    d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                    stroke="currentColor"
-                                                    strokeLinecap="square"
-                                                />
-                                            </svg>
-                                        </a>
-                                    </span>
-                                </li>
-                            </ul>
-                            <ul className="flex gap-3 text-sm leading-normal">
-                                <li>
-                                    <a
-                                        href="https://cloud.laravel.com"
-                                        target="_blank"
-                                        className="inline-block rounded-sm border border-black bg-[#1b1b18] px-5 py-1.5 text-sm leading-normal text-white hover:border-black hover:bg-black dark:border-[#eeeeec] dark:bg-[#eeeeec] dark:text-[#1C1C1A] dark:hover:border-white dark:hover:bg-white"
+                            </Typography>
+                            <List
+                                sx={{
+                                    mb: { xs: 2, lg: 3 },
+                                    position: 'relative',
+                                }}
+                            >
+                                <ListItem
+                                    sx={{
+                                        position: 'relative',
+                                        alignItems: 'flex-start',
+                                        py: 1,
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: '50%',
+                                            bottom: 0,
+                                            left: '0.4rem',
+                                            borderLeft: '1px solid #e3e3e0',
+                                            zIndex: 0,
+                                        },
+                                    }}
+                                >
+                                    <ListItemIcon
+                                        sx={{
+                                            position: 'relative',
+                                            zIndex: 1,
+                                            backgroundColor: 'white',
+                                            py: 0.5,
+                                            minWidth: 'auto',
+                                            mr: 2,
+                                        }}
                                     >
-                                        Deploy now
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div className="relative -mb-px aspect-[335/376] w-full shrink-0 overflow-hidden rounded-t-lg bg-[#fff2f2] lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:rounded-t-none lg:rounded-r-lg dark:bg-[#1D0002]">
-                            <svg
-                                className="w-full max-w-none translate-y-0 text-[#F53003] opacity-100 transition-all duration-750 dark:text-[#F61500] starting:translate-y-6 starting:opacity-0"
+                                        <Box
+                                            sx={{
+                                                width: 14,
+                                                height: 14,
+                                                borderRadius: '50%',
+                                                border: '1px solid #e3e3e0',
+                                                backgroundColor: '#FDFDFC',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                boxShadow: '0px 0px 1px 0px rgba(0,0,0,0.03), 0px 1px 2px 0px rgba(0,0,0,0.06)',
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    width: 6,
+                                                    height: 6,
+                                                    borderRadius: '50%',
+                                                    backgroundColor: '#dbdbd7',
+                                                }}
+                                            />
+                                        </Box>
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography variant="body2">
+                                                Read the{' '}
+                                                <MuiLink
+                                                    href="https://laravel.com/docs"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    sx={{
+                                                        color: '#f53003',
+                                                        textDecoration: 'underline',
+                                                        textUnderlineOffset: 4,
+                                                        fontWeight: 500,
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: 0.5,
+                                                    }}
+                                                >
+                                                    Documentation
+                                                    <ExternalLinkIcon sx={{ fontSize: '0.625rem' }} />
+                                                </MuiLink>
+                                            </Typography>
+                                        }
+                                    />
+                                </ListItem>
+                                <ListItem
+                                    sx={{
+                                        position: 'relative',
+                                        alignItems: 'flex-start',
+                                        py: 1,
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: 0,
+                                            bottom: '50%',
+                                            left: '0.4rem',
+                                            borderLeft: '1px solid #e3e3e0',
+                                            zIndex: 0,
+                                        },
+                                    }}
+                                >
+                                    <ListItemIcon
+                                        sx={{
+                                            position: 'relative',
+                                            zIndex: 1,
+                                            backgroundColor: 'white',
+                                            py: 0.5,
+                                            minWidth: 'auto',
+                                            mr: 2,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: 14,
+                                                height: 14,
+                                                borderRadius: '50%',
+                                                border: '1px solid #e3e3e0',
+                                                backgroundColor: '#FDFDFC',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                boxShadow: '0px 0px 1px 0px rgba(0,0,0,0.03), 0px 1px 2px 0px rgba(0,0,0,0.06)',
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    width: 6,
+                                                    height: 6,
+                                                    borderRadius: '50%',
+                                                    backgroundColor: '#dbdbd7',
+                                                }}
+                                            />
+                                        </Box>
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography variant="body2">
+                                                Watch video tutorials at{' '}
+                                                <MuiLink
+                                                    href="https://laracasts.com"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    sx={{
+                                                        color: '#f53003',
+                                                        textDecoration: 'underline',
+                                                        textUnderlineOffset: 4,
+                                                        fontWeight: 500,
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: 0.5,
+                                                    }}
+                                                >
+                                                    Laracasts
+                                                    <ExternalLinkIcon sx={{ fontSize: '0.625rem' }} />
+                                                </MuiLink>
+                                            </Typography>
+                                        }
+                                    />
+                                </ListItem>
+                            </List>
+                            <Stack direction="row" spacing={1}>
+                                <Button
+                                    component={MuiLink}
+                                    href="https://cloud.laravel.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    variant="contained"
+                                    size="small"
+                                    sx={{
+                                        backgroundColor: '#1b1b18',
+                                        color: 'white',
+                                        border: '1px solid black',
+                                        fontSize: '0.875rem',
+                                        '&:hover': {
+                                            backgroundColor: 'black',
+                                            borderColor: 'black',
+                                        },
+                                    }}
+                                >
+                                    Deploy now
+                                </Button>
+                            </Stack>
+                        </Paper>
+                        <Box
+                            sx={{
+                                position: 'relative',
+                                mb: { xs: '-1px', lg: 0 },
+                                ml: { lg: '-1px' },
+                                aspectRatio: { xs: '335/376', lg: 'auto' },
+                                width: { xs: '100%', lg: '438px' },
+                                flexShrink: 0,
+                                overflow: 'hidden',
+                                backgroundColor: '#fff2f2',
+                                borderRadius: {
+                                    xs: '8px 8px 0 0',
+                                    lg: '0 8px 8px 0',
+                                },
+                            }}
+                        >
+                            <Box
+                                component="svg"
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: 'none',
+                                    color: '#F53003',
+                                    opacity: 1,
+                                    transition: 'all 750ms',
+                                    transform: 'translateY(0)',
+                                }}
                                 viewBox="0 0 438 104"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -164,9 +413,21 @@ export default function Welcome() {
                                     d="M376.571 30.3656C356.603 30.3656 340.797 46.8497 340.797 67.1828C340.797 89.6597 356.094 104 378.661 104C391.29 104 399.354 99.1488 409.206 88.5848L398.189 80.0226C398.183 80.031 389.874 90.9895 377.468 90.9895C363.048 90.9895 356.977 79.3111 356.977 73.269H411.075C413.917 50.1328 398.775 30.3656 376.571 30.3656ZM357.02 61.0967C357.145 59.7487 359.023 43.3761 376.442 43.3761C393.861 43.3761 395.978 59.7464 396.099 61.0967H357.02Z"
                                     fill="currentColor"
                                 />
-                            </svg>
-                            <svg
-                                className="relative -mt-[4.9rem] -ml-8 w-[448px] max-w-none lg:-mt-[6.6rem] lg:ml-0 dark:hidden"
+                            </Box>
+                            <Box
+                                component="svg"
+                                sx={{
+                                    position: 'relative',
+                                    mt: '-4.9rem',
+                                    ml: '-2rem',
+                                    width: '448px',
+                                    maxWidth: 'none',
+                                    [theme.breakpoints.up('lg')]: {
+                                        mt: '-6.6rem',
+                                        ml: 0,
+                                    },
+                                    display: { xs: 'block', lg: 'block' },
+                                }}
                                 viewBox="0 0 440 376"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -485,9 +746,21 @@ export default function Welcome() {
                                         strokeWidth={1}
                                     />
                                 </g>
-                            </svg>
-                            <svg
-                                className="relative -mt-[4.9rem] -ml-8 hidden w-[448px] max-w-none lg:-mt-[6.6rem] lg:ml-0 dark:block"
+                            </Box>
+                            <Box
+                                component="svg"
+                                sx={{
+                                    position: 'relative',
+                                    mt: '-4.9rem',
+                                    ml: '-2rem',
+                                    width: '448px',
+                                    maxWidth: 'none',
+                                    display: { xs: 'none', lg: 'block' },
+                                    [theme.breakpoints.up('lg')]: {
+                                        mt: '-6.6rem',
+                                        ml: 0,
+                                    },
+                                }}
                                 viewBox="0 0 440 376"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -794,13 +1067,28 @@ export default function Welcome() {
                                         strokeWidth={1}
                                     />
                                 </g>
-                            </svg>
-                            <div className="absolute inset-0 rounded-t-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-t-none lg:rounded-r-lg dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]" />
-                        </div>
-                    </main>
-                </div>
-                <div className="hidden h-14.5 lg:block"></div>
-            </div>
+                            </Box>
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    inset: 0,
+                                    borderRadius: {
+                                        xs: '8px 8px 0 0',
+                                        lg: '0 8px 8px 0',
+                                    },
+                                    boxShadow: 'inset 0px 0px 0px 1px rgba(26,26,0,0.16)',
+                                }}
+                            />
+                        </Box>
+                    </Box>
+                </Box>
+                <Box
+                    sx={{
+                        height: '3.625rem',
+                        display: { xs: 'none', lg: 'block' },
+                    }}
+                />
+            </Box>
         </>
     );
 }

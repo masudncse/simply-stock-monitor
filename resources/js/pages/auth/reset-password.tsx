@@ -1,4 +1,5 @@
 import NewPasswordController from '@/actions/App/Http/Controllers/Auth/NewPasswordController';
+import AuthLayout from '@/layouts/auth-layout';
 import { Form, Head } from '@inertiajs/react';
 import {
     Box,

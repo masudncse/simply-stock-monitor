@@ -111,18 +111,17 @@ export default function TwoFactorChallenge() {
                         <Stack spacing={3}>
                             {showRecoveryInput ? (
                                 <>
-                                    <TextField
-                                        name="recovery_code"
-                                        type="text"
-                                        label="Recovery Code"
-                                        placeholder="Enter recovery code"
-                                        autoFocus={showRecoveryInput}
-                                        required
-                                        error={!!errors.recovery_code}
-                                        helperText={errors.recovery_code}
-                                        fullWidth
-                                        variant="outlined"
-                                    />
+                                        <TextField
+                                            name="recovery_code"
+                                            type="text"
+                                            label="Recovery Code"
+                                            placeholder="Enter recovery code"
+                                            autoFocus={showRecoveryInput}
+                                            error={!!errors.recovery_code}
+                                            helperText={errors.recovery_code}
+                                            fullWidth
+                                            variant="outlined"
+                                        />
                                 </>
                             ) : (
                                 <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>

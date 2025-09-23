@@ -40,7 +40,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             name="email"
                             type="email"
                             label="Email address"
-                            required
                             autoFocus
                             autoComplete="email"
                             placeholder="email@example.com"
@@ -70,7 +69,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 id="password"
                                 name="password"
                                 type="password"
-                                required
                                 autoComplete="current-password"
                                 placeholder="Password"
                                 error={!!errors.password}
