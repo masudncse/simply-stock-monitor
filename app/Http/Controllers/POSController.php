@@ -10,6 +10,7 @@ use App\Models\Warehouse;
 use App\Services\SaleService;
 use App\Http\Requests\ProcessPOSRequest;
 use App\Http\Requests\GetProductByBarcodeRequest;
+use App\Exceptions\InsufficientStockException;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -79,14 +80,24 @@ class POSController extends Controller
             'notes' => 'POS Sale',
         ];
 
-        // Create sale using service
-        $sale = $this->saleService->createSale($saleData, $request->items, auth()->id());
-        
-        // Process the sale immediately for POS
-        $this->saleService->processSale($sale->id);
+        try {
+            // Create sale using service
+            $sale = $this->saleService->createSale($saleData, $request->items, auth()->id());
+            
+            // Process the sale immediately for POS
+            $this->saleService->processSale($sale->id);
 
-        return redirect()->route('pos.index')
-            ->with('success', "Sale completed successfully! Invoice: {$sale->invoice_number}");
+            return redirect()->route('pos.index')
+                ->with('success', "Sale completed successfully! Invoice: {$sale->invoice_number}");
+        } catch (InsufficientStockException $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'An error occurred while processing the sale: ' . $e->getMessage());
+        }
     }
 
     /**

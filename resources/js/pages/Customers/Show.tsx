@@ -21,6 +21,8 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute, edit as editRoute } from '@/routes/customers';
+import { show as salesShowRoute } from '@/routes/sales';
 
 interface Sale {
   id: number;
@@ -92,14 +94,14 @@ export default function CustomersShow({ customer }: CustomersShowProps) {
             <Button
               variant="outlined"
               startIcon={<BackIcon />}
-              onClick={() => router.visit(route('customers.index'))}
+              onClick={() => router.visit(indexRoute.url())}
             >
               Back
             </Button>
             <Button
               variant="contained"
               startIcon={<EditIcon />}
-              onClick={() => router.visit(route('customers.edit', customer.id))}
+              onClick={() => router.visit(editRoute.url({ customer: customer.id }))}
             >
               Edit
             </Button>
@@ -268,7 +270,7 @@ export default function CustomersShow({ customer }: CustomersShowProps) {
                             <TableCell>
                               <Button
                                 size="small"
-                                onClick={() => router.visit(route('sales.show', sale.id))}
+                                onClick={() => router.visit(salesShowRoute.url({ sale: sale.id }))}
                               >
                                 View
                               </Button>

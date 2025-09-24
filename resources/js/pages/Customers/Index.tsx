@@ -34,6 +34,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/customers';
 
 interface Customer {
   id: number;
@@ -69,7 +70,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
   const [customerToDelete, setCustomerToDelete] = useState<Customer | null>(null);
 
   const handleSearch = () => {
-    router.get(route('customers.index'), {
+    router.get(indexRoute.url(), {
       search: searchTerm,
       status: statusFilter,
     }, {
@@ -85,7 +86,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
 
   const confirmDelete = () => {
     if (customerToDelete) {
-      router.delete(route('customers.destroy', customerToDelete.id));
+      router.delete(destroyRoute.url({ customer: customerToDelete.id }));
     }
     setDeleteDialogOpen(false);
     setCustomerToDelete(null);
@@ -101,7 +102,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => router.visit(route('customers.create'))}
+            onClick={() => router.visit(createRoute.url())}
           >
             New Customer
           </Button>
@@ -192,13 +193,13 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
                         <Box sx={{ display: 'flex', gap: 1 }}>
                           <IconButton
                             size="small"
-                            onClick={() => router.visit(route('customers.show', customer.id))}
+                            onClick={() => router.visit(showRoute.url({ customer: customer.id }))}
                           >
                             <ViewIcon />
                           </IconButton>
                           <IconButton
                             size="small"
-                            onClick={() => router.visit(route('customers.edit', customer.id))}
+                            onClick={() => router.visit(editRoute.url({ customer: customer.id }))}
                           >
                             <EditIcon />
                           </IconButton>

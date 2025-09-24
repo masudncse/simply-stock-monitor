@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { update as updateRoute, show as showRoute } from '@/routes/suppliers';
 
 interface Supplier {
   id: number;
@@ -64,7 +65,7 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    router.put(route('suppliers.update', supplier.id), formData, {
+    router.put(updateRoute.url({ supplier: supplier.id }), formData, {
       onError: (errors) => {
         setErrors(errors);
       },
@@ -81,7 +82,7 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
           <Button
             variant="outlined"
             startIcon={<BackIcon />}
-            onClick={() => router.visit(route('suppliers.show', supplier.id))}
+            onClick={() => router.visit(showRoute.url({ supplier: supplier.id }))}
           >
             Back to Supplier
           </Button>
@@ -243,7 +244,7 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.visit(route('suppliers.show', supplier.id))}
+                  onClick={() => router.visit(showRoute.url({ supplier: supplier.id }))}
                 >
                   Cancel
                 </Button>

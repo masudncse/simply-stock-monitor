@@ -23,6 +23,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute, edit as editRoute, process as processRoute } from '@/routes/sales';
 
 interface Customer {
   id: number;
@@ -117,7 +118,7 @@ export default function SalesShow({ sale }: SalesShowProps) {
   };
 
   const handleProcess = () => {
-    router.post(route('sales.process', sale.id));
+    router.post(processRoute.url({ sale: sale.id }));
   };
 
   return (
@@ -131,7 +132,7 @@ export default function SalesShow({ sale }: SalesShowProps) {
             <Button
               variant="outlined"
               startIcon={<BackIcon />}
-              onClick={() => router.visit(route('sales.index'))}
+              onClick={() => router.visit(indexRoute.url())}
             >
               Back
             </Button>
@@ -140,7 +141,7 @@ export default function SalesShow({ sale }: SalesShowProps) {
                 <Button
                   variant="contained"
                   startIcon={<EditIcon />}
-                  onClick={() => router.visit(route('sales.edit', sale.id))}
+                  onClick={() => router.visit(editRoute.url({ sale: sale.id }))}
                 >
                   Edit
                 </Button>

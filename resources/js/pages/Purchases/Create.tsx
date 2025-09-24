@@ -21,14 +21,16 @@ import {
   MenuItem,
   Autocomplete,
   Divider,
+  Alert,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Save as SaveIcon,
 } from '@mui/icons-material';
-import { router } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { store as storeRoute, index as indexRoute } from '@/routes/purchases';
 
 interface Supplier {
   id: number;
@@ -72,15 +74,21 @@ interface PurchasesCreateProps {
 }
 
 export default function PurchasesCreate({ suppliers, warehouses, products }: PurchasesCreateProps) {
-  const [formData, setFormData] = useState({
+  const { data: formData, setData: setFormData, post, processing, errors } = useForm({
     supplier_id: '',
     warehouse_id: '',
     purchase_date: new Date().toISOString().split('T')[0],
     due_date: '',
     notes: '',
+    items: [] as PurchaseItem[],
+    subtotal: 0,
+    tax_amount: 0,
+    discount_amount: 0,
+    total_amount: 0,
+    paid_amount: 0,
+    status: 'pending',
   });
 
-  const [items, setItems] = useState<PurchaseItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [newItem, setNewItem] = useState({
     quantity: 1,
@@ -88,6 +96,8 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
     batch: '',
     expiry_date: '',
   });
+
+  const items = formData.items;
 
   const addItem = () => {
     if (!selectedProduct) return;
@@ -103,7 +113,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
       expiry_date: newItem.expiry_date,
     };
 
-    setItems([...items, item]);
+    setFormData('items', [...items, item]);
     setSelectedProduct(null);
     setNewItem({
       quantity: 1,
@@ -114,7 +124,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
   };
 
   const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
+    setFormData('items', items.filter((_, i) => i !== index));
   };
 
   const updateItem = (index: number, field: keyof PurchaseItem, value: string | number) => {
@@ -125,7 +135,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
       updatedItems[index].total_price = updatedItems[index].quantity * updatedItems[index].unit_price;
     }
     
-    setItems(updatedItems);
+    setFormData('items', updatedItems);
   };
 
   const calculateTotals = () => {
@@ -147,16 +157,14 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
 
     const { subtotal, taxAmount, totalAmount } = calculateTotals();
 
-    router.post(route('purchases.store'), {
-      ...formData,
-      items,
-      subtotal,
-      tax_amount: taxAmount,
-      discount_amount: 0,
-      total_amount: totalAmount,
-      paid_amount: 0,
-      status: 'pending',
-    });
+    setFormData('subtotal', subtotal);
+    setFormData('tax_amount', taxAmount);
+    setFormData('discount_amount', 0);
+    setFormData('total_amount', totalAmount);
+    setFormData('paid_amount', 0);
+    setFormData('status', 'pending');
+
+    post(storeRoute.url());
   };
 
   const totals = calculateTotals();
@@ -170,13 +178,25 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
           </Typography>
           <Button
             variant="outlined"
-            onClick={() => router.visit(route('purchases.index'))}
+            onClick={() => router.visit(indexRoute.url())}
           >
             Back to Purchases
           </Button>
         </Box>
 
         <form onSubmit={handleSubmit}>
+          {Object.keys(errors).length > 0 && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              <Typography variant="subtitle2" gutterBottom>
+                Please fix the following errors:
+              </Typography>
+              <ul>
+                {Object.entries(errors).map(([field, message]) => (
+                  <li key={field}>{message}</li>
+                ))}
+              </ul>
+            </Alert>
+          )}
           <Grid container spacing={3}>
             {/* Purchase Details */}
             <Grid item xs={12} md={6}>
@@ -187,12 +207,12 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
                   </Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
-                      <FormControl fullWidth required>
+                      <FormControl fullWidth required error={!!errors.supplier_id}>
                         <InputLabel>Supplier</InputLabel>
                         <Select
                           value={formData.supplier_id}
                           label="Supplier"
-                          onChange={(e) => setFormData({ ...formData, supplier_id: e.target.value })}
+                          onChange={(e) => setFormData('supplier_id', e.target.value)}
                         >
                           {suppliers.map((supplier) => (
                             <MenuItem key={supplier.id} value={supplier.id}>
@@ -203,12 +223,12 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
                       </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                      <FormControl fullWidth required>
+                      <FormControl fullWidth required error={!!errors.warehouse_id}>
                         <InputLabel>Warehouse</InputLabel>
                         <Select
                           value={formData.warehouse_id}
                           label="Warehouse"
-                          onChange={(e) => setFormData({ ...formData, warehouse_id: e.target.value })}
+                          onChange={(e) => setFormData('warehouse_id', e.target.value)}
                         >
                           {warehouses.map((warehouse) => (
                             <MenuItem key={warehouse.id} value={warehouse.id}>
@@ -224,7 +244,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
                         label="Purchase Date"
                         type="date"
                         value={formData.purchase_date}
-                        onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
+                        onChange={(e) => setFormData('purchase_date', e.target.value)}
                         InputLabelProps={{ shrink: true }}
                         required
                       />
@@ -235,7 +255,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
                         label="Due Date"
                         type="date"
                         value={formData.due_date}
-                        onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                        onChange={(e) => setFormData('due_date', e.target.value)}
                         InputLabelProps={{ shrink: true }}
                       />
                     </Grid>
@@ -246,7 +266,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
                         multiline
                         rows={3}
                         value={formData.notes}
-                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                        onChange={(e) => setFormData('notes', e.target.value)}
                       />
                     </Grid>
                   </Grid>
@@ -440,7 +460,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.visit(route('purchases.index'))}
+                  onClick={() => router.visit(indexRoute.url())}
                 >
                   Cancel
                 </Button>

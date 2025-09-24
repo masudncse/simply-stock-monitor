@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { Link, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { update as updateRoute } from '@/routes/products';
 
 interface Category {
   id: number;
@@ -60,7 +61,7 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    put(`/products/${product.id}`);
+    put(updateRoute.url({ product: product.id }));
   };
 
   return (

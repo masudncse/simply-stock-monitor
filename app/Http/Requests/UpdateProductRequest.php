@@ -21,7 +21,8 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $productId = $this->route('product');
+        $product = $this->route('product');
+        $productId = $product instanceof \App\Models\Product ? $product->id : $product;
         
         return [
             'sku' => 'required|string|max:255|unique:products,sku,' . $productId,

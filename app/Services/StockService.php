@@ -96,10 +96,11 @@ class StockService
     /**
      * Get low stock products
      */
-    public function getLowStockProducts(): array
+    public function getLowStockProducts(): \Illuminate\Database\Eloquent\Collection
     {
         return Product::whereHas('stocks', function ($query) {
-            $query->selectRaw('SUM(qty) as total_qty')
+            $query->select('product_id')
+                ->selectRaw('SUM(qty) as total_qty')
                 ->groupBy('product_id')
                 ->havingRaw('SUM(qty) <= products.min_stock');
         })->with(['stocks.warehouse'])->get();

@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { update as updateRoute, show as showRoute } from '@/routes/customers';
 
 interface Customer {
   id: number;
@@ -64,7 +65,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    router.put(route('customers.update', customer.id), formData, {
+    router.put(updateRoute.url({ customer: customer.id }), formData, {
       onError: (errors) => {
         setErrors(errors);
       },
@@ -81,7 +82,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
           <Button
             variant="outlined"
             startIcon={<BackIcon />}
-            onClick={() => router.visit(route('customers.show', customer.id))}
+            onClick={() => router.visit(showRoute.url({ customer: customer.id }))}
           >
             Back to Customer
           </Button>
@@ -243,7 +244,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.visit(route('customers.show', customer.id))}
+                  onClick={() => router.visit(showRoute.url({ customer: customer.id }))}
                 >
                   Cancel
                 </Button>

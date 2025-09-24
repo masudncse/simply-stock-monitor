@@ -83,7 +83,7 @@ class ReportController extends Controller
     {
         $this->authorize('view-reports');
 
-        $query = Sale::with(['customer', 'warehouse', 'saleItems.product']);
+        $query = Sale::with(['customer', 'warehouse', 'items.product']);
 
         // Date range filter
         if ($request->filled('date_from')) {
@@ -108,10 +108,10 @@ class ReportController extends Controller
         // Calculate summary
         $summary = [
             'total_sales' => $sales->count(),
-            'total_amount' => $sales->sum('total_amount'),
-            'total_tax' => $sales->sum('tax_amount'),
-            'total_discount' => $sales->sum('discount_amount'),
-            'net_amount' => $sales->sum('total_amount') - $sales->sum('discount_amount'),
+            'total_amount' => (float) $sales->sum('total_amount'),
+            'total_tax' => (float) $sales->sum('tax_amount'),
+            'total_discount' => (float) $sales->sum('discount_amount'),
+            'net_amount' => (float) ($sales->sum('total_amount') - $sales->sum('discount_amount')),
         ];
 
         $customers = Customer::where('is_active', true)->get();
@@ -133,7 +133,7 @@ class ReportController extends Controller
     {
         $this->authorize('view-reports');
 
-        $query = Purchase::with(['supplier', 'warehouse', 'purchaseItems.product']);
+        $query = Purchase::with(['supplier', 'warehouse', 'items.product']);
 
         // Date range filter
         if ($request->filled('date_from')) {
@@ -158,10 +158,10 @@ class ReportController extends Controller
         // Calculate summary
         $summary = [
             'total_purchases' => $purchases->count(),
-            'total_amount' => $purchases->sum('total_amount'),
-            'total_tax' => $purchases->sum('tax_amount'),
-            'total_discount' => $purchases->sum('discount_amount'),
-            'net_amount' => $purchases->sum('total_amount') - $purchases->sum('discount_amount'),
+            'total_amount' => (float) $purchases->sum('total_amount'),
+            'total_tax' => (float) $purchases->sum('tax_amount'),
+            'total_discount' => (float) $purchases->sum('discount_amount'),
+            'net_amount' => (float) ($purchases->sum('total_amount') - $purchases->sum('discount_amount')),
         ];
 
         $suppliers = Supplier::where('is_active', true)->get();
@@ -192,10 +192,10 @@ class ReportController extends Controller
 
         // Calculate cost of goods sold
         $cogs = Sale::whereBetween('sale_date', [$dateFrom, $dateTo])
-            ->with('saleItems.product')
+            ->with('items.product')
             ->get()
             ->sum(function ($sale) {
-                return $sale->saleItems->sum(function ($item) {
+                return $sale->items->sum(function ($item) {
                     return $item->quantity * $item->product->cost_price;
                 });
             });
@@ -214,11 +214,11 @@ class ReportController extends Controller
         $netProfit = $grossProfit - $expenses;
 
         $summary = [
-            'revenue' => $revenue,
-            'cost_of_goods_sold' => $cogs,
-            'gross_profit' => $grossProfit,
-            'expenses' => $expenses,
-            'net_profit' => $netProfit,
+            'revenue' => (float) $revenue,
+            'cost_of_goods_sold' => (float) $cogs,
+            'gross_profit' => (float) $grossProfit,
+            'expenses' => (float) $expenses,
+            'net_profit' => (float) $netProfit,
             'gross_profit_margin' => $revenue > 0 ? ($grossProfit / $revenue) * 100 : 0,
             'net_profit_margin' => $revenue > 0 ? ($netProfit / $revenue) * 100 : 0,
         ];

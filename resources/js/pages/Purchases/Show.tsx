@@ -23,6 +23,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute, edit as editRoute } from '@/routes/purchases';
 
 interface Supplier {
   id: number;
@@ -78,7 +79,7 @@ interface Purchase {
   paid_amount: number;
   status: string;
   notes?: string;
-  purchase_items: PurchaseItem[];
+  items: PurchaseItem[];
   created_by: User;
   created_at: string;
   updated_at: string;
@@ -103,7 +104,7 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
   };
 
   const handleApprove = () => {
-    router.post(route('purchases.approve', purchase.id));
+    router.post(`/purchases/${purchase.id}/approve`);
   };
 
   return (
@@ -117,7 +118,7 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
             <Button
               variant="outlined"
               startIcon={<BackIcon />}
-              onClick={() => router.visit(route('purchases.index'))}
+              onClick={() => router.visit(indexRoute.url())}
             >
               Back
             </Button>
@@ -126,7 +127,7 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
                 <Button
                   variant="contained"
                   startIcon={<EditIcon />}
-                  onClick={() => router.visit(route('purchases.edit', purchase.id))}
+                  onClick={() => router.visit(editRoute.url({ purchase: purchase.id }))}
                 >
                   Edit
                 </Button>
@@ -319,7 +320,7 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {purchase.purchase_items.map((item) => (
+                      {purchase.items.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell>{item.product.name}</TableCell>
                           <TableCell>{item.product.sku}</TableCell>

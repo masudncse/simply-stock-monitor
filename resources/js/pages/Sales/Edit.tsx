@@ -30,6 +30,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { update as updateRoute, show as showRoute } from '@/routes/sales';
 
 interface Customer {
   id: number;
@@ -154,7 +155,7 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
 
     const { subtotal, taxAmount, totalAmount } = calculateTotals();
 
-    router.put(route('sales.update', sale.id), {
+    router.put(updateRoute.url({ sale: sale.id }), {
       ...formData,
       items,
       subtotal,
@@ -176,7 +177,7 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
           <Button
             variant="outlined"
             startIcon={<BackIcon />}
-            onClick={() => router.visit(route('sales.show', sale.id))}
+            onClick={() => router.visit(showRoute.url({ sale: sale.id }))}
           >
             Back to Sale
           </Button>
@@ -416,7 +417,7 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.visit(route('sales.show', sale.id))}
+                  onClick={() => router.visit(showRoute.url({ sale: sale.id }))}
                 >
                   Cancel
                 </Button>

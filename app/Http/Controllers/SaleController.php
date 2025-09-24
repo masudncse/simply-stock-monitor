@@ -32,7 +32,7 @@ class SaleController extends Controller
     {
         $this->authorize('view-sales');
 
-        $sales = Sale::with(['customer', 'warehouse', 'saleItems.product'])
+        $sales = Sale::with(['customer', 'warehouse', 'items.product'])
             ->when($request->search, function ($query, $search) {
                 $query->where('invoice_number', 'like', "%{$search}%")
                       ->orWhereHas('customer', function ($q) use ($search) {
@@ -93,7 +93,7 @@ class SaleController extends Controller
     {
         $this->authorize('view-sales');
 
-        $sale->load(['customer', 'warehouse', 'saleItems.product', 'createdBy']);
+        $sale->load(['customer', 'warehouse', 'items.product', 'createdBy']);
 
         return Inertia::render('Sales/Show', [
             'sale' => $sale,
@@ -107,7 +107,7 @@ class SaleController extends Controller
     {
         $this->authorize('edit-sales');
 
-        $sale->load(['saleItems.product']);
+        $sale->load(['items.product']);
         $customers = Customer::where('is_active', true)->get();
         $warehouses = Warehouse::where('is_active', true)->get();
         $products = Product::where('is_active', true)->with('category')->get();

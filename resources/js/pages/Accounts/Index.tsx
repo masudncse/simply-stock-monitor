@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute, trialBalance as trialBalanceRoute } from '@/routes/accounts';
 
 interface Account {
   id: number;
@@ -71,7 +72,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
   const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
 
   const handleSearch = () => {
-    router.get(route('accounts.index'), {
+    router.get(indexRoute.url(), {
       search: searchTerm,
       type: typeFilter,
       sub_type: subTypeFilter,
@@ -88,7 +89,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
 
   const confirmDelete = () => {
     if (accountToDelete) {
-      router.delete(route('accounts.destroy', accountToDelete.id));
+      router.delete(destroyRoute.url({ account: accountToDelete.id }));
     }
     setDeleteDialogOpen(false);
     setAccountToDelete(null);
@@ -130,14 +131,14 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
             <Button
               variant="outlined"
               startIcon={<TrialBalanceIcon />}
-              onClick={() => router.visit(route('accounts.trial-balance'))}
+              onClick={() => router.visit(trialBalanceRoute.url())}
             >
               Trial Balance
             </Button>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
-              onClick={() => router.visit(route('accounts.create'))}
+              onClick={() => router.visit(createRoute.url())}
             >
               New Account
             </Button>
@@ -244,13 +245,13 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
                         <Box sx={{ display: 'flex', gap: 1 }}>
                           <IconButton
                             size="small"
-                            onClick={() => router.visit(route('accounts.show', account.id))}
+                            onClick={() => router.visit(showRoute.url({ account: account.id }))}
                           >
                             <ViewIcon />
                           </IconButton>
                           <IconButton
                             size="small"
-                            onClick={() => router.visit(route('accounts.edit', account.id))}
+                            onClick={() => router.visit(editRoute.url({ account: account.id }))}
                           >
                             <EditIcon />
                           </IconButton>

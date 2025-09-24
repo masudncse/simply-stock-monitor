@@ -21,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import { Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { edit as editRoute } from '@/routes/products';
 
 interface Warehouse {
   id: number;
@@ -73,7 +74,7 @@ export default function ProductShow({ product }: ProductShowProps) {
           <Box display="flex" gap={2}>
             <Button
               component={Link}
-              href={`/products/${product.id}/edit`}
+              href={editRoute.url({ product: product.id })}
               variant="contained"
               startIcon={<EditIcon />}
             >

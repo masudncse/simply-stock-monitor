@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute, process as processRoute } from '@/routes/sales';
 
 interface Customer {
   id: number;
@@ -58,11 +59,11 @@ interface SaleItem {
 interface Sale {
   id: number;
   invoice_number: string;
-  customer: Customer;
+  customer: Customer | null;
   warehouse: {
     id: number;
     name: string;
-  };
+  } | null;
   sale_date: string;
   subtotal: number;
   tax_amount: number;
@@ -98,7 +99,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
   const [saleToDelete, setSaleToDelete] = useState<Sale | null>(null);
 
   const handleSearch = () => {
-    router.get(route('sales.index'), {
+    router.get(indexRoute.url(), {
       search: searchTerm,
       status: statusFilter,
       customer_id: customerFilter,
@@ -115,14 +116,14 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
 
   const confirmDelete = () => {
     if (saleToDelete) {
-      router.delete(route('sales.destroy', saleToDelete.id));
+      router.delete(destroyRoute.url({ sale: saleToDelete.id }));
     }
     setDeleteDialogOpen(false);
     setSaleToDelete(null);
   };
 
   const handleProcess = (sale: Sale) => {
-    router.post(route('sales.process', sale.id));
+    router.post(processRoute.url({ sale: sale.id }));
   };
 
   const getStatusColor = (status: string) => {
@@ -163,7 +164,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => router.visit(route('sales.create'))}
+            onClick={() => router.visit(createRoute.url())}
           >
             New Sale
           </Button>
@@ -254,8 +255,8 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
                   {sales.data.map((sale) => (
                     <TableRow key={sale.id}>
                       <TableCell>{sale.invoice_number}</TableCell>
-                      <TableCell>{sale.customer.name}</TableCell>
-                      <TableCell>{sale.warehouse.name}</TableCell>
+                      <TableCell>{sale.customer?.name || 'N/A'}</TableCell>
+                      <TableCell>{sale.warehouse?.name || 'N/A'}</TableCell>
                       <TableCell>
                         {new Date(sale.sale_date).toLocaleDateString()}
                       </TableCell>
@@ -278,13 +279,13 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
                         <Box sx={{ display: 'flex', gap: 1 }}>
                           <IconButton
                             size="small"
-                            onClick={() => router.visit(route('sales.show', sale.id))}
+                            onClick={() => router.visit(showRoute.url({ sale: sale.id }))}
                           >
                             <ViewIcon />
                           </IconButton>
                           <IconButton
                             size="small"
-                            onClick={() => router.visit(route('sales.edit', sale.id))}
+                            onClick={() => router.visit(editRoute.url({ sale: sale.id }))}
                           >
                             <EditIcon />
                           </IconButton>

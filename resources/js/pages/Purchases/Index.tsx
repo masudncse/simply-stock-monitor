@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/purchases';
 
 interface Supplier {
   id: number;
@@ -99,7 +100,7 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
   const [purchaseToDelete, setPurchaseToDelete] = useState<Purchase | null>(null);
 
   const handleSearch = () => {
-    router.get(route('purchases.index'), {
+    router.get(indexRoute.url(), {
       search: searchTerm,
       status: statusFilter,
       supplier_id: supplierFilter,
@@ -116,14 +117,14 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
 
   const confirmDelete = () => {
     if (purchaseToDelete) {
-      router.delete(route('purchases.destroy', purchaseToDelete.id));
+      router.delete(destroyRoute.url({ purchase: purchaseToDelete.id }));
     }
     setDeleteDialogOpen(false);
     setPurchaseToDelete(null);
   };
 
   const handleApprove = (purchase: Purchase) => {
-    router.post(route('purchases.approve', purchase.id));
+    router.post(`/purchases/${purchase.id}/approve`);
   };
 
   const getStatusColor = (status: string) => {
@@ -149,7 +150,7 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => router.visit(route('purchases.create'))}
+            onClick={() => router.visit(createRoute.url())}
           >
             New Purchase
           </Button>
@@ -256,13 +257,13 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
                         <Box sx={{ display: 'flex', gap: 1 }}>
                           <IconButton
                             size="small"
-                            onClick={() => router.visit(route('purchases.show', purchase.id))}
+                            onClick={() => router.visit(showRoute.url({ purchase: purchase.id }))}
                           >
                             <ViewIcon />
                           </IconButton>
                           <IconButton
                             size="small"
-                            onClick={() => router.visit(route('purchases.edit', purchase.id))}
+                            onClick={() => router.visit(editRoute.url({ purchase: purchase.id }))}
                           >
                             <EditIcon />
                           </IconButton>

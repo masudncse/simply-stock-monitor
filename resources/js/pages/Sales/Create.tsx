@@ -29,6 +29,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute } from '@/routes/sales';
 
 interface Customer {
   id: number;
@@ -142,7 +143,7 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
 
     const { subtotal, taxAmount, totalAmount } = calculateTotals();
 
-    router.post(route('sales.store'), {
+    router.post('/sales', {
       ...formData,
       items,
       subtotal,
@@ -152,6 +153,14 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
       paid_amount: 0,
       status: 'pending',
       payment_status: 'pending',
+    }, {
+      onError: (errors) => {
+        console.error('Sale creation errors:', errors);
+        // The error will be handled by Laravel's error handling
+      },
+      onSuccess: () => {
+        // Redirect will be handled by the controller
+      }
     });
   };
 
@@ -166,7 +175,7 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
           </Typography>
           <Button
             variant="outlined"
-            onClick={() => router.visit(route('sales.index'))}
+            onClick={() => router.visit(indexRoute.url())}
           >
             Back to Sales
           </Button>
@@ -406,7 +415,7 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.visit(route('sales.index'))}
+                  onClick={() => router.visit(indexRoute.url())}
                 >
                   Cancel
                 </Button>

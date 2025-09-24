@@ -30,6 +30,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { update as updateRoute, show as showRoute } from '@/routes/purchases';
 
 interface Supplier {
   id: number;
@@ -74,7 +75,7 @@ interface Purchase {
   purchase_date: string;
   due_date?: string;
   notes?: string;
-  purchase_items: PurchaseItem[];
+  items: PurchaseItem[];
 }
 
 interface PurchasesEditProps {
@@ -93,7 +94,7 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
     notes: purchase.notes || '',
   });
 
-  const [items, setItems] = useState<PurchaseItem[]>(purchase.purchase_items);
+  const [items, setItems] = useState<PurchaseItem[]>(purchase.items);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [newItem, setNewItem] = useState({
     quantity: 1,
@@ -160,7 +161,7 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
 
     const { subtotal, taxAmount, totalAmount } = calculateTotals();
 
-    router.put(route('purchases.update', purchase.id), {
+    router.put(updateRoute.url({ purchase: purchase.id }), {
       ...formData,
       items,
       subtotal,
@@ -182,7 +183,7 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
           <Button
             variant="outlined"
             startIcon={<BackIcon />}
-            onClick={() => router.visit(route('purchases.show', purchase.id))}
+            onClick={() => router.visit(showRoute.url({ purchase: purchase.id }))}
           >
             Back to Purchase
           </Button>
@@ -452,7 +453,7 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.visit(route('purchases.show', purchase.id))}
+                  onClick={() => router.visit(showRoute.url({ purchase: purchase.id }))}
                 >
                   Cancel
                 </Button>

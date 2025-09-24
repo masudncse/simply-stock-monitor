@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { Link, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { store as storeRoute } from '@/routes/products';
 
 interface Category {
   id: number;
@@ -44,7 +45,7 @@ export default function ProductCreate({ categories }: ProductCreateProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post('/products');
+    post(storeRoute.url());
   };
 
   return (

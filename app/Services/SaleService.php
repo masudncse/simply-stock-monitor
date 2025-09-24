@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Exceptions\InsufficientStockException;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Stock;
-use App\Models\Transaction;
 use App\Models\Account;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 
 class SaleService
@@ -97,7 +98,16 @@ class SaleService
             ->first();
 
         if (!$stock || $stock->qty < $item->quantity) {
-            throw new \Exception("Insufficient stock for product ID: {$item->product_id}");
+            $product = \App\Models\Product::find($item->product_id);
+            $productName = $product ? $product->name : "Unknown Product";
+            $availableQty = $stock ? $stock->qty : 0;
+            
+            throw new InsufficientStockException(
+                $item->product_id,
+                $productName,
+                $item->quantity,
+                $availableQty
+            );
         }
 
         $stock->qty -= $item->quantity;

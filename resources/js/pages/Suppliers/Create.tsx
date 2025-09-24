@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { store as storeRoute, index as indexRoute } from '@/routes/suppliers';
 
 export default function SuppliersCreate() {
   const [formData, setFormData] = useState({
@@ -46,7 +47,7 @@ export default function SuppliersCreate() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    router.post(route('suppliers.store'), formData, {
+    router.post(storeRoute.url(), formData, {
       onError: (errors) => {
         setErrors(errors);
       },
@@ -63,7 +64,7 @@ export default function SuppliersCreate() {
           <Button
             variant="outlined"
             startIcon={<BackIcon />}
-            onClick={() => router.visit(route('suppliers.index'))}
+            onClick={() => router.visit(indexRoute.url())}
           >
             Back to Suppliers
           </Button>
@@ -225,7 +226,7 @@ export default function SuppliersCreate() {
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.visit(route('suppliers.index'))}
+                  onClick={() => router.visit(indexRoute.url())}
                 >
                   Cancel
                 </Button>

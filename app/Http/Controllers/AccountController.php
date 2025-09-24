@@ -29,7 +29,7 @@ class AccountController extends Controller
     {
         $this->authorize('view-accounts');
 
-        $accounts = Account::with(['parentAccount', 'childAccounts'])
+        $accounts = Account::with(['parent', 'children'])
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
                       ->orWhere('code', 'like', "%{$search}%");
@@ -84,7 +84,7 @@ class AccountController extends Controller
     {
         $this->authorize('view-accounts');
 
-        $account->load(['parentAccount', 'childAccounts', 'transactions' => function ($query) {
+        $account->load(['parent', 'children', 'transactions' => function ($query) {
             $query->latest()->limit(20);
         }]);
 

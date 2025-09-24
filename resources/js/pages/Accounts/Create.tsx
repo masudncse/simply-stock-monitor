@@ -20,6 +20,7 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { store as storeRoute, index as indexRoute } from '@/routes/accounts';
 
 interface ParentAccount {
   id: number;
@@ -66,7 +67,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    router.post(route('accounts.store'), formData, {
+    router.post(storeRoute.url(), formData, {
       onError: (errors) => {
         setErrors(errors);
       },
@@ -91,7 +92,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
           <Button
             variant="outlined"
             startIcon={<BackIcon />}
-            onClick={() => router.visit(route('accounts.index'))}
+            onClick={() => router.visit(indexRoute.url())}
           >
             Back to Accounts
           </Button>
@@ -218,7 +219,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.visit(route('accounts.index'))}
+                  onClick={() => router.visit(indexRoute.url())}
                 >
                   Cancel
                 </Button>

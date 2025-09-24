@@ -45,7 +45,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('purchases/{purchase}/approve', [PurchaseController::class, 'approve'])->name('purchases.approve');
     
     // Sales
-    Route::resource('sales', SaleController::class);
+    Route::get('sales', [SaleController::class, 'index'])->name('sales.index');
+    Route::get('sales/create', [SaleController::class, 'create'])->name('sales.create');
+    Route::get('sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
+    Route::get('sales/{sale}/edit', [SaleController::class, 'edit'])->name('sales.edit');
+    Route::put('sales/{sale}', [SaleController::class, 'update'])->name('sales.update');
+    Route::delete('sales/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');
     Route::post('sales/{sale}/process', [SaleController::class, 'process'])->name('sales.process');
     
     // Customers

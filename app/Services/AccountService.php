@@ -54,7 +54,7 @@ class AccountService
             }
 
             // Check if account has child accounts
-            if ($account->childAccounts()->count() > 0) {
+            if ($account->children()->count() > 0) {
                 throw new \Exception('Cannot delete account with child accounts.');
             }
 

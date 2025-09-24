@@ -28,6 +28,7 @@ import {
 } from '@mui/icons-material';
 import { Link, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/products';
 
 interface Product {
   id: number;
@@ -80,7 +81,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
 
   const handleDelete = (productId: number) => {
     if (confirm('Are you sure you want to delete this product?')) {
-      router.delete(`/products/${productId}`);
+      router.delete(destroyRoute.url({ product: productId }));
     }
   };
 
@@ -91,7 +92,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
           <Typography variant="h4">Products</Typography>
           <Button
             component={Link}
-            href="/products/create"
+            href={createRoute.url()}
             variant="contained"
             startIcon={<AddIcon />}
           >
@@ -197,14 +198,14 @@ export default function ProductsIndex({ products, categories, filters }: Product
                       <TableCell align="center">
                         <IconButton
                           component={Link}
-                          href={`/products/${product.id}`}
+                          href={showRoute.url({ product: product.id })}
                           size="small"
                         >
                           <ViewIcon />
                         </IconButton>
                         <IconButton
                           component={Link}
-                          href={`/products/${product.id}/edit`}
+                          href={editRoute.url({ product: product.id })}
                           size="small"
                         >
                           <EditIcon />

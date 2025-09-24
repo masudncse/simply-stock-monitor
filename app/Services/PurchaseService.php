@@ -142,6 +142,37 @@ class PurchaseService
     }
 
     /**
+     * Update a purchase order
+     */
+    public function updatePurchase(Purchase $purchase, array $purchaseData, array $items = null): Purchase
+    {
+        return DB::transaction(function () use ($purchase, $purchaseData, $items) {
+            // Update purchase data
+            $purchase->update($purchaseData);
+
+            // Update items if provided
+            if ($items !== null) {
+                // Delete existing items
+                $purchase->items()->delete();
+
+                // Create new items
+                foreach ($items as $itemData) {
+                    $purchase->items()->create([
+                        'product_id' => $itemData['product_id'],
+                        'quantity' => $itemData['quantity'],
+                        'unit_price' => $itemData['unit_price'],
+                        'total_price' => $itemData['quantity'] * $itemData['unit_price'],
+                        'batch' => $itemData['batch'] ?? null,
+                        'expiry_date' => $itemData['expiry_date'] ?? null,
+                    ]);
+                }
+            }
+
+            return $purchase->fresh(['items.product']);
+        });
+    }
+
+    /**
      * Calculate purchase totals
      */
     public function calculateTotals(array $items, float $taxRate = 0, float $discountAmount = 0): array
