@@ -1,24 +1,10 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Grid,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@mui/material';
-import {
-  Edit as EditIcon,
-  ArrowBack as ArrowBackIcon,
-} from '@mui/icons-material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Edit as EditIcon, ArrowLeft as ArrowBackIcon } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { edit as editRoute } from '@/routes/products';
@@ -68,168 +54,140 @@ export default function ProductShow({ product }: ProductShowProps) {
 
   return (
     <Layout title={`Product: ${product.name}`}>
-      <Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h4">{product.name}</Typography>
-          <Box display="flex" gap={2}>
-            <Button
-              component={Link}
-              href={editRoute.url({ product: product.id })}
-              variant="contained"
-              startIcon={<EditIcon />}
-            >
-              Edit Product
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+            <p className="text-muted-foreground">
+              Product details and stock information
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button asChild>
+              <Link href={editRoute.url({ product: product.id })}>
+                <EditIcon className="mr-2 h-4 w-4" />
+                Edit Product
+              </Link>
             </Button>
-            <Button
-              component={Link}
-              href="/products"
-              variant="outlined"
-              startIcon={<ArrowBackIcon />}
-            >
-              Back to Products
+            <Button variant="outline" asChild>
+              <Link href="/products">
+                <ArrowBackIcon className="mr-2 h-4 w-4" />
+                Back to Products
+              </Link>
             </Button>
-          </Box>
-        </Box>
+          </div>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="grid gap-6 lg:grid-cols-2">
           {/* Product Details */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Product Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      SKU
-                    </Typography>
-                    <Typography variant="body1">{product.sku}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Barcode
-                    </Typography>
-                    <Typography variant="body1">
-                      {product.barcode || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Category
-                    </Typography>
-                    <Typography variant="body1">{product.category.name}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Unit
-                    </Typography>
-                    <Typography variant="body1">{product.unit}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Selling Price
-                    </Typography>
-                    <Typography variant="body1">${product.price.toFixed(2)}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Cost Price
-                    </Typography>
-                    <Typography variant="body1">${product.cost_price.toFixed(2)}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Tax Rate
-                    </Typography>
-                    <Typography variant="body1">{product.tax_rate}%</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Status
-                    </Typography>
-                    <Chip
-                      label={product.is_active ? 'Active' : 'Inactive'}
-                      color={product.is_active ? 'success' : 'default'}
-                      size="small"
-                    />
-                  </Grid>
-                  {product.description && (
-                    <Grid item xs={12}>
-                      <Typography variant="body2" color="textSecondary">
-                        Description
-                      </Typography>
-                      <Typography variant="body1">{product.description}</Typography>
-                    </Grid>
-                  )}
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">SKU</p>
+                  <p className="font-medium">{product.sku}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Barcode</p>
+                  <p className="font-medium">{product.barcode || 'N/A'}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Category</p>
+                  <p className="font-medium">{product.category.name}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Unit</p>
+                  <p className="font-medium">{product.unit}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Selling Price</p>
+                  <p className="font-medium">${product.price.toFixed(2)}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Cost Price</p>
+                  <p className="font-medium">${product.cost_price.toFixed(2)}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Tax Rate</p>
+                  <p className="font-medium">{product.tax_rate}%</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <Badge variant={product.is_active ? "default" : "secondary"}>
+                    {product.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+              </div>
+              
+              {product.description && (
+                <>
+                  <Separator />
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Description</p>
+                    <p className="text-sm">{product.description}</p>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Stock Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                  <Typography variant="h6">
-                    Stock Information
-                  </Typography>
-                  <Chip
-                    label={isLowStock ? 'Low Stock' : 'In Stock'}
-                    color={isLowStock ? 'warning' : 'success'}
-                    size="small"
-                  />
-                </Box>
-                
-                <Grid container spacing={2} mb={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Total Stock
-                    </Typography>
-                    <Typography variant="h6">{totalStock} {product.unit}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Minimum Stock
-                    </Typography>
-                    <Typography variant="body1">{product.min_stock} {product.unit}</Typography>
-                  </Grid>
-                </Grid>
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Stock Information</CardTitle>
+                <Badge variant={isLowStock ? "destructive" : "default"}>
+                  {isLowStock ? 'Low Stock' : 'In Stock'}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Total Stock</p>
+                  <p className="text-2xl font-bold">{totalStock} {product.unit}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Minimum Stock</p>
+                  <p className="text-lg font-medium">{product.min_stock} {product.unit}</p>
+                </div>
+              </div>
 
-                {product.stocks.length > 0 ? (
-                  <TableContainer component={Paper} variant="outlined">
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Warehouse</TableCell>
-                          <TableCell align="right">Quantity</TableCell>
-                          <TableCell>Batch</TableCell>
-                          <TableCell align="right">Cost Price</TableCell>
+              {product.stocks.length > 0 ? (
+                <div className="border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Warehouse</TableHead>
+                        <TableHead className="text-right">Quantity</TableHead>
+                        <TableHead>Batch</TableHead>
+                        <TableHead className="text-right">Cost Price</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {product.stocks.map((stock) => (
+                        <TableRow key={stock.id}>
+                          <TableCell className="font-medium">{stock.warehouse.name}</TableCell>
+                          <TableCell className="text-right">{stock.qty}</TableCell>
+                          <TableCell>{stock.batch || 'N/A'}</TableCell>
+                          <TableCell className="text-right">${stock.cost_price.toFixed(2)}</TableCell>
                         </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {product.stocks.map((stock) => (
-                          <TableRow key={stock.id}>
-                            <TableCell>{stock.warehouse.name}</TableCell>
-                            <TableCell align="right">{stock.qty}</TableCell>
-                            <TableCell>{stock.batch || 'N/A'}</TableCell>
-                            <TableCell align="right">${stock.cost_price.toFixed(2)}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
-                  <Typography variant="body2" color="textSecondary">
-                    No stock information available
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Box>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p className="text-sm">No stock information available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </Layout>
   );
 }

@@ -1,24 +1,19 @@
 import React, { useState } from 'react';
+import { Link as InertiaLink, useForm } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    FormLabel,
-    Grid,
-    TextField,
-    Typography,
-    Alert,
-    Divider,
-    Chip,
-} from '@mui/material';
-import { Save as SaveIcon, ArrowBack as BackIcon, Security as SecurityIcon } from '@mui/icons-material';
-import { Link, useForm } from '@inertiajs/react';
-import Layout from '@/layouts/Layout';
+  Save as SaveIcon,
+  ArrowLeft as BackIcon,
+  Shield as SecurityIcon,
+} from 'lucide-react';
+import Layout from '../../layouts/Layout';
 
 interface Permission {
     id: number;

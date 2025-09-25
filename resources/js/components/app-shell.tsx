@@ -1,23 +1,20 @@
-import { Box } from '@mui/material';
-
 interface AppShellProps {
     children: React.ReactNode;
     variant?: 'header' | 'sidebar';
 }
 
 export function AppShell({ children, variant = 'header' }: AppShellProps) {
-
     if (variant === 'header') {
         return (
-            <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%', flexDirection: 'column' }}>
+            <div className="flex min-h-screen w-full flex-col">
                 {children}
-            </Box>
+            </div>
         );
     }
 
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+        <div className="flex min-h-screen">
             {children}
-        </Box>
+        </div>
     );
 }

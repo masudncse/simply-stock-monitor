@@ -1,33 +1,23 @@
 import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Container,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Grid,
-  Alert,
-} from '@mui/material';
-import {
-  People as PeopleIcon,
+  Users as PeopleIcon,
   Download as DownloadIcon,
-  FilterList as FilterIcon,
-  Warning as WarningIcon,
-} from '@mui/icons-material';
+  Filter as FilterIcon,
+  AlertTriangle as WarningIcon,
+  DollarSign,
+  CreditCard,
+  TrendingUp,
+  AlertCircle,
+} from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
 interface CustomerOutstanding {

@@ -1,5 +1,5 @@
 import Heading from '@/components/heading';
-import { Divider, Box, List, ListItem, ListItemButton } from '@mui/material';
+import { Separator } from '@/components/ui/separator';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editPassword } from '@/routes/password';
 import { edit } from '@/routes/profile';
@@ -7,6 +7,7 @@ import { show } from '@/routes/two-factor';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
+import { cn } from '@/lib/utils';
 
 const sidebarNavItems: NavItem[] = [
     {
@@ -40,61 +41,47 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     const currentPath = window.location.pathname;
 
     return (
-        <Box sx={{ p: 3 }}>
+        <div className="p-3">
             <Heading
                 title="Settings"
                 description="Manage your profile and account settings"
             />
 
-            <Box sx={{ 
-                display: 'flex', 
-                flexDirection: { xs: 'column', lg: 'row' }, 
-                gap: 3,
-                mt: 3
-            }}>
-                <Box sx={{ 
-                    width: { xs: '100%', lg: 200 },
-                    maxWidth: { xs: '100%', lg: 200 }
-                }}>
-                    <List component="nav">
+            <div className="flex flex-col gap-3 mt-3 lg:flex-row">
+                <div className="w-full lg:w-[200px] lg:max-w-[200px]">
+                    <nav className="space-y-1">
                         {sidebarNavItems.map((item, index) => {
                             const isActive = currentPath === (typeof item.href === 'string' ? item.href : item.href.url);
                             return (
-                                <ListItem key={`${typeof item.href === 'string' ? item.href : item.href.url}-${index}`} disablePadding>
-                                    <ListItemButton
-                                        component={Link}
-                                        href={item.href}
-                                        selected={isActive}
-                                        sx={{
-                                            borderRadius: 1,
-                                            mb: 0.5,
-                                            '&.Mui-selected': {
-                                                backgroundColor: 'action.selected',
-                                            }
-                                        }}
-                                    >
-                                        {item.icon && (
-                                            <item.icon style={{ marginRight: 8, width: 16, height: 16 }} />
-                                        )}
-                                        {item.title}
-                                    </ListItemButton>
-                                </ListItem>
+                                <Link
+                                    key={`${typeof item.href === 'string' ? item.href : item.href.url}-${index}`}
+                                    href={item.href}
+                                    className={cn(
+                                        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                        "hover:bg-accent hover:text-accent-foreground",
+                                        isActive 
+                                            ? "bg-accent text-accent-foreground" 
+                                            : "text-muted-foreground"
+                                    )}
+                                >
+                                    {item.icon && (
+                                        <item.icon className="mr-2 h-4 w-4" />
+                                    )}
+                                    {item.title}
+                                </Link>
                             );
                         })}
-                    </List>
-                </Box>
+                    </nav>
+                </div>
 
-                <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', lg: 'block' } }} />
+                <Separator orientation="vertical" className="hidden lg:block" />
 
-                <Box sx={{ 
-                    flex: 1,
-                    maxWidth: { md: '600px' }
-                }}>
-                    <Box sx={{ maxWidth: '600px' }}>
+                <div className="flex-1 max-w-[600px]">
+                    <div className="max-w-[600px]">
                         {children}
-                    </Box>
-                </Box>
-            </Box>
-        </Box>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }

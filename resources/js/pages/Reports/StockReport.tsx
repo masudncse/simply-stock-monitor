@@ -1,32 +1,17 @@
 import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Container,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Grid,
-  Alert,
-} from '@mui/material';
-import {
-  Inventory as InventoryIcon,
+  Package as InventoryIcon,
   Download as DownloadIcon,
-  FilterList as FilterIcon,
-} from '@mui/icons-material';
+  Filter as FilterIcon,
+} from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
 interface Stock {
@@ -68,7 +53,7 @@ const StockReport: React.FC<StockReportProps> = ({
 }) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
-  const handleFilterChange = (field: string, value: string | number) => {
+  const handleFilterChange = (field: string, value: string | number | boolean) => {
     setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 
@@ -96,211 +81,202 @@ const StockReport: React.FC<StockReportProps> = ({
 
   const getStockStatus = (stock: Stock) => {
     if (stock.qty <= stock.product.min_stock) {
-      return { label: 'Low Stock', color: 'error' as const };
+      return { label: 'Low Stock', variant: 'destructive' as const };
     } else if (stock.qty <= stock.product.min_stock * 1.5) {
-      return { label: 'Medium Stock', color: 'warning' as const };
+      return { label: 'Medium Stock', variant: 'secondary' as const };
     } else {
-      return { label: 'Good Stock', color: 'success' as const };
+      return { label: 'Good Stock', variant: 'default' as const };
     }
   };
 
   return (
-    <Layout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            <InventoryIcon sx={{ mr: 2, verticalAlign: 'middle' }} />
-            Stock Report
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+    <Layout title="Stock Report">
+      <div className="space-y-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <InventoryIcon className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold tracking-tight">Stock Report</h1>
+          </div>
+          <p className="text-muted-foreground">
             Current stock levels and valuation across all warehouses
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
         {/* Summary Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Total Products
-                </Typography>
-                <Typography variant="h4">
-                  {stocks.length}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Total Valuation
-                </Typography>
-                <Typography variant="h4">
-                  ${totalValuation.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Low Stock Items
-                </Typography>
-                <Typography variant="h4" color="error">
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Products</p>
+                <p className="text-2xl font-bold">{stocks.length}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Valuation</p>
+                <p className="text-2xl font-bold">${totalValuation.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Low Stock Items</p>
+                <p className="text-2xl font-bold text-destructive">
                   {stocks.filter(stock => stock.qty <= stock.product.min_stock).length}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Warehouses
-                </Typography>
-                <Typography variant="h4">
-                  {warehouses.length}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Warehouses</p>
+                <p className="text-2xl font-bold">{warehouses.length}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Filters */}
-        <Paper sx={{ p: 3, mb: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            <FilterIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-            Filters
-          </Typography>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6} md={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Warehouse</InputLabel>
-                <Select
-                  value={localFilters.warehouse_id || ''}
-                  onChange={(e) => handleFilterChange('warehouse_id', e.target.value)}
-                  label="Warehouse"
-                >
-                  <MenuItem value="">All Warehouses</MenuItem>
-                  {warehouses.map((warehouse) => (
-                    <MenuItem key={warehouse.id} value={warehouse.id}>
-                      {warehouse.name}
-                    </MenuItem>
-                  ))}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FilterIcon className="h-5 w-5" />
+              Filters
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label htmlFor="warehouse">Warehouse</Label>
+                <Select value={localFilters.warehouse_id?.toString() || "all"} onValueChange={(value) => handleFilterChange('warehouse_id', value === "all" ? "" : parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Warehouses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Warehouses</SelectItem>
+                    {warehouses.map((warehouse) => (
+                      <SelectItem key={warehouse.id} value={warehouse.id.toString()}>
+                        {warehouse.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Category</InputLabel>
-                <Select
-                  value={localFilters.category_id || ''}
-                  onChange={(e) => handleFilterChange('category_id', e.target.value)}
-                  label="Category"
-                >
-                  <MenuItem value="">All Categories</MenuItem>
-                  {categories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <Select value={localFilters.category_id?.toString() || "all"} onValueChange={(value) => handleFilterChange('category_id', value === "all" ? "" : parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id.toString()}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Stock Status</InputLabel>
-                <Select
-                  value={localFilters.low_stock ? 'low' : ''}
-                  onChange={(e) => handleFilterChange('low_stock', e.target.value === 'low')}
-                  label="Stock Status"
-                >
-                  <MenuItem value="">All Stock</MenuItem>
-                  <MenuItem value="low">Low Stock Only</MenuItem>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="stock_status">Stock Status</Label>
+                <Select value={localFilters.low_stock ? "low" : "all"} onValueChange={(value) => handleFilterChange('low_stock', value === "low")}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Stock" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Stock</SelectItem>
+                    <SelectItem value="low">Low Stock Only</SelectItem>
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button variant="contained" onClick={applyFilters} size="small">
-                  Apply Filters
-                </Button>
-                <Button variant="outlined" onClick={clearFilters} size="small">
-                  Clear
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
+              </div>
+              <div className="space-y-2">
+                <Label>&nbsp;</Label>
+                <div className="flex gap-2">
+                  <Button onClick={applyFilters}>
+                    Apply Filters
+                  </Button>
+                  <Button variant="outline" onClick={clearFilters}>
+                    Clear
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Actions */}
-        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">
             Stock Details ({stocks.length} items)
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<DownloadIcon />}
-            onClick={exportReport}
-          >
+          </h2>
+          <Button onClick={exportReport}>
+            <DownloadIcon className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
-        </Box>
+        </div>
 
         {/* Stock Table */}
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Product</TableCell>
-                <TableCell>SKU</TableCell>
-                <TableCell>Warehouse</TableCell>
-                <TableCell align="right">Quantity</TableCell>
-                <TableCell align="right">Min Stock</TableCell>
-                <TableCell align="right">Cost Price</TableCell>
-                <TableCell align="right">Total Value</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Batch</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {stocks.map((stock) => {
-                const status = getStockStatus(stock);
-                return (
-                  <TableRow key={`${stock.product.id}-${stock.warehouse.id}`}>
-                    <TableCell>{stock.product.name}</TableCell>
-                    <TableCell>{stock.product.sku}</TableCell>
-                    <TableCell>{stock.warehouse.name}</TableCell>
-                    <TableCell align="right">{stock.qty}</TableCell>
-                    <TableCell align="right">{stock.product.min_stock}</TableCell>
-                    <TableCell align="right">${stock.cost_price.toFixed(2)}</TableCell>
-                    <TableCell align="right">
-                      ${(stock.qty * stock.cost_price).toFixed(2)}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={status.label}
-                        color={status.color}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>{stock.batch || '-'}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {stocks.length === 0 && (
-          <Alert severity="info" sx={{ mt: 2 }}>
-            No stock data found for the selected filters.
-          </Alert>
-        )}
-      </Container>
+        <Card>
+          <CardContent>
+            {stocks.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Alert>
+                  <AlertDescription>
+                    No stock data found for the selected filters.
+                  </AlertDescription>
+                </Alert>
+              </div>
+            ) : (
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead>SKU</TableHead>
+                      <TableHead>Warehouse</TableHead>
+                      <TableHead className="text-right">Quantity</TableHead>
+                      <TableHead className="text-right">Min Stock</TableHead>
+                      <TableHead className="text-right">Cost Price</TableHead>
+                      <TableHead className="text-right">Total Value</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Batch</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {stocks.map((stock) => {
+                      const status = getStockStatus(stock);
+                      return (
+                        <TableRow key={`${stock.product.id}-${stock.warehouse.id}`}>
+                          <TableCell className="font-medium">{stock.product.name}</TableCell>
+                          <TableCell>{stock.product.sku}</TableCell>
+                          <TableCell>{stock.warehouse.name}</TableCell>
+                          <TableCell className="text-right">{stock.qty}</TableCell>
+                          <TableCell className="text-right">{stock.product.min_stock}</TableCell>
+                          <TableCell className="text-right">${stock.cost_price.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">
+                            ${(stock.qty * stock.cost_price).toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={status.variant}>
+                              {status.label}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{stock.batch || '-'}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </Layout>
   );
 };

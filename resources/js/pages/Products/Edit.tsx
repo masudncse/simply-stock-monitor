@@ -1,20 +1,13 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Switch,
-  FormControlLabel,
-  Alert,
-} from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ArrowLeft } from 'lucide-react';
 import { Link, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { update as updateRoute } from '@/routes/products';
@@ -66,191 +59,221 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
 
   return (
     <Layout title="Edit Product">
-      <Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h4">Edit Product</Typography>
-          <Button
-            component={Link}
-            href="/products"
-            variant="outlined"
-          >
-            Back to Products
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Edit Product</h1>
+            <p className="text-muted-foreground">
+              Update product information
+            </p>
+          </div>
+          <Button variant="outline" asChild>
+            <Link href="/products">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Products
+            </Link>
           </Button>
-        </Box>
+        </div>
 
         <Card>
+          <CardHeader>
+            <CardTitle>Product Information</CardTitle>
+          </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="SKU *"
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="sku">SKU *</Label>
+                  <Input
+                    id="sku"
                     value={data.sku}
                     onChange={(e) => setData('sku', e.target.value)}
-                    error={!!errors.sku}
-                    helperText={errors.sku}
+                    className={errors.sku ? 'border-destructive' : ''}
                     required
                   />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Barcode"
+                  {errors.sku && (
+                    <p className="text-sm text-destructive">{errors.sku}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="barcode">Barcode</Label>
+                  <Input
+                    id="barcode"
                     value={data.barcode}
                     onChange={(e) => setData('barcode', e.target.value)}
-                    error={!!errors.barcode}
-                    helperText={errors.barcode}
+                    className={errors.barcode ? 'border-destructive' : ''}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Product Name *"
-                    value={data.name}
-                    onChange={(e) => setData('name', e.target.value)}
-                    error={!!errors.name}
-                    helperText={errors.name}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Description"
-                    multiline
-                    rows={3}
-                    value={data.description}
-                    onChange={(e) => setData('description', e.target.value)}
-                    error={!!errors.description}
-                    helperText={errors.description}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <FormControl fullWidth required error={!!errors.category_id}>
-                    <InputLabel>Category</InputLabel>
-                    <Select
-                      value={data.category_id}
-                      onChange={(e) => setData('category_id', e.target.value)}
-                      label="Category"
-                    >
+                  {errors.barcode && (
+                    <p className="text-sm text-destructive">{errors.barcode}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="name">Product Name *</Label>
+                <Input
+                  id="name"
+                  value={data.name}
+                  onChange={(e) => setData('name', e.target.value)}
+                  className={errors.name ? 'border-destructive' : ''}
+                  required
+                />
+                {errors.name && (
+                  <p className="text-sm text-destructive">{errors.name}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={data.description}
+                  onChange={(e) => setData('description', e.target.value)}
+                  className={errors.description ? 'border-destructive' : ''}
+                  rows={3}
+                />
+                {errors.description && (
+                  <p className="text-sm text-destructive">{errors.description}</p>
+                )}
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category *</Label>
+                  <Select value={data.category_id.toString()} onValueChange={(value) => setData('category_id', parseInt(value))}>
+                    <SelectTrigger className={errors.category_id ? 'border-destructive' : ''}>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
                       {categories.map((category) => (
-                        <MenuItem key={category.id} value={category.id}>
+                        <SelectItem key={category.id} value={category.id.toString()}>
                           {category.name}
-                        </MenuItem>
+                        </SelectItem>
                       ))}
-                    </Select>
-                    {errors.category_id && (
-                      <Typography variant="caption" color="error" sx={{ mt: 1, ml: 2 }}>
-                        {errors.category_id}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <FormControl fullWidth>
-                    <InputLabel>Unit</InputLabel>
-                    <Select
-                      value={data.unit}
-                      onChange={(e) => setData('unit', e.target.value)}
-                      label="Unit"
-                    >
-                      <MenuItem value="pcs">Pieces</MenuItem>
-                      <MenuItem value="kg">Kilogram</MenuItem>
-                      <MenuItem value="liter">Liter</MenuItem>
-                      <MenuItem value="box">Box</MenuItem>
-                      <MenuItem value="pack">Pack</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    fullWidth
-                    label="Minimum Stock"
+                    </SelectContent>
+                  </Select>
+                  {errors.category_id && (
+                    <p className="text-sm text-destructive">{errors.category_id}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="unit">Unit</Label>
+                  <Select value={data.unit} onValueChange={(value) => setData('unit', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pcs">Pieces</SelectItem>
+                      <SelectItem value="kg">Kilogram</SelectItem>
+                      <SelectItem value="liter">Liter</SelectItem>
+                      <SelectItem value="box">Box</SelectItem>
+                      <SelectItem value="pack">Pack</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="min_stock">Minimum Stock</Label>
+                  <Input
+                    id="min_stock"
                     type="number"
                     value={data.min_stock}
                     onChange={(e) => setData('min_stock', parseFloat(e.target.value) || 0)}
-                    error={!!errors.min_stock}
-                    helperText={errors.min_stock}
+                    className={errors.min_stock ? 'border-destructive' : ''}
                   />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    fullWidth
-                    label="Selling Price *"
+                  {errors.min_stock && (
+                    <p className="text-sm text-destructive">{errors.min_stock}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="price">Selling Price *</Label>
+                  <Input
+                    id="price"
                     type="number"
                     step="0.01"
                     value={data.price}
                     onChange={(e) => setData('price', parseFloat(e.target.value) || 0)}
-                    error={!!errors.price}
-                    helperText={errors.price}
+                    className={errors.price ? 'border-destructive' : ''}
                     required
                   />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    fullWidth
-                    label="Cost Price *"
+                  {errors.price && (
+                    <p className="text-sm text-destructive">{errors.price}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="cost_price">Cost Price *</Label>
+                  <Input
+                    id="cost_price"
                     type="number"
                     step="0.01"
                     value={data.cost_price}
                     onChange={(e) => setData('cost_price', parseFloat(e.target.value) || 0)}
-                    error={!!errors.cost_price}
-                    helperText={errors.cost_price}
+                    className={errors.cost_price ? 'border-destructive' : ''}
                     required
                   />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Tax Rate (%)"
+                  {errors.cost_price && (
+                    <p className="text-sm text-destructive">{errors.cost_price}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="tax_rate">Tax Rate (%)</Label>
+                  <Input
+                    id="tax_rate"
                     type="number"
                     step="0.01"
                     value={data.tax_rate}
                     onChange={(e) => setData('tax_rate', parseFloat(e.target.value) || 0)}
-                    error={!!errors.tax_rate}
-                    helperText={errors.tax_rate}
+                    className={errors.tax_rate ? 'border-destructive' : ''}
                   />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={data.is_active}
-                        onChange={(e) => setData('is_active', e.target.checked)}
-                      />
-                    }
-                    label="Active"
-                  />
-                </Grid>
-              </Grid>
+                  {errors.tax_rate && (
+                    <p className="text-sm text-destructive">{errors.tax_rate}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="is_active">Status</Label>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="is_active"
+                      checked={data.is_active}
+                      onCheckedChange={(checked) => setData('is_active', checked)}
+                    />
+                    <Label htmlFor="is_active" className="text-sm font-normal">
+                      Active
+                    </Label>
+                  </div>
+                </div>
+              </div>
 
               {Object.keys(errors).length > 0 && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                  Please fix the errors above before submitting.
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    Please fix the errors above before submitting.
+                  </AlertDescription>
                 </Alert>
               )}
 
-              <Box mt={3} display="flex" gap={2}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={processing}
-                >
+              <div className="flex gap-2">
+                <Button type="submit" disabled={processing}>
                   {processing ? 'Updating...' : 'Update Product'}
                 </Button>
-                <Button
-                  component={Link}
-                  href="/products"
-                  variant="outlined"
-                >
-                  Cancel
+                <Button variant="outline" asChild>
+                  <Link href="/products">Cancel</Link>
                 </Button>
-              </Box>
+              </div>
             </form>
           </CardContent>
         </Card>
-      </Box>
+      </div>
     </Layout>
   );
 }

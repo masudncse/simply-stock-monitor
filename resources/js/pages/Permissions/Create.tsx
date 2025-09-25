@@ -1,24 +1,19 @@
 import React, { useState } from 'react';
+import { Link as InertiaLink, useForm } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    FormLabel,
-    Grid,
-    TextField,
-    Typography,
-    Alert,
-    Divider,
-    Chip,
-} from '@mui/material';
-import { Save as SaveIcon, ArrowBack as BackIcon, Security as SecurityIcon } from '@mui/icons-material';
-import { Link, useForm } from '@inertiajs/react';
-import Layout from '@/layouts/Layout';
+  Save as SaveIcon,
+  ArrowLeft as BackIcon,
+  Shield as SecurityIcon,
+} from 'lucide-react';
+import Layout from '../../layouts/Layout';
 
 interface Role {
     id: number;
@@ -54,170 +49,154 @@ export default function PermissionsCreate({ roles }: PermissionsCreateProps) {
         post('/permissions');
     };
 
-    const getRoleColor = (roleName: string): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+    const getRoleVariant = (roleName: string) => {
         switch (roleName.toLowerCase()) {
             case 'admin':
-                return 'error';
+                return 'destructive';
             case 'sales':
                 return 'primary';
             case 'storekeeper':
-                return 'info';
+                return 'secondary';
             case 'accountant':
                 return 'success';
             default:
-                return 'default';
+                return 'outline';
         }
     };
 
     return (
         <Layout title="Create New Permission">
-            <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Button
-                        component={Link}
-                        href="/permissions"
-                        startIcon={<BackIcon />}
-                        variant="outlined"
-                    >
-                        Back to Permissions
+            <div className="space-y-6">
+                <div className="flex items-center gap-4 mb-6">
+                    <Button variant="outline" asChild>
+                        <InertiaLink href="/permissions">
+                            <BackIcon className="mr-2 h-4 w-4" />
+                            Back to Permissions
+                        </InertiaLink>
                     </Button>
-                    <Typography variant="h4" component="h1">
-                        Create New Permission
-                    </Typography>
-                </Box>
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">Create New Permission</h1>
+                        <p className="text-muted-foreground">
+                            Define a new permission and assign it to roles
+                        </p>
+                    </div>
+                </div>
 
-                <form onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
-                            <Card>
-                                <CardContent>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                                        <SecurityIcon color="primary" />
-                                        <Typography variant="h6">
-                                            Permission Information
-                                        </Typography>
-                                    </Box>
-                                    
-                                    <TextField
-                                        fullWidth
-                                        label="Permission Name"
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid gap-6 md:grid-cols-2">
+                        {/* Permission Information */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <SecurityIcon className="h-5 w-5 text-primary" />
+                                    Permission Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="name">Permission Name *</Label>
+                                    <Input
+                                        id="name"
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
-                                        error={!!errors.name}
-                                        helperText={errors.name || 'e.g., view-products, create-users, edit-roles'}
-                                        margin="normal"
-                                        required
                                         placeholder="view-products"
+                                        required
+                                        isInvalid={!!errors.name}
                                     />
+                                    {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                                    <p className="text-xs text-muted-foreground">
+                                        e.g., view-products, create-users, edit-roles
+                                    </p>
+                                </div>
 
-                                    <TextField
-                                        fullWidth
-                                        label="Guard Name"
+                                <div className="space-y-2">
+                                    <Label htmlFor="guard_name">Guard Name *</Label>
+                                    <Input
+                                        id="guard_name"
                                         value={data.guard_name}
                                         onChange={(e) => setData('guard_name', e.target.value)}
-                                        error={!!errors.guard_name}
-                                        helperText={errors.guard_name || 'Usually "web" for web applications'}
-                                        margin="normal"
                                         required
+                                        isInvalid={!!errors.guard_name}
                                     />
+                                    {errors.guard_name && <p className="text-sm text-destructive">{errors.guard_name}</p>}
+                                    <p className="text-xs text-muted-foreground">
+                                        Usually "web" for web applications
+                                    </p>
+                                </div>
 
-                                    <Box sx={{ mt: 2 }}>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Selected Roles: {selectedRoles.length}
-                                        </Typography>
-                                    </Box>
+                                <div className="pt-2">
+                                    <p className="text-sm text-muted-foreground">
+                                        Selected Roles: {selectedRoles.length}
+                                    </p>
+                                </div>
 
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        fullWidth
-                                        startIcon={<SaveIcon />}
-                                        disabled={processing}
-                                        sx={{ mt: 3 }}
-                                    >
-                                        {processing ? 'Creating...' : 'Create Permission'}
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                <Button
+                                    type="submit"
+                                    className="w-full"
+                                    disabled={processing}
+                                >
+                                    <SaveIcon className="mr-2 h-4 w-4" />
+                                    {processing ? 'Creating...' : 'Create Permission'}
+                                </Button>
+                            </CardContent>
+                        </Card>
 
-                        <Grid item xs={12} md={6}>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h6" gutterBottom>
-                                        Assign to Roles
-                                    </Typography>
+                        {/* Assign to Roles */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Assign to Roles</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {errors.roles && (
+                                    <Alert variant="destructive">
+                                        <AlertDescription>{errors.roles}</AlertDescription>
+                                    </Alert>
+                                )}
+
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-base">Available Roles ({roles.length})</Label>
+                                    </div>
+                                    <Separator />
                                     
-                                    {errors.roles && (
-                                        <Alert severity="error" sx={{ mb: 2 }}>
-                                            {errors.roles}
-                                        </Alert>
-                                    )}
+                                    <div className="space-y-3">
+                                        {roles.map((role) => (
+                                            <div key={role.id} className="flex items-center space-x-3">
+                                                <Checkbox
+                                                    id={`role-${role.id}`}
+                                                    checked={selectedRoles.includes(role.name)}
+                                                    onCheckedChange={(checked) => handleRoleChange(role.name, !!checked)}
+                                                />
+                                                <div className="flex items-center gap-2">
+                                                    <Label htmlFor={`role-${role.id}`} className="text-sm font-medium">
+                                                        {role.name}
+                                                    </Label>
+                                                    <Badge variant={getRoleVariant(role.name)}>
+                                                        {role.name}
+                                                    </Badge>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
 
-                                    <FormControl component="fieldset" fullWidth>
-                                        <FormLabel component="legend" sx={{ mb: 2 }}>
-                                            <Typography variant="subtitle1">
-                                                Available Roles ({roles.length})
-                                            </Typography>
-                                        </FormLabel>
-                                        
-                                        <Divider sx={{ mb: 2 }} />
-                                        
-                                        <FormGroup>
-                                            <Grid container spacing={1}>
-                                                {roles.map((role) => (
-                                                    <Grid item xs={12} key={role.id}>
-                                                        <FormControlLabel
-                                                            control={
-                                                                <Checkbox
-                                                                    checked={selectedRoles.includes(role.name)}
-                                                                    onChange={(e) => handleRoleChange(role.name, e.target.checked)}
-                                                                />
-                                                            }
-                                                            label={
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                    <Typography variant="body1">
-                                                                        {role.name}
-                                                                    </Typography>
-                                                                    <Chip
-                                                                        label={role.name}
-                                                                        size="small"
-                                                                        color={getRoleColor(role.name)}
-                                                                        variant="outlined"
-                                                                    />
-                                                                </Box>
-                                                            }
-                                                        />
-                                                    </Grid>
-                                                ))}
-                                            </Grid>
-                                        </FormGroup>
-                                    </FormControl>
-
-                                    {selectedRoles.length > 0 && (
-                                        <Box sx={{ mt: 3 }}>
-                                            <Typography variant="subtitle2" gutterBottom>
-                                                Selected Roles:
-                                            </Typography>
-                                            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                                                {selectedRoles.map((roleName) => (
-                                                    <Chip
-                                                        key={roleName}
-                                                        label={roleName}
-                                                        color={getRoleColor(roleName)}
-                                                        variant="filled"
-                                                        size="small"
-                                                    />
-                                                ))}
-                                            </Stack>
-                                        </Box>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
+                                {selectedRoles.length > 0 && (
+                                    <div className="pt-4">
+                                        <Label className="text-sm font-medium">Selected Roles:</Label>
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {selectedRoles.map((roleName) => (
+                                                <Badge key={roleName} variant={getRoleVariant(roleName)}>
+                                                    {roleName}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
                 </form>
-            </Box>
+            </div>
         </Layout>
     );
 }

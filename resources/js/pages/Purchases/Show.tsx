@@ -1,26 +1,14 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-  Divider,
-} from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
   Edit as EditIcon,
   CheckCircle as ApproveIcon,
-  ArrowBack as BackIcon,
-} from '@mui/icons-material';
+  ArrowLeft as BackIcon,
+} from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as indexRoute, edit as editRoute } from '@/routes/purchases';
@@ -90,16 +78,16 @@ interface PurchasesShowProps {
 }
 
 export default function PurchasesShow({ purchase }: PurchasesShowProps) {
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'warning';
+        return 'secondary';
       case 'approved':
-        return 'success';
-      case 'cancelled':
-        return 'error';
-      default:
         return 'default';
+      case 'cancelled':
+        return 'destructive';
+      default:
+        return 'secondary';
     }
   };
 
@@ -108,302 +96,223 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
   };
 
   return (
-    <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Purchase Details
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<BackIcon />}
-              onClick={() => router.visit(indexRoute.url())}
-            >
+    <Layout title="Purchase Details">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Purchase Details</h1>
+            <p className="text-muted-foreground">
+              View purchase order information and items
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => router.visit(indexRoute.url())}>
+              <BackIcon className="mr-2 h-4 w-4" />
               Back
             </Button>
             {purchase.status === 'pending' && (
               <>
-                <Button
-                  variant="contained"
-                  startIcon={<EditIcon />}
-                  onClick={() => router.visit(editRoute.url({ purchase: purchase.id }))}
-                >
+                <Button onClick={() => router.visit(editRoute.url({ purchase: purchase.id }))}>
+                  <EditIcon className="mr-2 h-4 w-4" />
                   Edit
                 </Button>
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<ApproveIcon />}
-                  onClick={handleApprove}
-                >
+                <Button onClick={handleApprove} className="bg-green-600 hover:bg-green-700">
+                  <ApproveIcon className="mr-2 h-4 w-4" />
                   Approve
                 </Button>
               </>
             )}
-          </Box>
-        </Box>
+          </div>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="grid gap-6 lg:grid-cols-2">
           {/* Purchase Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Purchase Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Invoice Number
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {purchase.invoice_number}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Status
-                    </Typography>
-                    <Chip
-                      label={purchase.status}
-                      color={getStatusColor(purchase.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Purchase Date
-                    </Typography>
-                    <Typography variant="body1">
-                      {new Date(purchase.purchase_date).toLocaleDateString()}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Due Date
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.due_date ? new Date(purchase.due_date).toLocaleDateString() : 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Notes
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.notes || 'No notes'}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Purchase Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">Invoice Number</p>
+                  <p className="font-semibold">{purchase.invoice_number}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <Badge variant={getStatusVariant(purchase.status)}>
+                    {purchase.status}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Purchase Date</p>
+                  <p>{new Date(purchase.purchase_date).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Due Date</p>
+                  <p>{purchase.due_date ? new Date(purchase.due_date).toLocaleDateString() : 'N/A'}</p>
+                </div>
+              </div>
+              {purchase.notes && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Notes</p>
+                  <p className="text-sm">{purchase.notes}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Supplier Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Supplier Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Name
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {purchase.supplier.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Code
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.supplier.code}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Contact Person
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.supplier.contact_person || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Phone
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.supplier.phone || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Email
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.supplier.email || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Address
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.supplier.address || 'N/A'}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Supplier Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Name</p>
+                <p className="font-semibold">{purchase.supplier.name}</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">Code</p>
+                  <p>{purchase.supplier.code}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Contact Person</p>
+                  <p>{purchase.supplier.contact_person || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Phone</p>
+                  <p>{purchase.supplier.phone || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p>{purchase.supplier.email || 'N/A'}</p>
+                </div>
+              </div>
+              {purchase.supplier.address && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Address</p>
+                  <p className="text-sm">{purchase.supplier.address}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Warehouse Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Warehouse Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Name
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {purchase.warehouse.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Code
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.warehouse.code}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Address
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.warehouse.address || 'N/A'}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Warehouse Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">Name</p>
+                  <p className="font-semibold">{purchase.warehouse.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Code</p>
+                  <p>{purchase.warehouse.code}</p>
+                </div>
+              </div>
+              {purchase.warehouse.address && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Address</p>
+                  <p className="text-sm">{purchase.warehouse.address}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-          {/* Purchase Items */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Purchase Items
-                </Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Product</TableCell>
-                        <TableCell>SKU</TableCell>
-                        <TableCell>Unit</TableCell>
-                        <TableCell align="right">Quantity</TableCell>
-                        <TableCell align="right">Unit Price</TableCell>
-                        <TableCell align="right">Total Price</TableCell>
-                        <TableCell>Batch</TableCell>
-                        <TableCell>Expiry Date</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {purchase.items.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>{item.product.name}</TableCell>
-                          <TableCell>{item.product.sku}</TableCell>
-                          <TableCell>{item.product.unit}</TableCell>
-                          <TableCell align="right">{item.quantity}</TableCell>
-                          <TableCell align="right">${item.unit_price.toFixed(2)}</TableCell>
-                          <TableCell align="right">${item.total_price.toFixed(2)}</TableCell>
-                          <TableCell>{item.batch || 'N/A'}</TableCell>
-                          <TableCell>
-                            {item.expiry_date ? new Date(item.expiry_date).toLocaleDateString() : 'N/A'}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </CardContent>
-            </Card>
-          </Grid>
+          {/* Additional Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Additional Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Created By</p>
+                <p>{purchase.created_by.name} ({purchase.created_by.email})</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Created At</p>
+                <p>{new Date(purchase.created_at).toLocaleString()}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          {/* Totals */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Grid container spacing={2} justifyContent="flex-end">
-                  <Grid item xs={12} md={4}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography>Subtotal:</Typography>
-                      <Typography>${purchase.subtotal.toFixed(2)}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography>Tax Amount:</Typography>
-                      <Typography>${purchase.tax_amount.toFixed(2)}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography>Discount Amount:</Typography>
-                      <Typography>${purchase.discount_amount.toFixed(2)}</Typography>
-                    </Box>
-                    <Divider sx={{ my: 1 }} />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="h6">Total Amount:</Typography>
-                      <Typography variant="h6">${purchase.total_amount.toFixed(2)}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography>Paid Amount:</Typography>
-                      <Typography>${purchase.paid_amount.toFixed(2)}</Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+        {/* Purchase Items */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Purchase Items</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="border rounded-lg">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>SKU</TableHead>
+                    <TableHead>Unit</TableHead>
+                    <TableHead className="text-right">Quantity</TableHead>
+                    <TableHead className="text-right">Unit Price</TableHead>
+                    <TableHead className="text-right">Total Price</TableHead>
+                    <TableHead>Batch</TableHead>
+                    <TableHead>Expiry Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {purchase.items.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.product.name}</TableCell>
+                      <TableCell>{item.product.sku}</TableCell>
+                      <TableCell>{item.product.unit}</TableCell>
+                      <TableCell className="text-right">{item.quantity}</TableCell>
+                      <TableCell className="text-right">${item.unit_price.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">${item.total_price.toFixed(2)}</TableCell>
+                      <TableCell>{item.batch || 'N/A'}</TableCell>
+                      <TableCell>
+                        {item.expiry_date ? new Date(item.expiry_date).toLocaleDateString() : 'N/A'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Created By */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Additional Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Created By
-                    </Typography>
-                    <Typography variant="body1">
-                      {purchase.created_by.name} ({purchase.created_by.email})
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Created At
-                    </Typography>
-                    <Typography variant="body1">
-                      {new Date(purchase.created_at).toLocaleString()}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Box>
+        {/* Totals */}
+        <Card>
+          <CardContent>
+            <div className="flex justify-end">
+              <div className="w-full max-w-sm space-y-2">
+                <div className="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span>${purchase.subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tax Amount:</span>
+                  <span>${purchase.tax_amount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Discount Amount:</span>
+                  <span>${purchase.discount_amount.toFixed(2)}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between font-semibold text-lg">
+                  <span>Total Amount:</span>
+                  <span>${purchase.total_amount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Paid Amount:</span>
+                  <span>${purchase.paid_amount.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </Layout>
   );
 }

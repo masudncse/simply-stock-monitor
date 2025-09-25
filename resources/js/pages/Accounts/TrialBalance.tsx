@@ -1,25 +1,16 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-  Grid,
-} from '@mui/material';
-import {
-  ArrowBack as BackIcon,
-  Print as PrintIcon,
+  ArrowLeft as BackIcon,
+  Printer as PrintIcon,
   Download as DownloadIcon,
-} from '@mui/icons-material';
+  CheckCircle,
+  XCircle,
+} from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as indexRoute } from '@/routes/accounts';
@@ -75,115 +66,100 @@ export default function TrialBalance({ trialBalance }: TrialBalanceProps) {
     return groups;
   }, {} as Record<string, TrialBalanceItem[]>);
 
+  const isBalanced = totalDebit === totalCredit;
+
   return (
-    <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Trial Balance
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<BackIcon />}
-              onClick={handleBack}
-            >
+    <Layout title="Trial Balance">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Trial Balance</h1>
+            <p className="text-muted-foreground">
+              Financial report showing account balances
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleBack}>
+              <BackIcon className="mr-2 h-4 w-4" />
               Back to Accounts
             </Button>
-            <Button
-              variant="outlined"
-              startIcon={<PrintIcon />}
-              onClick={handlePrint}
-            >
+            <Button variant="outline" onClick={handlePrint}>
+              <PrintIcon className="mr-2 h-4 w-4" />
               Print
             </Button>
-            <Button
-              variant="outlined"
-              startIcon={<DownloadIcon />}
-              onClick={handleExport}
-            >
+            <Button variant="outline" onClick={handleExport}>
+              <DownloadIcon className="mr-2 h-4 w-4" />
               Export
             </Button>
-          </Box>
-        </Box>
+          </div>
+        </div>
 
         {/* Summary Cards */}
-        <Grid container spacing={3} sx={{ mb: 3 }}>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" color="primary">
-                  Total Debit
-                </Typography>
-                <Typography variant="h4" color="primary">
-                  ${totalDebit.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" color="secondary">
-                  Total Credit
-                </Typography>
-                <Typography variant="h4" color="secondary">
-                  ${totalCredit.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-primary">Total Debit</h3>
+                <p className="text-3xl font-bold text-primary">${totalDebit.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-secondary-foreground">Total Credit</h3>
+                <p className="text-3xl font-bold text-secondary-foreground">${totalCredit.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Trial Balance Table */}
         <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Trial Balance Report
-            </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+          <CardHeader>
+            <CardTitle>Trial Balance Report</CardTitle>
+            <p className="text-sm text-muted-foreground">
               As of {new Date().toLocaleDateString()}
-            </Typography>
-
-            <TableContainer component={Paper} variant="outlined">
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="border rounded-lg">
               <Table>
-                <TableHead>
+                <TableHeader>
                   <TableRow>
-                    <TableCell>Account Code</TableCell>
-                    <TableCell>Account Name</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell align="right">Debit</TableCell>
-                    <TableCell align="right">Credit</TableCell>
+                    <TableHead>Account Code</TableHead>
+                    <TableHead>Account Name</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead className="text-right">Debit</TableHead>
+                    <TableHead className="text-right">Credit</TableHead>
                   </TableRow>
-                </TableHead>
+                </TableHeader>
                 <TableBody>
                   {Object.entries(groupedByType).map(([type, items]) => (
                     <React.Fragment key={type}>
                       {/* Type Header */}
-                      <TableRow sx={{ backgroundColor: 'grey.50' }}>
+                      <TableRow className="bg-muted/50">
                         <TableCell colSpan={5}>
-                          <Typography variant="subtitle1" fontWeight="bold">
+                          <h4 className="font-semibold text-sm">
                             {type.charAt(0).toUpperCase() + type.slice(1)} Accounts
-                          </Typography>
+                          </h4>
                         </TableCell>
                       </TableRow>
                       
                       {/* Accounts in this type */}
                       {items.map((item) => (
                         <TableRow key={item.account.id}>
-                          <TableCell>{item.account.code}</TableCell>
+                          <TableCell className="font-medium">{item.account.code}</TableCell>
                           <TableCell>{item.account.name}</TableCell>
                           <TableCell>
-                            <Chip
-                              label={item.account.type}
-                              size="small"
-                              variant="outlined"
-                            />
+                            <Badge variant="outline" className="text-xs">
+                              {item.account.type}
+                            </Badge>
                           </TableCell>
-                          <TableCell align="right">
+                          <TableCell className="text-right">
                             {item.debit > 0 ? `$${item.debit.toFixed(2)}` : '-'}
                           </TableCell>
-                          <TableCell align="right">
+                          <TableCell className="text-right">
                             {item.credit > 0 ? `$${item.credit.toFixed(2)}` : '-'}
                           </TableCell>
                         </TableRow>
@@ -192,45 +168,44 @@ export default function TrialBalance({ trialBalance }: TrialBalanceProps) {
                   ))}
                   
                   {/* Total Row */}
-                  <TableRow sx={{ backgroundColor: 'primary.light', color: 'primary.contrastText' }}>
+                  <TableRow className="bg-primary text-primary-foreground font-bold">
                     <TableCell colSpan={3}>
-                      <Typography variant="h6" fontWeight="bold">
-                        TOTAL
-                      </Typography>
+                      <span className="text-lg">TOTAL</span>
                     </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6" fontWeight="bold">
-                        ${totalDebit.toFixed(2)}
-                      </Typography>
+                    <TableCell className="text-right">
+                      <span className="text-lg">${totalDebit.toFixed(2)}</span>
                     </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6" fontWeight="bold">
-                        ${totalCredit.toFixed(2)}
-                      </Typography>
+                    <TableCell className="text-right">
+                      <span className="text-lg">${totalCredit.toFixed(2)}</span>
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
-            </TableContainer>
+            </div>
 
             {/* Balance Check */}
-            <Box sx={{ mt: 2, p: 2, backgroundColor: totalDebit === totalCredit ? 'success.light' : 'error.light' }}>
-              <Typography variant="body1" align="center">
-                {totalDebit === totalCredit ? (
-                  <Chip label="✓ Trial Balance is Balanced" color="success" />
-                ) : (
-                  <Chip label="✗ Trial Balance is NOT Balanced" color="error" />
-                )}
-              </Typography>
-              {totalDebit !== totalCredit && (
-                <Typography variant="body2" align="center" sx={{ mt: 1 }}>
-                  Difference: ${Math.abs(totalDebit - totalCredit).toFixed(2)}
-                </Typography>
+            <div className="mt-4">
+              {isBalanced ? (
+                <Alert className="border-green-200 bg-green-50">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800">
+                    <strong>Trial Balance is Balanced</strong> - All debits equal credits
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <Alert variant="destructive">
+                  <XCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    <strong>Trial Balance is NOT Balanced</strong>
+                    <br />
+                    Difference: ${Math.abs(totalDebit - totalCredit).toFixed(2)}
+                  </AlertDescription>
+                </Alert>
               )}
-            </Box>
+            </div>
           </CardContent>
         </Card>
-      </Box>
+      </div>
     </Layout>
   );
 }

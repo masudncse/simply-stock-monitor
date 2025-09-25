@@ -1,41 +1,42 @@
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
+import { cn } from '@/lib/utils';
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();
     return (
-        <Box sx={{ px: 2, py: 0 }}>
-            <Typography variant="overline" sx={{ px: 2, py: 1, color: 'text.secondary' }}>
+        <div className="px-2 py-0">
+            <div className="px-2 py-1 text-xs font-medium uppercase text-muted-foreground">
                 Platform
-            </Typography>
-            <List>
-                {items.map((item) => (
-                    <ListItem key={item.title} disablePadding>
-                        <ListItemButton
-                            component={Link}
+            </div>
+            <nav className="space-y-1">
+                {items.map((item) => {
+                    const isActive = page.url.startsWith(
+                        typeof item.href === 'string'
+                            ? item.href
+                            : item.href.url,
+                    );
+                    
+                    return (
+                        <Link
+                            key={item.title}
                             href={item.href}
-                            selected={page.url.startsWith(
-                                typeof item.href === 'string'
-                                    ? item.href
-                                    : item.href.url,
+                            className={cn(
+                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                "hover:bg-accent hover:text-accent-foreground",
+                                isActive 
+                                    ? "bg-accent text-accent-foreground" 
+                                    : "text-muted-foreground"
                             )}
-                            sx={{
-                                borderRadius: 1,
-                                mx: 1,
-                                mb: 0.5,
-                            }}
                         >
                             {item.icon && (
-                                <ListItemIcon>
-                                    <item.icon style={{ width: 16, height: 16 }} />
-                                </ListItemIcon>
+                                <item.icon className="h-4 w-4" />
                             )}
-                            <ListItemText primary={item.title} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        </Box>
+                            <span>{item.title}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
+        </div>
     );
 }

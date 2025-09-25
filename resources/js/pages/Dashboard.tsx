@@ -1,19 +1,12 @@
 import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Layout from '../layouts/Layout';
 import {
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  Paper,
-} from '@mui/material';
-import {
-  Inventory as InventoryIcon,
+  Package as InventoryIcon,
   ShoppingCart as ShoppingCartIcon,
   Store as StoreIcon,
-  People as PeopleIcon,
-} from '@mui/icons-material';
-import Layout from '../layouts/Layout';
+  Users as PeopleIcon,
+} from 'lucide-react';
 
 interface DashboardProps {
   stats: {
@@ -29,71 +22,107 @@ export default function Dashboard({ stats }: DashboardProps) {
     {
       title: 'Total Products',
       value: stats.totalProducts,
-      icon: <InventoryIcon sx={{ fontSize: 40 }} />,
-      color: '#1976d2',
+      icon: <InventoryIcon className="h-8 w-8" />,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
     },
     {
       title: 'Total Stock Value',
       value: `$${stats.totalStock.toLocaleString()}`,
-      icon: <StoreIcon sx={{ fontSize: 40 }} />,
-      color: '#2e7d32',
+      icon: <StoreIcon className="h-8 w-8" />,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
     },
     {
       title: 'Total Sales',
       value: `$${stats.totalSales.toLocaleString()}`,
-      icon: <ShoppingCartIcon sx={{ fontSize: 40 }} />,
-      color: '#ed6c02',
+      icon: <ShoppingCartIcon className="h-8 w-8" />,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
     },
     {
       title: 'Total Customers',
       value: stats.totalCustomers,
-      icon: <PeopleIcon sx={{ fontSize: 40 }} />,
-      color: '#9c27b0',
+      icon: <PeopleIcon className="h-8 w-8" />,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
     },
   ];
 
   return (
     <Layout title="Dashboard">
-      <Box>
-        <Typography variant="h4" gutterBottom>
-          Dashboard
-        </Typography>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Welcome to the Stock Management System. Here's an overview of your business.
+          </p>
+        </div>
         
-        <Grid container spacing={3}>
+        {/* Stats Grid */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {statCards.map((card, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card>
-                <CardContent>
-                  <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Box>
-                      <Typography color="textSecondary" gutterBottom variant="h6">
-                        {card.title}
-                      </Typography>
-                      <Typography variant="h4" component="div">
-                        {card.value}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ color: card.color }}>
-                      {card.icon}
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+            <Card key={index}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {card.title}
+                </CardTitle>
+                <div className={`p-2 rounded-lg ${card.bgColor}`}>
+                  <div className={card.color}>
+                    {card.icon}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{card.value}</div>
+              </CardContent>
+            </Card>
           ))}
-        </Grid>
+        </div>
 
-        <Box mt={4}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h5" gutterBottom>
-              Quick Actions
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Welcome to the Stock Management System. Use the navigation menu to access different modules.
-            </Typography>
-          </Paper>
-        </Box>
-      </Box>
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>
+              Common tasks and shortcuts to help you manage your business efficiently.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="flex items-center space-x-4 rounded-lg border p-4">
+                <div className="p-2 bg-blue-50 rounded-lg">
+                  <ShoppingCartIcon className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Point of Sale</h3>
+                  <p className="text-sm text-muted-foreground">Process sales quickly</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4 rounded-lg border p-4">
+                <div className="p-2 bg-green-50 rounded-lg">
+                  <InventoryIcon className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Add Products</h3>
+                  <p className="text-sm text-muted-foreground">Manage your inventory</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4 rounded-lg border p-4">
+                <div className="p-2 bg-purple-50 rounded-lg">
+                  <PeopleIcon className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Manage Customers</h3>
+                  <p className="text-sm text-muted-foreground">View customer information</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </Layout>
   );
 }

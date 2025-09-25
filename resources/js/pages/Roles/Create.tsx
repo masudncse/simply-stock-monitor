@@ -1,24 +1,19 @@
 import React, { useState } from 'react';
+import { Link as InertiaLink, useForm } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    FormLabel,
-    Grid,
-    TextField,
-    Typography,
-    Alert,
-    Divider,
-    Chip,
-} from '@mui/material';
-import { Save as SaveIcon, ArrowBack as BackIcon } from '@mui/icons-material';
-import { Link, useForm } from '@inertiajs/react';
-import Layout from '@/layouts/Layout';
+  Save as SaveIcon,
+  ArrowLeft as BackIcon,
+  Shield as ShieldIcon,
+} from 'lucide-react';
+import Layout from '../../layouts/Layout';
 
 interface Permission {
     id: number;
@@ -92,135 +87,120 @@ export default function RolesCreate({ permissions }: RolesCreateProps) {
 
     return (
         <Layout title="Create New Role">
-            <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Button
-                        component={Link}
-                        href="/roles"
-                        startIcon={<BackIcon />}
-                        variant="outlined"
-                    >
-                        Back to Roles
+            <div className="space-y-6">
+                <div className="flex items-center gap-4 mb-6">
+                    <Button variant="outline" asChild>
+                        <InertiaLink href="/roles">
+                            <BackIcon className="mr-2 h-4 w-4" />
+                            Back to Roles
+                        </InertiaLink>
                     </Button>
-                    <Typography variant="h4" component="h1">
-                        Create New Role
-                    </Typography>
-                </Box>
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">Create New Role</h1>
+                        <p className="text-muted-foreground">
+                            Define a new role and assign permissions
+                        </p>
+                    </div>
+                </div>
 
-                <form onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={4}>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h6" gutterBottom>
-                                        Role Information
-                                    </Typography>
-                                    
-                                    <TextField
-                                        fullWidth
-                                        label="Role Name"
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid gap-6 md:grid-cols-3">
+                        {/* Role Information */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <ShieldIcon className="h-5 w-5 text-primary" />
+                                    Role Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="name">Role Name *</Label>
+                                    <Input
+                                        id="name"
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
-                                        error={!!errors.name}
-                                        helperText={errors.name}
-                                        margin="normal"
-                                        required
                                         placeholder="e.g., Manager, Editor, Viewer"
+                                        required
+                                        isInvalid={!!errors.name}
                                     />
+                                    {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                                </div>
 
-                                    <Box sx={{ mt: 2 }}>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Selected Permissions: {selectedPermissions.length}
-                                        </Typography>
-                                    </Box>
+                                <div className="pt-2">
+                                    <p className="text-sm text-muted-foreground">
+                                        Selected Permissions: {selectedPermissions.length}
+                                    </p>
+                                </div>
 
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        fullWidth
-                                        startIcon={<SaveIcon />}
-                                        disabled={processing}
-                                        sx={{ mt: 3 }}
-                                    >
-                                        {processing ? 'Creating...' : 'Create Role'}
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                <Button
+                                    type="submit"
+                                    className="w-full"
+                                    disabled={processing}
+                                >
+                                    <SaveIcon className="mr-2 h-4 w-4" />
+                                    {processing ? 'Creating...' : 'Create Role'}
+                                </Button>
+                            </CardContent>
+                        </Card>
 
-                        <Grid item xs={12} md={8}>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h6" gutterBottom>
-                                        Permissions
-                                    </Typography>
-                                    
-                                    {errors.permissions && (
-                                        <Alert severity="error" sx={{ mb: 2 }}>
-                                            {errors.permissions}
-                                        </Alert>
-                                    )}
+                        {/* Permissions */}
+                        <Card className="md:col-span-2">
+                            <CardHeader>
+                                <CardTitle>Permissions</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {errors.permissions && (
+                                    <Alert variant="destructive">
+                                        <AlertDescription>{errors.permissions}</AlertDescription>
+                                    </Alert>
+                                )}
 
-                                    {Object.entries(permissions).map(([category, categoryPermissions]) => (
-                                        <Box key={category} sx={{ mb: 3 }}>
-                                            <FormControl component="fieldset" fullWidth>
-                                                <FormLabel component="legend" sx={{ mb: 1 }}>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                        <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-                                                            {category}
-                                                        </Typography>
-                                                        <Chip 
-                                                            label={`${categoryPermissions.length} permissions`}
-                                                            size="small"
-                                                            variant="outlined"
-                                                        />
-                                                    </Box>
-                                                </FormLabel>
-                                                
-                                                <FormControlLabel
-                                                    control={
-                                                        <Checkbox
-                                                            checked={isCategorySelected(category)}
-                                                            indeterminate={isCategoryIndeterminate(category)}
-                                                            onChange={(e) => handleSelectAll(category, e.target.checked)}
-                                                        />
-                                                    }
-                                                    label={`Select All ${category} permissions`}
-                                                    sx={{ mb: 1, fontWeight: 'medium' }}
-                                                />
-                                                
-                                                <Divider sx={{ mb: 1 }} />
-                                                
-                                                <FormGroup>
-                                                    <Grid container spacing={1}>
-                                                        {categoryPermissions.map((permission) => (
-                                                            <Grid item xs={12} sm={6} md={4} key={permission.id}>
-                                                                <FormControlLabel
-                                                                    control={
-                                                                        <Checkbox
-                                                                            checked={selectedPermissions.includes(permission.name)}
-                                                                            onChange={(e) => handlePermissionChange(permission.name, e.target.checked)}
-                                                                        />
-                                                                    }
-                                                                    label={
-                                                                        <Typography variant="body2">
-                                                                            {permission.name.replace(`${category}-`, '').replace('-', ' ')}
-                                                                        </Typography>
-                                                                    }
-                                                                />
-                                                            </Grid>
-                                                        ))}
-                                                    </Grid>
-                                                </FormGroup>
-                                            </FormControl>
-                                        </Box>
-                                    ))}
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
+                                {Object.entries(permissions).map(([category, categoryPermissions]) => (
+                                    <div key={category} className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <Label className="text-base capitalize">{category}</Label>
+                                                <Badge variant="outline" className="text-xs">
+                                                    {categoryPermissions.length} permissions
+                                                </Badge>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id={`select-all-${category}`}
+                                                checked={isCategorySelected(category)}
+                                                onCheckedChange={(checked) => handleSelectAll(category, !!checked)}
+                                            />
+                                            <Label htmlFor={`select-all-${category}`} className="text-sm font-medium">
+                                                Select All {category} permissions
+                                            </Label>
+                                        </div>
+                                        
+                                        <Separator />
+                                        
+                                        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                                            {categoryPermissions.map((permission) => (
+                                                <div key={permission.id} className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id={`permission-${permission.id}`}
+                                                        checked={selectedPermissions.includes(permission.name)}
+                                                        onCheckedChange={(checked) => handlePermissionChange(permission.name, !!checked)}
+                                                    />
+                                                    <Label htmlFor={`permission-${permission.id}`} className="text-sm">
+                                                        {permission.name.replace(`${category}-`, '').replace('-', ' ')}
+                                                    </Label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
+                    </div>
                 </form>
-            </Box>
+            </div>
         </Layout>
     );
 }

@@ -1,30 +1,17 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Grid,
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-  MenuItem,
-  InputAdornment,
-} from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import {
   Search as SearchIcon,
-  Warning as WarningIcon,
-  SwapHoriz as SwapHorizIcon,
-  Tune as TuneIcon,
-} from '@mui/icons-material';
+  AlertTriangle as WarningIcon,
+  Settings as TuneIcon,
+  ArrowRightLeft as SwapHorizIcon,
+} from 'lucide-react';
 import { Link, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 
@@ -37,6 +24,7 @@ interface Product {
   id: number;
   name: string;
   sku: string;
+  min_stock: number;
 }
 
 interface Stock {
@@ -68,8 +56,8 @@ interface StockIndexProps {
 
 export default function StockIndex({ stocks, warehouses, products, filters }: StockIndexProps) {
   const [search, setSearch] = useState(filters.search || '');
-  const [warehouseFilter, setWarehouseFilter] = useState(filters.warehouse_id || '');
-  const [productFilter, setProductFilter] = useState(filters.product_id || '');
+  const [warehouseFilter, setWarehouseFilter] = useState(filters.warehouse_id?.toString() || '');
+  const [productFilter, setProductFilter] = useState(filters.product_id?.toString() || '');
 
   const handleSearch = () => {
     router.get('/stock', {
@@ -88,155 +76,155 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
 
   return (
     <Layout title="Stock Management">
-      <Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h4">Stock Management</Typography>
-          <Box display="flex" gap={2}>
-            <Button
-              component={Link}
-              href="/stock/low-stock"
-              variant="outlined"
-              startIcon={<WarningIcon />}
-              color="warning"
-            >
-              Low Stock
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Stock Management</h1>
+            <p className="text-muted-foreground">
+              Monitor and manage your inventory levels
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <Link href="/stock/low-stock">
+                <WarningIcon className="mr-2 h-4 w-4" />
+                Low Stock
+              </Link>
             </Button>
-            <Button
-              component={Link}
-              href="/stock/adjust"
-              variant="outlined"
-              startIcon={<TuneIcon />}
-            >
-              Adjust Stock
+            <Button variant="outline" asChild>
+              <Link href="/stock/adjust">
+                <TuneIcon className="mr-2 h-4 w-4" />
+                Adjust Stock
+              </Link>
             </Button>
-            <Button
-              component={Link}
-              href="/stock/transfer"
-              variant="outlined"
-              startIcon={<SwapHorizIcon />}
-            >
-              Transfer Stock
+            <Button variant="outline" asChild>
+              <Link href="/stock/transfer">
+                <SwapHorizIcon className="mr-2 h-4 w-4" />
+                Transfer Stock
+              </Link>
             </Button>
-          </Box>
-        </Box>
+          </div>
+        </div>
 
         {/* Filters */}
-        <Paper sx={{ p: 2, mb: 3 }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Search Products"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleSearch}>
-                        <SearchIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                select
-                label="Warehouse"
-                value={warehouseFilter}
-                onChange={(e) => setWarehouseFilter(e.target.value)}
-              >
-                <MenuItem value="">All Warehouses</MenuItem>
-                {warehouses.map((warehouse) => (
-                  <MenuItem key={warehouse.id} value={warehouse.id}>
-                    {warehouse.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                select
-                label="Product"
-                value={productFilter}
-                onChange={(e) => setProductFilter(e.target.value)}
-              >
-                <MenuItem value="">All Products</MenuItem>
-                {products.map((product) => (
-                  <MenuItem key={product.id} value={product.id}>
-                    {product.name} ({product.sku})
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <Button
-                fullWidth
-                variant="outlined"
-                onClick={handleSearch}
-              >
-                Filter
-              </Button>
-            </Grid>
-          </Grid>
-        </Paper>
+        <Card>
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label htmlFor="search">Search Products</Label>
+                <div className="relative">
+                  <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="search"
+                    placeholder="Search products..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-9"
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="warehouse">Warehouse</Label>
+                <Select value={warehouseFilter || "all"} onValueChange={(value) => setWarehouseFilter(value === "all" ? "" : value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Warehouses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Warehouses</SelectItem>
+                    {warehouses.map((warehouse) => (
+                      <SelectItem key={warehouse.id} value={warehouse.id.toString()}>
+                        {warehouse.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="product">Product</Label>
+                <Select value={productFilter || "all"} onValueChange={(value) => setProductFilter(value === "all" ? "" : value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Products" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Products</SelectItem>
+                    {products.map((product) => (
+                      <SelectItem key={product.id} value={product.id.toString()}>
+                        {product.name} ({product.sku})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>&nbsp;</Label>
+                <Button variant="outline" onClick={handleSearch} className="w-full">
+                  <SearchIcon className="mr-2 h-4 w-4" />
+                  Filter
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Stock Table */}
         <Card>
+          <CardHeader>
+            <CardTitle>Stock Records ({stocks.total})</CardTitle>
+          </CardHeader>
           <CardContent>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Product</TableCell>
-                    <TableCell>SKU</TableCell>
-                    <TableCell>Warehouse</TableCell>
-                    <TableCell align="right">Quantity</TableCell>
-                    <TableCell>Batch</TableCell>
-                    <TableCell align="right">Cost Price</TableCell>
-                    <TableCell>Expiry Date</TableCell>
-                    <TableCell>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {stocks.data.map((stock) => (
-                    <TableRow key={stock.id}>
-                      <TableCell>{stock.product.name}</TableCell>
-                      <TableCell>{stock.product.sku}</TableCell>
-                      <TableCell>{stock.warehouse.name}</TableCell>
-                      <TableCell align="right">{stock.qty}</TableCell>
-                      <TableCell>{stock.batch || 'N/A'}</TableCell>
-                      <TableCell align="right">${stock.cost_price.toFixed(2)}</TableCell>
-                      <TableCell>
-                        {stock.expiry_date ? new Date(stock.expiry_date).toLocaleDateString() : 'N/A'}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={isLowStock(stock) ? 'Low Stock' : 'In Stock'}
-                          color={isLowStock(stock) ? 'warning' : 'success'}
-                          size="small"
-                        />
-                      </TableCell>
+            {stocks.data.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <h3 className="text-lg font-semibold">No stock records found</h3>
+                <p className="text-sm">Try adjusting your search criteria</p>
+              </div>
+            ) : (
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead>SKU</TableHead>
+                      <TableHead>Warehouse</TableHead>
+                      <TableHead className="text-right">Quantity</TableHead>
+                      <TableHead>Batch</TableHead>
+                      <TableHead className="text-right">Cost Price</TableHead>
+                      <TableHead>Expiry Date</TableHead>
+                      <TableHead>Status</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            {stocks.data.length === 0 && (
-              <Box textAlign="center" py={4}>
-                <Typography variant="h6" color="textSecondary">
-                  No stock records found
-                </Typography>
-              </Box>
+                  </TableHeader>
+                  <TableBody>
+                    {stocks.data.map((stock) => (
+                      <TableRow key={stock.id}>
+                        <TableCell className="font-medium">{stock.product.name}</TableCell>
+                        <TableCell>{stock.product.sku}</TableCell>
+                        <TableCell>{stock.warehouse.name}</TableCell>
+                        <TableCell className="text-right">{stock.qty}</TableCell>
+                        <TableCell>{stock.batch || 'N/A'}</TableCell>
+                        <TableCell className="text-right">${stock.cost_price.toFixed(2)}</TableCell>
+                        <TableCell>
+                          {stock.expiry_date ? new Date(stock.expiry_date).toLocaleDateString() : 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={isLowStock(stock) ? "destructive" : "default"}>
+                            {isLowStock(stock) ? 'Low Stock' : 'In Stock'}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>
-      </Box>
+      </div>
     </Layout>
   );
 }

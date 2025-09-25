@@ -1,22 +1,15 @@
 import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Container,
-  Paper,
-  TextField,
-  Grid,
-  Divider,
-} from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import {
   TrendingUp as TrendingUpIcon,
   Download as DownloadIcon,
-  FilterList as FilterIcon,
-} from '@mui/icons-material';
+  Filter as FilterIcon,
+} from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
 interface ProfitLossReportProps {
@@ -68,222 +61,199 @@ const ProfitLossReport: React.FC<ProfitLossReportProps> = ({
   };
 
   return (
-    <Layout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            <TrendingUpIcon sx={{ mr: 2, verticalAlign: 'middle' }} />
-            Profit & Loss Report
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+    <Layout title="Profit & Loss Report">
+      <div className="space-y-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <TrendingUpIcon className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold tracking-tight">Profit & Loss Report</h1>
+          </div>
+          <p className="text-muted-foreground">
             Financial performance analysis and profit margins
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
         {/* Filters */}
-        <Paper sx={{ p: 3, mb: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            <FilterIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-            Date Range
-          </Typography>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                type="date"
-                label="Date From"
-                value={localFilters.date_from || ''}
-                onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                type="date"
-                label="Date To"
-                value={localFilters.date_to || ''}
-                onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button variant="contained" onClick={applyFilters} size="small">
-                  Apply Filters
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FilterIcon className="h-5 w-5" />
+              Date Range
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label htmlFor="date_from">Date From</Label>
+                <Input
+                  id="date_from"
+                  type="date"
+                  value={localFilters.date_from || ''}
+                  onChange={(e) => handleFilterChange('date_from', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="date_to">Date To</Label>
+                <Input
+                  id="date_to"
+                  type="date"
+                  value={localFilters.date_to || ''}
+                  onChange={(e) => handleFilterChange('date_to', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>&nbsp;</Label>
+                <div className="flex gap-2">
+                  <Button onClick={applyFilters}>
+                    Apply Filters
+                  </Button>
+                  <Button variant="outline" onClick={clearFilters}>
+                    Clear
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>&nbsp;</Label>
+                <Button onClick={exportReport}>
+                  <DownloadIcon className="mr-2 h-4 w-4" />
+                  Export PDF
                 </Button>
-                <Button variant="outlined" onClick={clearFilters} size="small">
-                  Clear
-                </Button>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Button
-                variant="contained"
-                startIcon={<DownloadIcon />}
-                onClick={exportReport}
-                size="small"
-              >
-                Export PDF
-              </Button>
-            </Grid>
-          </Grid>
-        </Paper>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Profit & Loss Statement */}
-        <Paper sx={{ p: 3 }}>
-          <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h5" component="h2">
-              Profit & Loss Statement
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {localFilters.date_from && localFilters.date_to 
-                ? `${new Date(localFilters.date_from).toLocaleDateString()} - ${new Date(localFilters.date_to).toLocaleDateString()}`
-                : 'All Time'
-              }
-            </Typography>
-          </Box>
-
-          <Box sx={{ maxWidth: 600, mx: 'auto' }}>
-            {/* Revenue Section */}
-            <Card sx={{ mb: 2 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom color="primary">
-                  Revenue
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="body1">Total Sales Revenue</Typography>
-                  <Typography variant="h6" color="primary">
-                    ${summary.revenue.toFixed(2)}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
-
-            {/* Cost of Goods Sold */}
-            <Card sx={{ mb: 2 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom color="error">
-                  Cost of Goods Sold
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="body1">Cost of Goods Sold</Typography>
-                  <Typography variant="h6" color="error">
-                    ${summary.cost_of_goods_sold.toFixed(2)}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
-
-            {/* Gross Profit */}
-            <Card sx={{ mb: 2, backgroundColor: summary.gross_profit >= 0 ? 'success.light' : 'error.light' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Gross Profit
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="body1">Gross Profit</Typography>
-                  <Typography variant="h5" color={summary.gross_profit >= 0 ? 'success.main' : 'error.main'}>
-                    ${summary.gross_profit.toFixed(2)}
-                  </Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Margin: {summary.gross_profit_margin.toFixed(2)}%
-                </Typography>
-              </CardContent>
-            </Card>
-
-            {/* Expenses */}
-            <Card sx={{ mb: 2 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom color="warning.main">
-                  Operating Expenses
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="body1">Total Expenses</Typography>
-                  <Typography variant="h6" color="warning.main">
-                    ${summary.expenses.toFixed(2)}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
-
-            <Divider sx={{ my: 2 }} />
-
-            {/* Net Profit */}
-            <Card sx={{ backgroundColor: summary.net_profit >= 0 ? 'success.light' : 'error.light' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Net Profit/Loss
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="body1">Net Profit</Typography>
-                  <Typography variant="h4" color={summary.net_profit >= 0 ? 'success.main' : 'error.main'}>
-                    ${summary.net_profit.toFixed(2)}
-                  </Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Margin: {summary.net_profit_margin.toFixed(2)}%
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-
-          {/* Summary Cards */}
-          <Grid container spacing={3} sx={{ mt: 4 }}>
-            <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
-                    Revenue
-                  </Typography>
-                  <Typography variant="h4" color="primary">
-                    ${summary.revenue.toFixed(2)}
-                  </Typography>
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle>Profit & Loss Statement</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {localFilters.date_from && localFilters.date_to 
+                  ? `${new Date(localFilters.date_from).toLocaleDateString()} - ${new Date(localFilters.date_to).toLocaleDateString()}`
+                  : 'All Time'
+                }
+              </p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-w-2xl mx-auto space-y-4">
+              {/* Revenue Section */}
+              <Card className="border-blue-200 bg-blue-50">
+                <CardContent className="pt-6">
+                  <h3 className="text-lg font-semibold text-blue-600 mb-2">Revenue</h3>
+                  <div className="flex justify-between items-center">
+                    <span>Total Sales Revenue</span>
+                    <span className="text-lg font-semibold text-blue-600">
+                      ${summary.revenue.toFixed(2)}
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
-                    Gross Profit
-                  </Typography>
-                  <Typography variant="h4" color={summary.gross_profit >= 0 ? 'success.main' : 'error.main'}>
-                    ${summary.gross_profit.toFixed(2)}
-                  </Typography>
+
+              {/* Cost of Goods Sold */}
+              <Card className="border-red-200 bg-red-50">
+                <CardContent className="pt-6">
+                  <h3 className="text-lg font-semibold text-red-600 mb-2">Cost of Goods Sold</h3>
+                  <div className="flex justify-between items-center">
+                    <span>Cost of Goods Sold</span>
+                    <span className="text-lg font-semibold text-red-600">
+                      ${summary.cost_of_goods_sold.toFixed(2)}
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
-                    Expenses
-                  </Typography>
-                  <Typography variant="h4" color="warning.main">
-                    ${summary.expenses.toFixed(2)}
-                  </Typography>
+
+              {/* Gross Profit */}
+              <Card className={`border ${summary.gross_profit >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+                <CardContent className="pt-6">
+                  <h3 className="text-lg font-semibold mb-2">Gross Profit</h3>
+                  <div className="flex justify-between items-center">
+                    <span>Gross Profit</span>
+                    <span className={`text-xl font-semibold ${summary.gross_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      ${summary.gross_profit.toFixed(2)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Margin: {summary.gross_profit_margin.toFixed(2)}%
+                  </p>
                 </CardContent>
               </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
-                    Net Profit
-                  </Typography>
-                  <Typography variant="h4" color={summary.net_profit >= 0 ? 'success.main' : 'error.main'}>
-                    ${summary.net_profit.toFixed(2)}
-                  </Typography>
+
+              {/* Expenses */}
+              <Card className="border-orange-200 bg-orange-50">
+                <CardContent className="pt-6">
+                  <h3 className="text-lg font-semibold text-orange-600 mb-2">Operating Expenses</h3>
+                  <div className="flex justify-between items-center">
+                    <span>Total Expenses</span>
+                    <span className="text-lg font-semibold text-orange-600">
+                      ${summary.expenses.toFixed(2)}
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Container>
+
+              <Separator className="my-4" />
+
+              {/* Net Profit */}
+              <Card className={`border ${summary.net_profit >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+                <CardContent className="pt-6">
+                  <h3 className="text-lg font-semibold mb-2">Net Profit/Loss</h3>
+                  <div className="flex justify-between items-center">
+                    <span>Net Profit</span>
+                    <span className={`text-2xl font-bold ${summary.net_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      ${summary.net_profit.toFixed(2)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Margin: {summary.net_profit_margin.toFixed(2)}%
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid gap-4 md:grid-cols-4 mt-8">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Revenue</p>
+                    <p className="text-2xl font-bold text-primary">${summary.revenue.toFixed(2)}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Gross Profit</p>
+                    <p className={`text-2xl font-bold ${summary.gross_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      ${summary.gross_profit.toFixed(2)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Expenses</p>
+                    <p className="text-2xl font-bold text-orange-600">${summary.expenses.toFixed(2)}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Net Profit</p>
+                    <p className={`text-2xl font-bold ${summary.net_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      ${summary.net_profit.toFixed(2)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </Layout>
   );
 };

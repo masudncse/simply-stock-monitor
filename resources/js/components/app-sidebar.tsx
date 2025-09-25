@@ -1,7 +1,6 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Box } from '@mui/material';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -31,31 +30,21 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     return (
-        <Box
-            sx={{
-                width: 256,
-                flexShrink: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                borderRight: 1,
-                borderColor: 'divider',
-                bgcolor: 'background.paper',
-            }}
-        >
-            <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+        <div className="flex w-64 flex-shrink-0 flex-col border-r bg-background">
+            <div className="border-b p-2">
                 <Link href={dashboard()} prefetch>
                     <AppLogo />
                 </Link>
-            </Box>
+            </div>
 
-            <Box sx={{ flex: 1, overflow: 'auto' }}>
+            <div className="flex-1 overflow-auto">
                 <NavMain items={mainNavItems} />
-            </Box>
+            </div>
 
-            <Box sx={{ mt: 'auto', borderTop: 1, borderColor: 'divider' }}>
+            <div className="mt-auto border-t">
                 <NavFooter items={footerNavItems} />
                 <NavUser />
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 }

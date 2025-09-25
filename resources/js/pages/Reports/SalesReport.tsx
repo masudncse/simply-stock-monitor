@@ -1,33 +1,18 @@
 import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Container,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Grid,
-  Alert,
-} from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   ShoppingCart as ShoppingCartIcon,
   Download as DownloadIcon,
-  FilterList as FilterIcon,
-} from '@mui/icons-material';
+  Filter as FilterIcon,
+} from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
 interface Sale {
@@ -103,251 +88,228 @@ const SalesReport: React.FC<SalesReportProps> = ({
     });
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status.toLowerCase()) {
       case 'completed':
-        return 'success';
-      case 'pending':
-        return 'warning';
-      case 'cancelled':
-        return 'error';
-      default:
         return 'default';
+      case 'pending':
+        return 'secondary';
+      case 'cancelled':
+        return 'destructive';
+      default:
+        return 'secondary';
     }
   };
 
-  const getPaymentStatusColor = (status: string) => {
+  const getPaymentStatusVariant = (status: string) => {
     switch (status.toLowerCase()) {
       case 'paid':
-        return 'success';
-      case 'partial':
-        return 'warning';
-      case 'unpaid':
-        return 'error';
-      default:
         return 'default';
+      case 'partial':
+        return 'secondary';
+      case 'unpaid':
+        return 'destructive';
+      default:
+        return 'secondary';
     }
   };
 
   return (
-    <Layout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            <ShoppingCartIcon sx={{ mr: 2, verticalAlign: 'middle' }} />
-            Sales Report
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+    <Layout title="Sales Report">
+      <div className="space-y-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <ShoppingCartIcon className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold tracking-tight">Sales Report</h1>
+          </div>
+          <p className="text-muted-foreground">
             Sales performance and revenue analysis
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
         {/* Summary Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={2.4}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Total Sales
-                </Typography>
-                <Typography variant="h4">
-                  {summary.total_sales}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={2.4}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Total Amount
-                </Typography>
-                <Typography variant="h4">
-                  ${summary.total_amount.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={2.4}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Total Tax
-                </Typography>
-                <Typography variant="h4">
-                  ${summary.total_tax.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={2.4}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Total Discount
-                </Typography>
-                <Typography variant="h4">
-                  ${summary.total_discount.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={2.4}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Net Amount
-                </Typography>
-                <Typography variant="h4" color="primary">
-                  ${summary.net_amount.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        <div className="grid gap-4 md:grid-cols-5">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Sales</p>
+                <p className="text-2xl font-bold">{summary.total_sales}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Amount</p>
+                <p className="text-2xl font-bold">${summary.total_amount.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Tax</p>
+                <p className="text-2xl font-bold">${summary.total_tax.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Discount</p>
+                <p className="text-2xl font-bold">${summary.total_discount.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Net Amount</p>
+                <p className="text-2xl font-bold text-primary">${summary.net_amount.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Filters */}
-        <Paper sx={{ p: 3, mb: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            <FilterIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-            Filters
-          </Typography>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                type="date"
-                label="Date From"
-                value={localFilters.date_from || ''}
-                onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                type="date"
-                label="Date To"
-                value={localFilters.date_to || ''}
-                onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Customer</InputLabel>
-                <Select
-                  value={localFilters.customer_id || ''}
-                  onChange={(e) => handleFilterChange('customer_id', e.target.value)}
-                  label="Customer"
-                >
-                  <MenuItem value="">All Customers</MenuItem>
-                  {customers.map((customer) => (
-                    <MenuItem key={customer.id} value={customer.id}>
-                      {customer.name}
-                    </MenuItem>
-                  ))}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FilterIcon className="h-5 w-5" />
+              Filters
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label htmlFor="date_from">Date From</Label>
+                <Input
+                  id="date_from"
+                  type="date"
+                  value={localFilters.date_from || ''}
+                  onChange={(e) => handleFilterChange('date_from', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="date_to">Date To</Label>
+                <Input
+                  id="date_to"
+                  type="date"
+                  value={localFilters.date_to || ''}
+                  onChange={(e) => handleFilterChange('date_to', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="customer">Customer</Label>
+                <Select value={localFilters.customer_id?.toString() || "all"} onValueChange={(value) => handleFilterChange('customer_id', value === "all" ? "" : parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Customers" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Customers</SelectItem>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id.toString()}>
+                        {customer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Warehouse</InputLabel>
-                <Select
-                  value={localFilters.warehouse_id || ''}
-                  onChange={(e) => handleFilterChange('warehouse_id', e.target.value)}
-                  label="Warehouse"
-                >
-                  <MenuItem value="">All Warehouses</MenuItem>
-                  {warehouses.map((warehouse) => (
-                    <MenuItem key={warehouse.id} value={warehouse.id}>
-                      {warehouse.name}
-                    </MenuItem>
-                  ))}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="warehouse">Warehouse</Label>
+                <Select value={localFilters.warehouse_id?.toString() || "all"} onValueChange={(value) => handleFilterChange('warehouse_id', value === "all" ? "" : parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Warehouses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Warehouses</SelectItem>
+                    {warehouses.map((warehouse) => (
+                      <SelectItem key={warehouse.id} value={warehouse.id.toString()}>
+                        {warehouse.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button variant="contained" onClick={applyFilters} size="small">
-                  Apply Filters
-                </Button>
-                <Button variant="outlined" onClick={clearFilters} size="small">
-                  Clear
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <Button onClick={applyFilters}>
+                Apply Filters
+              </Button>
+              <Button variant="outline" onClick={clearFilters}>
+                Clear
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Actions */}
-        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">
             Sales Details ({sales.length} transactions)
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<DownloadIcon />}
-            onClick={exportReport}
-          >
+          </h2>
+          <Button onClick={exportReport}>
+            <DownloadIcon className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
-        </Box>
+        </div>
 
         {/* Sales Table */}
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Invoice</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Customer</TableCell>
-                <TableCell>Warehouse</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Tax</TableCell>
-                <TableCell align="right">Discount</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Payment</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sales.map((sale) => (
-                <TableRow key={sale.id}>
-                  <TableCell>{sale.invoice_number}</TableCell>
-                  <TableCell>{new Date(sale.sale_date).toLocaleDateString()}</TableCell>
-                  <TableCell>{sale.customer?.name || 'Walk-in'}</TableCell>
-                  <TableCell>{sale.warehouse.name}</TableCell>
-                  <TableCell align="right">${sale.total_amount.toFixed(2)}</TableCell>
-                  <TableCell align="right">${sale.tax_amount.toFixed(2)}</TableCell>
-                  <TableCell align="right">${sale.discount_amount.toFixed(2)}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={sale.status}
-                      color={getStatusColor(sale.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={sale.payment_status}
-                      color={getPaymentStatusColor(sale.payment_status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                      size="small"
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {sales.length === 0 && (
-          <Alert severity="info" sx={{ mt: 2 }}>
-            No sales data found for the selected filters.
-          </Alert>
-        )}
-      </Container>
+        <Card>
+          <CardContent>
+            {sales.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Alert>
+                  <AlertDescription>
+                    No sales data found for the selected filters.
+                  </AlertDescription>
+                </Alert>
+              </div>
+            ) : (
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Invoice</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Warehouse</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead className="text-right">Tax</TableHead>
+                      <TableHead className="text-right">Discount</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Payment</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sales.map((sale) => (
+                      <TableRow key={sale.id}>
+                        <TableCell className="font-medium">{sale.invoice_number}</TableCell>
+                        <TableCell>{new Date(sale.sale_date).toLocaleDateString()}</TableCell>
+                        <TableCell>{sale.customer?.name || 'Walk-in'}</TableCell>
+                        <TableCell>{sale.warehouse.name}</TableCell>
+                        <TableCell className="text-right">${sale.total_amount.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">${sale.tax_amount.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">${sale.discount_amount.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge variant={getStatusVariant(sale.status)}>
+                            {sale.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={getPaymentStatusVariant(sale.payment_status)}>
+                            {sale.payment_status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </Layout>
   );
 };

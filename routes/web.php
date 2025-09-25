@@ -20,7 +20,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    return Inertia::render('Welcome');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {

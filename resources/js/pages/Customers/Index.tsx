@@ -1,40 +1,31 @@
 import React, { useState } from 'react';
+import { Link as InertiaLink, router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Chip,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import {
-  Add as AddIcon,
+  Plus as AddIcon,
   Search as SearchIcon,
-  Visibility as ViewIcon,
+  Eye as ViewIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { router } from '@inertiajs/react';
+  Trash as DeleteIcon,
+} from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/customers';
+import { cn } from '@/lib/utils';
 
 interface Customer {
   id: number;
@@ -53,9 +44,9 @@ interface Customer {
 
 interface CustomersIndexProps {
   customers: {
-  data: Customer[];
-  links: Array<{ url: string | null; label: string; active: boolean }>;
-  meta: { current_page: number; last_page: number; per_page: number; total: number };
+    data: Customer[];
+    links: Array<{ url: string | null; label: string; active: boolean }>;
+    meta?: { current_page: number; last_page: number; per_page: number; total: number };
   };
   filters: {
     search?: string;
@@ -70,7 +61,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
   const [customerToDelete, setCustomerToDelete] = useState<Customer | null>(null);
 
   const handleSearch = () => {
-    router.get(indexRoute.url(), {
+    router.get('/customers', {
       search: searchTerm,
       status: statusFilter,
     }, {
@@ -86,174 +77,195 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
 
   const confirmDelete = () => {
     if (customerToDelete) {
-      router.delete(destroyRoute.url({ customer: customerToDelete.id }));
+      router.delete(`/customers/${customerToDelete.id}`);
     }
     setDeleteDialogOpen(false);
     setCustomerToDelete(null);
   };
 
   return (
-    <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Customers
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => router.visit(createRoute.url())}
-          >
+    <Layout title="Customers">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Customers</h1>
+            <p className="text-muted-foreground">
+              Manage your customer information and relationships
+            </p>
+          </div>
+          <Button onClick={() => router.visit('/customers/create')}>
+            <AddIcon className="mr-2 h-4 w-4" />
             New Customer
           </Button>
-        </Box>
+        </div>
 
         {/* Filters */}
-        <Card sx={{ mb: 3 }}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Filter Customers</CardTitle>
+          </CardHeader>
           <CardContent>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  label="Search"
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 items-end">
+              <div className="space-y-2">
+                <Label htmlFor="search">Search</Label>
+                <Input
+                  id="search"
+                  placeholder="Search by name or code"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton onClick={handleSearch}>
-                        <SearchIcon />
-                      </IconButton>
-                    ),
-                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Status</InputLabel>
-                  <Select
-                    value={statusFilter}
-                    label="Status"
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                  >
-                    <MenuItem value="">All Status</MenuItem>
-                    <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="inactive">Inactive</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <Button
-                  variant="outlined"
-                  onClick={handleSearch}
-                  sx={{ height: '56px' }}
-                >
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleSearch}>
+                  <SearchIcon className="mr-2 h-4 w-4" />
                   Apply Filters
                 </Button>
-              </Grid>
-            </Grid>
+                <Button variant="outline" onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('');
+                  router.get('/customers', {}, { preserveState: true, replace: true });
+                }}>
+                  Clear
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* Customers Table */}
         <Card>
+          <CardHeader>
+            <CardTitle>Customers List</CardTitle>
+          </CardHeader>
           <CardContent>
-            <TableContainer component={Paper}>
+            <div className="rounded-md border">
               <Table>
-                <TableHead>
+                <TableHeader>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Code</TableCell>
-                    <TableCell>Contact Person</TableCell>
-                    <TableCell>Phone</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Credit Limit</TableCell>
-                    <TableCell>Outstanding</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Actions</TableCell>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Code</TableHead>
+                    <TableHead>Contact Person</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead className="text-right">Credit Limit</TableHead>
+                    <TableHead className="text-right">Outstanding</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
-                </TableHead>
+                </TableHeader>
                 <TableBody>
-                  {customers.data.map((customer) => (
-                    <TableRow key={customer.id}>
-                      <TableCell>{customer.name}</TableCell>
-                      <TableCell>{customer.code}</TableCell>
-                      <TableCell>{customer.contact_person || 'N/A'}</TableCell>
-                      <TableCell>{customer.phone || 'N/A'}</TableCell>
-                      <TableCell>{customer.email || 'N/A'}</TableCell>
-                      <TableCell>${customer.credit_limit.toFixed(2)}</TableCell>
-                      <TableCell>${customer.outstanding_amount.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={customer.is_active ? 'Active' : 'Inactive'}
-                          color={customer.is_active ? 'success' : 'default'}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                          <IconButton
-                            size="small"
-                            onClick={() => router.visit(showRoute.url({ customer: customer.id }))}
-                          >
-                            <ViewIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => router.visit(editRoute.url({ customer: customer.id }))}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDelete(customer)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
+                  {customers.data.length > 0 ? (
+                    customers.data.map((customer) => (
+                      <TableRow key={customer.id}>
+                        <TableCell className="font-medium">{customer.name}</TableCell>
+                        <TableCell>{customer.code}</TableCell>
+                        <TableCell>{customer.contact_person || 'N/A'}</TableCell>
+                        <TableCell>{customer.phone || 'N/A'}</TableCell>
+                        <TableCell>{customer.email || 'N/A'}</TableCell>
+                        <TableCell className="text-right">${customer.credit_limit.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">${customer.outstanding_amount.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge variant={customer.is_active ? 'success' : 'secondary'}>
+                            {customer.is_active ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => router.visit(`/customers/${customer.id}`)}
+                            >
+                              <ViewIcon className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => router.visit(`/customers/${customer.id}/edit`)}
+                            >
+                              <EditIcon className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive"
+                              onClick={() => handleDelete(customer)}
+                            >
+                              <DeleteIcon className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={9} className="h-24 text-center">
+                        No customers found.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
-            </TableContainer>
+            </div>
 
             {/* Pagination */}
-            {customers.links && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                {customers.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
-                  <Button
-                    key={index}
-                    variant={link.active ? 'contained' : 'outlined'}
-                    onClick={() => link.url && router.visit(link.url)}
-                    disabled={!link.url}
-                    sx={{ mx: 0.5 }}
-                  >
-                    {link.label}
-                  </Button>
-                ))}
-              </Box>
+            {customers.meta && customers.meta.last_page > 1 && (
+              <div className="flex justify-center mt-4">
+                <div className="flex items-center space-x-2">
+                  {customers.links.map((link, index) => (
+                    <Button
+                      key={index}
+                      variant={link.active ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => link.url && router.visit(link.url)}
+                      disabled={!link.url}
+                      className={cn(
+                        link.active && 'pointer-events-none',
+                        !link.url && 'text-muted-foreground cursor-not-allowed'
+                      )}
+                    >
+                      {link.label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»')}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>
 
         {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-          <DialogTitle>Confirm Delete</DialogTitle>
-          <DialogContent>
-            <Typography>
-              Are you sure you want to delete customer {customerToDelete?.name}?
-              This action cannot be undone.
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-            <Button onClick={confirmDelete} color="error" variant="contained">
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete customer <span className="font-semibold">{customerToDelete?.name}</span>?
+                This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </Layout>
   );
 }

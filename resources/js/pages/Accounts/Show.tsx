@@ -1,24 +1,12 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-} from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import {
   Edit as EditIcon,
-  ArrowBack as BackIcon,
-} from '@mui/icons-material';
+  ArrowLeft as BackIcon,
+} from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as indexRoute, edit as editRoute } from '@/routes/accounts';
@@ -65,197 +53,158 @@ export default function AccountsShow({ account, balance }: AccountsShowProps) {
   };
 
   return (
-    <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Account Details
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<BackIcon />}
-              onClick={handleBack}
-            >
+    <Layout title="Account Details">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Account Details</h1>
+            <p className="text-muted-foreground">
+              View account information and transaction history
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleBack}>
+              <BackIcon className="mr-2 h-4 w-4" />
               Back to Accounts
             </Button>
-            <Button
-              variant="contained"
-              startIcon={<EditIcon />}
-              onClick={handleEdit}
-            >
+            <Button onClick={handleEdit}>
+              <EditIcon className="mr-2 h-4 w-4" />
               Edit Account
             </Button>
-          </Box>
-        </Box>
+          </div>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="grid gap-6 lg:grid-cols-2">
           {/* Account Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Account Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Code
-                    </Typography>
-                    <Typography variant="body1">
-                      {account.code}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Name
-                    </Typography>
-                    <Typography variant="body1">
-                      {account.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Type
-                    </Typography>
-                    <Typography variant="body1">
-                      {account.type}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Sub Type
-                    </Typography>
-                    <Typography variant="body1">
-                      {account.sub_type || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Parent Account
-                    </Typography>
-                    <Typography variant="body1">
-                      {account.parent ? `${account.parent.code} - ${account.parent.name}` : 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Status
-                    </Typography>
-                    <Chip
-                      label={account.is_active ? 'Active' : 'Inactive'}
-                      color={account.is_active ? 'success' : 'default'}
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Opening Balance
-                    </Typography>
-                    <Typography variant="h6" color={account.opening_balance >= 0 ? 'success.main' : 'error.main'}>
-                      ${account.opening_balance.toFixed(2)}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Current Balance
-                    </Typography>
-                    <Typography variant="h5" color={balance >= 0 ? 'success.main' : 'error.main'}>
-                      ${balance.toFixed(2)}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">Code</p>
+                  <p className="font-medium">{account.code}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Name</p>
+                  <p className="font-medium">{account.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Type</p>
+                  <p>{account.type}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Sub Type</p>
+                  <p>{account.sub_type || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Parent Account</p>
+                  <p>{account.parent ? `${account.parent.code} - ${account.parent.name}` : 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <Badge variant={account.is_active ? 'default' : 'secondary'}>
+                    {account.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Opening Balance</p>
+                <p className={`text-lg font-semibold ${account.opening_balance >= 0 ? 'text-green-600' : 'text-destructive'}`}>
+                  ${account.opening_balance.toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Current Balance</p>
+                <p className={`text-xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-destructive'}`}>
+                  ${balance.toFixed(2)}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Child Accounts */}
           {account.children && account.children.length > 0 && (
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Child Accounts
-                  </Typography>
-                  <TableContainer component={Paper} variant="outlined">
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Code</TableCell>
-                          <TableCell>Name</TableCell>
-                          <TableCell>Type</TableCell>
-                          <TableCell>Status</TableCell>
+            <Card>
+              <CardHeader>
+                <CardTitle>Child Accounts</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Code</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {account.children.map((child) => (
+                        <TableRow key={child.id}>
+                          <TableCell className="font-medium">{child.code}</TableCell>
+                          <TableCell>{child.name}</TableCell>
+                          <TableCell>{child.type}</TableCell>
+                          <TableCell>
+                            <Badge variant={child.is_active ? 'default' : 'secondary'}>
+                              {child.is_active ? 'Active' : 'Inactive'}
+                            </Badge>
+                          </TableCell>
                         </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {account.children.map((child) => (
-                          <TableRow key={child.id}>
-                            <TableCell>{child.code}</TableCell>
-                            <TableCell>{child.name}</TableCell>
-                            <TableCell>{child.type}</TableCell>
-                            <TableCell>
-                              <Chip
-                                label={child.is_active ? 'Active' : 'Inactive'}
-                                color={child.is_active ? 'success' : 'default'}
-                                size="small"
-                              />
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            </Grid>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
           )}
+        </div>
 
-          {/* Recent Transactions */}
-          {account.transactions && account.transactions.length > 0 && (
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Recent Transactions
-                  </Typography>
-                  <TableContainer component={Paper} variant="outlined">
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Date</TableCell>
-                          <TableCell>Description</TableCell>
-                          <TableCell>Reference</TableCell>
-                          <TableCell align="right">Debit</TableCell>
-                          <TableCell align="right">Credit</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {account.transactions.map((transaction) => (
-                          <TableRow key={transaction.id}>
-                            <TableCell>
-                              {new Date(transaction.transaction_date).toLocaleDateString()}
-                            </TableCell>
-                            <TableCell>{transaction.description}</TableCell>
-                            <TableCell>
-                              {transaction.reference_type} #{transaction.reference_id}
-                            </TableCell>
-                            <TableCell align="right">
-                              {transaction.debit > 0 ? `$${transaction.debit.toFixed(2)}` : '-'}
-                            </TableCell>
-                            <TableCell align="right">
-                              {transaction.credit > 0 ? `$${transaction.credit.toFixed(2)}` : '-'}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            </Grid>
-          )}
-        </Grid>
-      </Box>
+        {/* Recent Transactions */}
+        {account.transactions && account.transactions.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Transactions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Reference</TableHead>
+                      <TableHead className="text-right">Debit</TableHead>
+                      <TableHead className="text-right">Credit</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {account.transactions.map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell>
+                          {new Date(transaction.transaction_date).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>{transaction.description}</TableCell>
+                        <TableCell>
+                          {transaction.reference_type} #{transaction.reference_id}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {transaction.debit > 0 ? `$${transaction.debit.toFixed(2)}` : '-'}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {transaction.credit > 0 ? `$${transaction.credit.toFixed(2)}` : '-'}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </Layout>
   );
 }

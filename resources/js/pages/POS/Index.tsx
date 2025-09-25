@@ -1,34 +1,20 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider,
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  Remove as RemoveIcon,
-  Delete as DeleteIcon,
+  Plus as AddIcon,
+  Minus as RemoveIcon,
+  Trash2 as DeleteIcon,
   Search as SearchIcon,
   ShoppingCart as ShoppingCartIcon,
-  Payment as PaymentIcon,
-} from '@mui/icons-material';
+  CreditCard as PaymentIcon,
+} from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 
@@ -140,268 +126,274 @@ export default function POS({ products }: POSProps) {
 
   return (
     <Layout title="Point of Sale">
-      <Box>
-        <Typography variant="h4" gutterBottom>
-          Point of Sale
-        </Typography>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Point of Sale</h1>
+          <p className="text-muted-foreground">
+            Process sales quickly and efficiently
+          </p>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="grid gap-6 lg:grid-cols-3">
           {/* Product Search and Selection */}
-          <Grid item xs={12} md={8}>
+          <div className="lg:col-span-2">
             <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <SearchIcon className="h-5 w-5" />
                   Products
-                </Typography>
-                
-                <TextField
-                  fullWidth
-                  label="Search Products"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    startAdornment: <SearchIcon sx={{ mr: 1 }} />,
-                  }}
-                  sx={{ mb: 2 }}
-                />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="relative">
+                  <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search products..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
 
-                <Grid container spacing={2}>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredProducts.map((product) => (
-                    <Grid item xs={12} sm={6} md={4} key={product.id}>
-                      <Card
-                        variant="outlined"
-                        sx={{
-                          cursor: 'pointer',
-                          '&:hover': { bgcolor: 'action.hover' },
-                        }}
-                        onClick={() => setSelectedProduct(product)}
-                      >
-                        <CardContent>
-                          <Typography variant="subtitle1" noWrap>
+                    <Card
+                      key={product.id}
+                      className="cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
+                      onClick={() => setSelectedProduct(product)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="space-y-2">
+                          <h3 className="font-medium truncate">
                             {product.name}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
                             SKU: {product.sku}
-                          </Typography>
-                          <Typography variant="h6" color="primary">
-                            ${product.price.toFixed(2)}
-                          </Typography>
-                          <Typography variant="caption" color="textSecondary">
-                            {product.unit}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </Grid>
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-semibold text-primary">
+                              ${product.price.toFixed(2)}
+                            </span>
+                            <Badge variant="secondary" className="text-xs">
+                              {product.unit}
+                            </Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
-                </Grid>
+                </div>
               </CardContent>
             </Card>
-          </Grid>
+          </div>
 
           {/* Cart */}
-          <Grid item xs={12} md={4}>
+          <div>
             <Card>
-              <CardContent>
-                <Box display="flex" alignItems="center" mb={2}>
-                  <ShoppingCartIcon sx={{ mr: 1 }} />
-                  <Typography variant="h6">
-                    Cart ({cart.length} items)
-                  </Typography>
-                </Box>
-
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingCartIcon className="h-5 w-5" />
+                  Cart ({cart.length} items)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 {cart.length === 0 ? (
-                  <Typography color="textSecondary" textAlign="center" py={4}>
+                  <div className="text-center py-8 text-muted-foreground">
                     No items in cart
-                  </Typography>
+                  </div>
                 ) : (
                   <>
-                    <TableContainer component={Paper} variant="outlined">
-                      <Table size="small">
-                        <TableHead>
+                    <div className="border rounded-lg">
+                      <Table>
+                        <TableHeader>
                           <TableRow>
-                            <TableCell>Item</TableCell>
-                            <TableCell align="center">Qty</TableCell>
-                            <TableCell align="right">Total</TableCell>
-                            <TableCell align="center">Action</TableCell>
+                            <TableHead>Item</TableHead>
+                            <TableHead className="text-center">Qty</TableHead>
+                            <TableHead className="text-right">Total</TableHead>
+                            <TableHead className="text-center">Action</TableHead>
                           </TableRow>
-                        </TableHead>
+                        </TableHeader>
                         <TableBody>
                           {cart.map((item) => (
                             <TableRow key={item.id}>
                               <TableCell>
-                                <Typography variant="body2" noWrap>
-                                  {item.product.name}
-                                </Typography>
-                                <Typography variant="caption" color="textSecondary">
-                                  ${item.unitPrice.toFixed(2)}
-                                </Typography>
+                                <div className="space-y-1">
+                                  <p className="font-medium text-sm truncate">
+                                    {item.product.name}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    ${item.unitPrice.toFixed(2)}
+                                  </p>
+                                </div>
                               </TableCell>
-                              <TableCell align="center">
-                                <Box display="flex" alignItems="center" justifyContent="center">
-                                  <IconButton
-                                    size="small"
+                              <TableCell className="text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-6 w-6"
                                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                   >
-                                    <RemoveIcon fontSize="small" />
-                                  </IconButton>
-                                  <Typography variant="body2" sx={{ mx: 1 }}>
+                                    <RemoveIcon className="h-3 w-3" />
+                                  </Button>
+                                  <span className="text-sm font-medium min-w-[2rem] text-center">
                                     {item.quantity}
-                                  </Typography>
-                                  <IconButton
-                                    size="small"
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-6 w-6"
                                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                   >
-                                    <AddIcon fontSize="small" />
-                                  </IconButton>
-                                </Box>
+                                    <AddIcon className="h-3 w-3" />
+                                  </Button>
+                                </div>
                               </TableCell>
-                              <TableCell align="right">
+                              <TableCell className="text-right font-medium">
                                 ${item.total.toFixed(2)}
                               </TableCell>
-                              <TableCell align="center">
-                                <IconButton
-                                  size="small"
-                                  color="error"
+                              <TableCell className="text-center">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-6 w-6 text-destructive hover:text-destructive"
                                   onClick={() => removeFromCart(item.id)}
                                 >
-                                  <DeleteIcon fontSize="small" />
-                                </IconButton>
+                                  <DeleteIcon className="h-3 w-3" />
+                                </Button>
                               </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
-                    </TableContainer>
+                    </div>
 
-                    <Divider sx={{ my: 2 }} />
+                    <Separator />
 
-                    <Box>
-                      <Box display="flex" justifyContent="space-between" mb={1}>
-                        <Typography>Subtotal:</Typography>
-                        <Typography>${getSubtotal().toFixed(2)}</Typography>
-                      </Box>
-                      <Box display="flex" justifyContent="space-between" mb={1}>
-                        <Typography>Tax (10%):</Typography>
-                        <Typography>${getTax().toFixed(2)}</Typography>
-                      </Box>
-                      <Divider sx={{ my: 1 }} />
-                      <Box display="flex" justifyContent="space-between" mb={2}>
-                        <Typography variant="h6">Total:</Typography>
-                        <Typography variant="h6">${getTotal().toFixed(2)}</Typography>
-                      </Box>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Subtotal:</span>
+                        <span>${getSubtotal().toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Tax (10%):</span>
+                        <span>${getTax().toFixed(2)}</span>
+                      </div>
+                      <Separator />
+                      <div className="flex justify-between font-semibold">
+                        <span>Total:</span>
+                        <span>${getTotal().toFixed(2)}</span>
+                      </div>
+                    </div>
 
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        size="large"
-                        startIcon={<PaymentIcon />}
-                        onClick={() => setPaymentDialogOpen(true)}
-                        disabled={cart.length === 0}
-                      >
-                        Process Sale
-                      </Button>
-                    </Box>
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      onClick={() => setPaymentDialogOpen(true)}
+                      disabled={cart.length === 0}
+                    >
+                      <PaymentIcon className="mr-2 h-4 w-4" />
+                      Process Sale
+                    </Button>
                   </>
                 )}
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
+          </div>
+        </div>
 
         {/* Product Selection Dialog */}
-        <Dialog
-          open={!!selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>
-            Add to Cart
-          </DialogTitle>
-          <DialogContent>
+        <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add to Cart</DialogTitle>
+              <DialogDescription>
+                Select the quantity for this product
+              </DialogDescription>
+            </DialogHeader>
             {selectedProduct && (
-              <Box>
-                <Typography variant="h6" gutterBottom>
-                  {selectedProduct.name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" gutterBottom>
-                  SKU: {selectedProduct.sku} | Price: ${selectedProduct.price.toFixed(2)}
-                </Typography>
-                <TextField
-                  fullWidth
-                  label="Quantity"
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  sx={{ mt: 2 }}
-                />
-              </Box>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">{selectedProduct.name}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    SKU: {selectedProduct.sku} | Price: ${selectedProduct.price.toFixed(2)}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quantity">Quantity</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  />
+                </div>
+              </div>
             )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setSelectedProduct(null)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => selectedProduct && addToCart(selectedProduct)}
+              >
+                Add to Cart
+              </Button>
+            </DialogFooter>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setSelectedProduct(null)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => selectedProduct && addToCart(selectedProduct)}
-              variant="contained"
-            >
-              Add to Cart
-            </Button>
-          </DialogActions>
         </Dialog>
 
         {/* Payment Dialog */}
-        <Dialog
-          open={paymentDialogOpen}
-          onClose={() => setPaymentDialogOpen(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>
-            Process Payment
-          </DialogTitle>
-          <DialogContent>
-            <TextField
-              fullWidth
-              label="Customer Name (Optional)"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-            <Typography variant="h6" gutterBottom>
-              Order Summary
-            </Typography>
-            {cart.map((item) => (
-              <Box key={item.id} display="flex" justifyContent="space-between" mb={1}>
-                <Typography variant="body2">
-                  {item.product.name} x {item.quantity}
-                </Typography>
-                <Typography variant="body2">
-                  ${item.total.toFixed(2)}
-                </Typography>
-              </Box>
-            ))}
-            <Divider sx={{ my: 1 }} />
-            <Box display="flex" justifyContent="space-between">
-              <Typography variant="h6">Total:</Typography>
-              <Typography variant="h6">${getTotal().toFixed(2)}</Typography>
-            </Box>
+        <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Process Payment</DialogTitle>
+              <DialogDescription>
+                Complete the sale transaction
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="customer-name">Customer Name (Optional)</Label>
+                <Input
+                  id="customer-name"
+                  placeholder="Walk-in Customer"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-semibold">Order Summary</h4>
+                <div className="space-y-1">
+                  {cart.map((item) => (
+                    <div key={item.id} className="flex justify-between text-sm">
+                      <span>
+                        {item.product.name} x {item.quantity}
+                      </span>
+                      <span>${item.total.toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <Separator />
+                <div className="flex justify-between font-semibold">
+                  <span>Total:</span>
+                  <span>${getTotal().toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setPaymentDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={processSale} className="bg-green-600 hover:bg-green-700">
+                Complete Sale
+              </Button>
+            </DialogFooter>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setPaymentDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={processSale}
-              variant="contained"
-              color="success"
-            >
-              Complete Sale
-            </Button>
-          </DialogActions>
         </Dialog>
-      </Box>
+      </div>
     </Layout>
   );
 }

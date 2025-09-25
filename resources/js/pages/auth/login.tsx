@@ -1,20 +1,16 @@
 import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController';
-import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { request } from '@/routes/password';
-import { Form, Head } from '@inertiajs/react';
-import {
-    Box,
-    Button,
-    Checkbox,
-    CircularProgress,
-    FormControlLabel,
-    TextField,
-    Typography,
-    Alert,
-    Link as MuiLink,
-} from '@mui/material';
-import { Link } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import AppLogoIcon from '@/components/app-logo-icon';
+import { home } from '@/routes';
+import { Loader2 } from 'lucide-react';
 
 interface LoginProps {
     status?: string;
@@ -23,104 +19,121 @@ interface LoginProps {
 
 export default function Login({ status, canResetPassword }: LoginProps) {
     return (
-        <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
-        >
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
             <Head title="Log in" />
-
-            <Form
-                {...AuthenticatedSessionController.store.form()}
-                resetOnSuccess={['password']}
-            >
-                {({ processing, errors }) => (
-                    <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                        <TextField
-                            id="email"
-                            name="email"
-                            type="email"
-                            label="Email address"
-                            autoFocus
-                            autoComplete="email"
-                            placeholder="email@example.com"
-                            error={!!errors.email}
-                            helperText={errors.email}
-                            fullWidth
-                            variant="outlined"
-                        />
-
-                        <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                            <Box component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Typography variant="body2" component="label" htmlFor="password">
-                                    Password
-                                </Typography>
-                                {canResetPassword && (
-                                    <MuiLink
-                                        component={Link}
-                                        href={request()}
-                                        variant="body2"
-                                        sx={{ textDecoration: 'none', fontSize: '0.875rem' }}
-                                    >
-                                        Forgot password?
-                                    </MuiLink>
-                                )}
-                            </Box>
-                            <TextField
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="current-password"
-                                placeholder="Password"
-                                error={!!errors.password}
-                                helperText={errors.password}
-                                fullWidth
-                                variant="outlined"
-                            />
-                        </Box>
-
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    id="remember"
-                                    name="remember"
-                                />
-                            }
-                            label="Remember me"
-                        />
-
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            fullWidth
-                            disabled={processing}
-                            sx={{ mt: 2 }}
-                            data-test="login-button"
-                        >
-                            {processing && (
-                                <CircularProgress size={20} sx={{ mr: 1 }} />
-                            )}
-                            Log in
-                        </Button>
-
-                        <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
-                            Don't have an account?{' '}
-                            <MuiLink
-                                component={Link}
-                                href={register()}
-                                sx={{ textDecoration: 'none' }}
+            
+            <div className="w-full max-w-md">
+                <Card>
+                    <CardHeader className="space-y-4">
+                        <div className="flex flex-col items-center space-y-4">
+                            <Link
+                                href={home()}
+                                className="flex flex-col items-center space-y-2 text-foreground hover:text-primary transition-colors"
                             >
-                                Sign up
-                            </MuiLink>
-                        </Typography>
-                    </Box>
-                )}
-            </Form>
+                                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                                    <AppLogoIcon className="w-9 h-9 fill-current text-primary" />
+                                </div>
+                            </Link>
+                            
+                            <div className="text-center space-y-2">
+                                <CardTitle className="text-2xl font-medium">
+                                    Log in to your account
+                                </CardTitle>
+                                <CardDescription>
+                                    Enter your email and password below to log in
+                                </CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    
+                    <CardContent>
+                        <Form
+                            {...AuthenticatedSessionController.store.form()}
+                            resetOnSuccess={['password']}
+                        >
+                            {({ processing, errors }) => (
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email">Email address</Label>
+                                        <Input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            autoFocus
+                                            autoComplete="email"
+                                            placeholder="email@example.com"
+                                            className={errors.email ? 'border-destructive' : ''}
+                                        />
+                                        {errors.email && (
+                                            <p className="text-sm text-destructive">{errors.email}</p>
+                                        )}
+                                    </div>
 
-            {status && (
-                <Alert severity="success" sx={{ mt: 2 }}>
-                    {status}
-                </Alert>
-            )}
-        </AuthLayout>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="password">Password</Label>
+                                            {canResetPassword && (
+                                                <Link
+                                                    href={request()}
+                                                    className="text-sm text-primary hover:text-primary/80 transition-colors"
+                                                >
+                                                    Forgot password?
+                                                </Link>
+                                            )}
+                                        </div>
+                                        <Input
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            autoComplete="current-password"
+                                            placeholder="Password"
+                                            className={errors.password ? 'border-destructive' : ''}
+                                        />
+                                        {errors.password && (
+                                            <p className="text-sm text-destructive">{errors.password}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox id="remember" name="remember" />
+                                        <Label htmlFor="remember" className="text-sm font-normal">
+                                            Remember me
+                                        </Label>
+                                    </div>
+
+                                    <Button
+                                        type="submit"
+                                        className="w-full"
+                                        disabled={processing}
+                                        data-test="login-button"
+                                    >
+                                        {processing && (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        )}
+                                        Log in
+                                    </Button>
+
+                                    <p className="text-center text-sm text-muted-foreground">
+                                        Don't have an account?{' '}
+                                        <Link
+                                            href={register()}
+                                            className="text-primary hover:text-primary/80 transition-colors"
+                                        >
+                                            Sign up
+                                        </Link>
+                                    </p>
+                                </div>
+                            )}
+                        </Form>
+
+                        {status && (
+                            <Alert className="mt-4">
+                                <AlertDescription>{status}</AlertDescription>
+                            </Alert>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
     );
 }

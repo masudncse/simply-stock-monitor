@@ -1,4 +1,4 @@
-import { Breadcrumbs as MuiBreadcrumbs, Link as MuiLink, Typography } from '@mui/material';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Fragment } from 'react';
@@ -8,33 +8,31 @@ export function Breadcrumbs({
 }: {
     breadcrumbs: BreadcrumbItemType[];
 }) {
+    if (breadcrumbs.length === 0) {
+        return null;
+    }
+
     return (
-        <>
-            {breadcrumbs.length > 0 && (
-                <MuiBreadcrumbs>
-                    {breadcrumbs.map((item, index) => {
-                        const isLast = index === breadcrumbs.length - 1;
-                        return (
-                            <Fragment key={index}>
+        <Breadcrumb>
+            <BreadcrumbList>
+                {breadcrumbs.map((item, index) => {
+                    const isLast = index === breadcrumbs.length - 1;
+                    return (
+                        <Fragment key={index}>
+                            <BreadcrumbItem>
                                 {isLast ? (
-                                    <Typography color="text.primary">
-                                        {item.title}
-                                    </Typography>
+                                    <BreadcrumbPage>{item.title}</BreadcrumbPage>
                                 ) : (
-                                    <MuiLink
-                                        component={Link}
-                                        href={item.href}
-                                        color="inherit"
-                                        underline="hover"
-                                    >
-                                        {item.title}
-                                    </MuiLink>
+                                    <BreadcrumbLink asChild>
+                                        <Link href={item.href}>{item.title}</Link>
+                                    </BreadcrumbLink>
                                 )}
-                            </Fragment>
-                        );
-                    })}
-                </MuiBreadcrumbs>
-            )}
-        </>
+                            </BreadcrumbItem>
+                            {!isLast && <BreadcrumbSeparator />}
+                        </Fragment>
+                    );
+                })}
+            </BreadcrumbList>
+        </Breadcrumb>
     );
 }

@@ -1,28 +1,17 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-} from '@mui/material';
+import { Link as InertiaLink, router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import {
   Edit as EditIcon,
-  ArrowBack as BackIcon,
-} from '@mui/icons-material';
-import { router } from '@inertiajs/react';
+  ArrowLeft as BackIcon,
+  DollarSign as DollarSignIcon,
+  CreditCard as CreditCardIcon,
+  CircleDollarSign as OutstandingIcon,
+} from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { index as indexRoute, edit as editRoute } from '@/routes/customers';
-import { show as salesShowRoute } from '@/routes/sales';
 
 interface Sale {
   id: number;
@@ -55,270 +44,208 @@ interface CustomersShowProps {
 }
 
 export default function CustomersShow({ customer }: CustomersShowProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const getStatusVariant = (status: string) => {
+    switch (status.toLowerCase()) {
       case 'pending':
-        return 'warning';
+        return 'secondary';
       case 'completed':
         return 'success';
       case 'cancelled':
-        return 'error';
+        return 'destructive';
       default:
-        return 'default';
+        return 'outline';
     }
   };
 
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
+  const getPaymentStatusVariant = (status: string) => {
+    switch (status.toLowerCase()) {
       case 'pending':
-        return 'warning';
+        return 'secondary';
       case 'paid':
         return 'success';
       case 'partial':
-        return 'info';
+        return 'secondary';
       case 'overdue':
-        return 'error';
+        return 'destructive';
       default:
-        return 'default';
+        return 'outline';
     }
   };
 
-  return (
-    <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Customer Details
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<BackIcon />}
-              onClick={() => router.visit(indexRoute.url())}
-            >
-              Back
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<EditIcon />}
-              onClick={() => router.visit(editRoute.url({ customer: customer.id }))}
-            >
-              Edit
-            </Button>
-          </Box>
-        </Box>
+  const availableCredit = customer.credit_limit - customer.outstanding_amount;
 
-        <Grid container spacing={3}>
+  return (
+    <Layout title={`Customer Details - ${customer.name}`}>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Customer Details - {customer.name}</h1>
+            <p className="text-muted-foreground">
+              Detailed information about the customer
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => router.visit('/customers')}>
+              <BackIcon className="mr-2 h-4 w-4" />
+              Back to Customers
+            </Button>
+            <Button onClick={() => router.visit(`/customers/${customer.id}/edit`)}>
+              <EditIcon className="mr-2 h-4 w-4" />
+              Edit Customer
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Customer Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Customer Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Name
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {customer.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Code
-                    </Typography>
-                    <Typography variant="body1">
-                      {customer.code}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Contact Person
-                    </Typography>
-                    <Typography variant="body1">
-                      {customer.contact_person || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Status
-                    </Typography>
-                    <Chip
-                      label={customer.is_active ? 'Active' : 'Inactive'}
-                      color={customer.is_active ? 'success' : 'default'}
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Phone
-                    </Typography>
-                    <Typography variant="body1">
-                      {customer.phone || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Email
-                    </Typography>
-                    <Typography variant="body1">
-                      {customer.email || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Address
-                    </Typography>
-                    <Typography variant="body1">
-                      {customer.address || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Tax Number
-                    </Typography>
-                    <Typography variant="body1">
-                      {customer.tax_number || 'N/A'}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Customer Information</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Name</p>
+                <p className="font-medium">{customer.name}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Code</p>
+                <p className="font-medium">{customer.code}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Contact Person</p>
+                <p>{customer.contact_person || 'N/A'}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Status</p>
+                <Badge variant={customer.is_active ? 'success' : 'secondary'}>
+                  {customer.is_active ? 'Active' : 'Inactive'}
+                </Badge>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Phone</p>
+                <p>{customer.phone || 'N/A'}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Email</p>
+                <p>{customer.email || 'N/A'}</p>
+              </div>
+              <div className="space-y-1 md:col-span-2">
+                <p className="text-sm text-muted-foreground">Address</p>
+                <p>{customer.address || 'N/A'}</p>
+              </div>
+              <div className="space-y-1 md:col-span-2">
+                <p className="text-sm text-muted-foreground">Tax Number</p>
+                <p>{customer.tax_number || 'N/A'}</p>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Financial Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Financial Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Credit Limit
-                    </Typography>
-                    <Typography variant="h6" color="primary">
-                      ${customer.credit_limit.toFixed(2)}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Outstanding Amount
-                    </Typography>
-                    <Typography variant="h6" color={customer.outstanding_amount > 0 ? 'error' : 'success'}>
-                      ${customer.outstanding_amount.toFixed(2)}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Available Credit
-                    </Typography>
-                    <Typography variant="h6" color="success">
-                      ${(customer.credit_limit - customer.outstanding_amount).toFixed(2)}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Financial Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CreditCardIcon className="h-5 w-5 text-primary" />
+                  <p className="text-sm text-muted-foreground">Credit Limit</p>
+                </div>
+                <p className="font-semibold text-lg">${customer.credit_limit.toFixed(2)}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <OutstandingIcon className="h-5 w-5 text-destructive" />
+                  <p className="text-sm text-muted-foreground">Outstanding Amount</p>
+                </div>
+                <p className="font-semibold text-lg text-destructive">${customer.outstanding_amount.toFixed(2)}</p>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t">
+                <div className="flex items-center gap-2">
+                  <DollarSignIcon className="h-5 w-5 text-success" />
+                  <p className="text-sm text-muted-foreground">Available Credit</p>
+                </div>
+                <p className="font-bold text-xl text-success">${availableCredit.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          {/* Recent Sales */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Recent Sales
-                </Typography>
-                {customer.sales.length > 0 ? (
-                  <TableContainer component={Paper}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Invoice #</TableCell>
-                          <TableCell>Date</TableCell>
-                          <TableCell align="right">Amount</TableCell>
-                          <TableCell>Status</TableCell>
-                          <TableCell>Payment</TableCell>
-                          <TableCell>Actions</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {customer.sales.map((sale) => (
-                          <TableRow key={sale.id}>
-                            <TableCell>{sale.invoice_number}</TableCell>
-                            <TableCell>
-                              {new Date(sale.sale_date).toLocaleDateString()}
-                            </TableCell>
-                            <TableCell align="right">${sale.total_amount.toFixed(2)}</TableCell>
-                            <TableCell>
-                              <Chip
-                                label={sale.status}
-                                color={getStatusColor(sale.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Chip
-                                label={sale.payment_status}
-                                color={getPaymentStatusColor(sale.payment_status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                size="small"
-                                onClick={() => router.visit(salesShowRoute.url({ sale: sale.id }))}
-                              >
-                                View
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
-                  <Typography color="textSecondary">
-                    No sales found for this customer.
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
+        {/* Recent Sales */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Sales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {customer.sales.length > 0 ? (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Invoice #</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Payment</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {customer.sales.map((sale) => (
+                      <TableRow key={sale.id}>
+                        <TableCell className="font-medium">{sale.invoice_number}</TableCell>
+                        <TableCell>{new Date(sale.sale_date).toLocaleDateString()}</TableCell>
+                        <TableCell className="text-right">${sale.total_amount.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge variant={getStatusVariant(sale.status)}>
+                            {sale.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={getPaymentStatusVariant(sale.payment_status)}>
+                            {sale.payment_status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="h-auto p-0"
+                            onClick={() => router.visit(`/sales/${sale.id}`)}
+                          >
+                            View
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <p className="text-muted-foreground">
+                No sales found for this customer.
+              </p>
+            )}
+          </CardContent>
+        </Card>
 
-          {/* Additional Information */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Additional Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Created At
-                    </Typography>
-                    <Typography variant="body1">
-                      {new Date(customer.created_at).toLocaleString()}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Last Updated
-                    </Typography>
-                    <Typography variant="body1">
-                      {new Date(customer.updated_at).toLocaleString()}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Box>
+        {/* Additional Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Audit Information</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Created At</p>
+              <p>{new Date(customer.created_at).toLocaleString()}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Last Updated</p>
+              <p>{new Date(customer.updated_at).toLocaleString()}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </Layout>
   );
 }

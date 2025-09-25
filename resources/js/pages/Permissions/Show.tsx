@@ -1,24 +1,18 @@
 import React from 'react';
+import { Link as InertiaLink } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    Grid,
-    Typography,
-    Divider,
-    Stack,
-    Paper,
-} from '@mui/material';
-import {
-    Edit as EditIcon,
-    ArrowBack as BackIcon,
-    Security as SecurityIcon,
-    Shield as ShieldIcon,
-} from '@mui/icons-material';
-import { Link } from '@inertiajs/react';
-import Layout from '@/layouts/Layout';
+  Edit as EditIcon,
+  ArrowLeft as BackIcon,
+  Shield as SecurityIcon,
+  ShieldCheck as ShieldCheckIcon,
+  Calendar as CalendarIcon,
+  Clock as ClockIcon,
+} from 'lucide-react';
+import Layout from '../../layouts/Layout';
 
 interface Permission {
     id: number;
@@ -39,36 +33,36 @@ interface PermissionsShowProps {
 }
 
 export default function PermissionsShow({ permission }: PermissionsShowProps) {
-    const getRoleColor = (roleName: string): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+    const getRoleVariant = (roleName: string) => {
         switch (roleName.toLowerCase()) {
             case 'admin':
-                return 'error';
+                return 'destructive';
             case 'sales':
                 return 'primary';
             case 'storekeeper':
-                return 'info';
+                return 'secondary';
             case 'accountant':
                 return 'success';
             default:
-                return 'default';
+                return 'outline';
         }
     };
 
-    const getPermissionColor = (permissionName: string): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+    const getPermissionVariant = (permissionName: string) => {
         const action = permissionName.split('-')[0];
         switch (action) {
             case 'view':
-                return 'info';
+                return 'secondary';
             case 'create':
                 return 'success';
             case 'edit':
-                return 'warning';
+                return 'default';
             case 'delete':
-                return 'error';
+                return 'destructive';
             case 'assign':
                 return 'primary';
             default:
-                return 'default';
+                return 'outline';
         }
     };
 

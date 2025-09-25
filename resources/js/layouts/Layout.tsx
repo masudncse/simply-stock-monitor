@@ -1,43 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import {
-  AppBar,
-  Box,
-  CssBaseline,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Typography,
-  Avatar,
-  Menu,
-  MenuItem,
-  Divider,
-  ListItemAvatar,
-} from '@mui/material';
-import {
-  Menu as MenuIcon,
-  Dashboard as DashboardIcon,
-  Inventory as InventoryIcon,
-  ShoppingCart as ShoppingCartIcon,
-  Store as StoreIcon,
-  People as PeopleIcon,
-  AccountBalance as AccountBalanceIcon,
-  Assessment as AssessmentIcon,
-  Settings as SettingsIcon,
-  Add as AddIcon,
-  Logout,
-  Person,
-  Lock,
-} from '@mui/icons-material';
 import { Link, usePage, router } from '@inertiajs/react';
 import { logout } from '@/routes';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editPassword } from '@/routes/password';
 import { type SharedData } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import {
+  Menu as MenuIcon,
+  LayoutDashboard as DashboardIcon,
+  Package as InventoryIcon,
+  ShoppingCart as ShoppingCartIcon,
+  Store as StoreIcon,
+  Users as PeopleIcon,
+  CreditCard as AccountBalanceIcon,
+  BarChart3 as AssessmentIcon,
+  Settings as SettingsIcon,
+  Plus as AddIcon,
+  LogOut,
+  User,
+  Lock,
+} from 'lucide-react';
 
 const drawerWidth = 240;
 
@@ -47,22 +34,21 @@ interface LayoutProps {
 }
 
 const menuItems = [
-  { text: 'Dashboard', icon: <DashboardIcon />, href: '/dashboard' },
-  { text: 'POS', icon: <ShoppingCartIcon />, href: '/pos' },
-  { text: 'Products', icon: <InventoryIcon />, href: '/products' },
-  { text: 'Stock', icon: <StoreIcon />, href: '/stock' },
-  { text: 'Purchases', icon: <ShoppingCartIcon />, href: '/purchases' },
-  { text: 'Sales', icon: <AddIcon />, href: '/sales' },
-  { text: 'Customers', icon: <PeopleIcon />, href: '/customers' },
-  { text: 'Suppliers', icon: <PeopleIcon />, href: '/suppliers' },
-  { text: 'Accounts', icon: <AccountBalanceIcon />, href: '/accounts' },
-  { text: 'Reports', icon: <AssessmentIcon />, href: '/reports' },
-  { text: 'Settings', icon: <SettingsIcon />, href: '/settings' },
+  { text: 'Dashboard', icon: <DashboardIcon className="h-5 w-5" />, href: '/dashboard' },
+  { text: 'POS', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/pos' },
+  { text: 'Products', icon: <InventoryIcon className="h-5 w-5" />, href: '/products' },
+  { text: 'Stock', icon: <StoreIcon className="h-5 w-5" />, href: '/stock' },
+  { text: 'Purchases', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/purchases' },
+  { text: 'Sales', icon: <AddIcon className="h-5 w-5" />, href: '/sales' },
+  { text: 'Customers', icon: <PeopleIcon className="h-5 w-5" />, href: '/customers' },
+  { text: 'Suppliers', icon: <PeopleIcon className="h-5 w-5" />, href: '/suppliers' },
+  { text: 'Accounts', icon: <AccountBalanceIcon className="h-5 w-5" />, href: '/accounts' },
+  { text: 'Reports', icon: <AssessmentIcon className="h-5 w-5" />, href: '/reports' },
+  { text: 'Settings', icon: <SettingsIcon className="h-5 w-5" />, href: '/settings' },
 ];
 
 export default function Layout({ children, title = 'Stock Management' }: LayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { auth } = usePage<SharedData>().props;
 
   // Handle browser back/forward navigation
@@ -97,16 +83,7 @@ export default function Layout({ children, title = 'Stock Management' }: LayoutP
     setMobileOpen(!mobileOpen);
   };
 
-  const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleUserMenuClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleLogout = () => {
-    handleUserMenuClose();
     router.post(logout().url);
   };
 
@@ -119,177 +96,126 @@ export default function Layout({ children, title = 'Stock Management' }: LayoutP
       .slice(0, 2);
   };
 
-  const drawer = (
-    <div>
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
-          Stock Manager
-        </Typography>
-      </Toolbar>
-      <List>
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* Logo */}
+      <div className="flex items-center px-6 py-4 border-b">
+        <h2 className="text-xl font-semibold text-foreground">Stock Manager</h2>
+      </div>
+      
+      {/* Navigation */}
+      <nav className="flex-1 px-4 py-4 space-y-2">
         {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton component={Link} href={item.href}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
+          <Link
+            key={item.text}
+            href={item.href}
+            className={cn(
+              "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+              "hover:bg-accent hover:text-accent-foreground",
+              "focus:bg-accent focus:text-accent-foreground focus:outline-none"
+            )}
+          >
+            {item.icon}
+            <span>{item.text}</span>
+          </Link>
         ))}
-      </List>
+      </nav>
     </div>
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { md: `calc(100% - ${drawerWidth}px)` },
-          ml: { md: `${drawerWidth}px` },
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            {title}
-          </Typography>
-          
+    <div className="flex h-screen bg-background">
+      {/* Desktop Sidebar */}
+      <div className="md:flex md:w-60 md:flex-col md:fixed md:inset-y-0">
+        <div className="flex flex-col flex-grow border-r bg-card">
+          <SidebarContent />
+        </div>
+      </div>
+
+      {/* Mobile Sidebar */}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent side="left" className="w-60 p-0">
+          <SidebarContent />
+        </SheetContent>
+      </Sheet>
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 md:pl-60">
+        {/* Header */}
+        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b bg-background px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+          {/* Mobile menu button */}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <MenuIcon className="h-5 w-5" />
+                <span className="sr-only">Open sidebar</span>
+              </Button>
+            </SheetTrigger>
+          </Sheet>
+
+          {/* Page title */}
+          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+            <div className="flex flex-1 items-center">
+              <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+            </div>
+          </div>
+
           {/* User Menu */}
-          <IconButton
-            onClick={handleUserMenuOpen}
-            color="inherit"
-            sx={{ ml: 2 }}
-          >
-            <Avatar
-              sx={{ width: 32, height: 32 }}
-              src={auth.user.avatar}
-              alt={auth.user.name}
-            >
-              {getInitials(auth.user.name)}
-            </Avatar>
-          </IconButton>
-          
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleUserMenuClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            {/* User Info */}
-            <MenuItem disabled>
-              <ListItemAvatar>
-                <Avatar
-                  sx={{ width: 32, height: 32 }}
-                  src={auth.user.avatar}
-                  alt={auth.user.name}
-                >
-                  {getInitials(auth.user.name)}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                  <AvatarFallback>{getInitials(auth.user.name)}</AvatarFallback>
                 </Avatar>
-              </ListItemAvatar>
-              <Box>
-                <Typography variant="subtitle2" noWrap>
-                  {auth.user.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" noWrap>
-                  {auth.user.email}
-                </Typography>
-              </Box>
-            </MenuItem>
-            
-            <Divider />
-            
-            {/* Profile */}
-            <MenuItem 
-              component={Link} 
-              href={editProfile().url}
-              onClick={handleUserMenuClose}
-            >
-              <ListItemIcon>
-                <Person fontSize="small" />
-              </ListItemIcon>
-              Profile
-            </MenuItem>
-            
-            {/* Change Password */}
-            <MenuItem 
-              component={Link} 
-              href={editPassword().url}
-              onClick={handleUserMenuClose}
-            >
-              <ListItemIcon>
-                <Lock fontSize="small" />
-              </ListItemIcon>
-              Change Password
-            </MenuItem>
-            
-            <Divider />
-            
-            {/* Logout */}
-            <MenuItem onClick={handleLogout}>
-              <ListItemIcon>
-                <Logout fontSize="small" />
-              </ListItemIcon>
-              Logout
-            </MenuItem>
-          </Menu>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
-      >
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', md: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { md: `calc(100% - ${drawerWidth}px)` },
-        }}
-      >
-        <Toolbar />
-        {children}
-      </Box>
-    </Box>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              {/* User Info */}
+              <div className="flex items-center justify-start gap-2 p-2">
+                <div className="flex flex-col space-y-1 leading-none">
+                  <p className="font-medium">{auth.user.name}</p>
+                  <p className="w-[200px] truncate text-sm text-muted-foreground">
+                    {auth.user.email}
+                  </p>
+                </div>
+              </div>
+              <DropdownMenuSeparator />
+              
+              {/* Profile */}
+              <DropdownMenuItem asChild>
+                <Link href={editProfile().url} className="flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              
+              {/* Change Password */}
+              <DropdownMenuItem asChild>
+                <Link href={editPassword().url} className="flex items-center">
+                  <Lock className="mr-2 h-4 w-4" />
+                  Change Password
+                </Link>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              {/* Logout */}
+              <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </header>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-6">
+            {children}
+          </div>
+        </main>
+      </div>
+    </div>
   );
 }

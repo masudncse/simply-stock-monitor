@@ -1,25 +1,14 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Alert,
-} from '@mui/material';
-import {
-  ArrowBack as ArrowBackIcon,
-  Warning as WarningIcon,
-  Inventory as InventoryIcon,
-} from '@mui/icons-material';
+  ArrowLeft as ArrowBackIcon,
+  AlertTriangle as WarningIcon,
+  Package as InventoryIcon,
+} from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as stockIndexRoute } from '@/routes/stock';
@@ -58,135 +47,152 @@ export default function LowStock({ products }: LowStockProps) {
   const getStockStatus = (product: Product) => {
     const totalStock = getTotalStock(product.stocks);
     if (totalStock === 0) {
-      return { label: 'Out of Stock', color: 'error' as const };
+      return { label: 'Out of Stock', variant: 'destructive' as const };
     } else if (totalStock <= product.min_stock) {
-      return { label: 'Low Stock', color: 'warning' as const };
+      return { label: 'Low Stock', variant: 'secondary' as const };
     }
-    return { label: 'In Stock', color: 'success' as const };
+    return { label: 'In Stock', variant: 'default' as const };
   };
 
   return (
     <Layout title="Low Stock Products">
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <WarningIcon color="warning" sx={{ fontSize: 32 }} />
-            <Typography variant="h4" component="h1">
-              Low Stock Products
-            </Typography>
-          </Box>
-          <Button
-            component={Link}
-            href={stockIndexRoute.url()}
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-          >
-            Back to Stock
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-orange-50 rounded-lg">
+              <WarningIcon className="h-8 w-8 text-orange-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Low Stock Products</h1>
+              <p className="text-muted-foreground">
+                Products that need immediate attention
+              </p>
+            </div>
+          </div>
+          <Button variant="outline" asChild>
+            <Link href={stockIndexRoute.url()}>
+              <ArrowBackIcon className="mr-2 h-4 w-4" />
+              Back to Stock
+            </Link>
           </Button>
-        </Box>
+        </div>
 
         {products.length === 0 ? (
           <Card>
             <CardContent>
-              <Box sx={{ textAlign: 'center', py: 4 }}>
-                <InventoryIcon sx={{ fontSize: 64, color: 'success.main', mb: 2 }} />
-                <Typography variant="h6" color="success.main" gutterBottom>
+              <div className="text-center py-12">
+                <div className="p-4 bg-green-50 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <InventoryIcon className="h-12 w-12 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-green-600 mb-2">
                   All products are well stocked!
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
+                </h3>
+                <p className="text-muted-foreground">
                   No products are currently below their minimum stock levels.
-                </Typography>
-              </Box>
+                </p>
+              </div>
             </CardContent>
           </Card>
         ) : (
           <>
-            <Alert severity="warning" sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" gutterBottom>
-                {products.length} product{products.length !== 1 ? 's' : ''} {products.length === 1 ? 'is' : 'are'} below minimum stock level
-              </Typography>
-              <Typography variant="body2">
-                Consider reordering these products to maintain adequate inventory levels.
-              </Typography>
+            <Alert>
+              <WarningIcon className="h-4 w-4" />
+              <AlertDescription>
+                <div className="space-y-1">
+                  <p className="font-semibold">
+                    {products.length} product{products.length !== 1 ? 's' : ''} {products.length === 1 ? 'is' : 'are'} below minimum stock level
+                  </p>
+                  <p className="text-sm">
+                    Consider reordering these products to maintain adequate inventory levels.
+                  </p>
+                </div>
+              </AlertDescription>
             </Alert>
 
             <Card>
+              <CardHeader>
+                <CardTitle>Low Stock Products ({products.length})</CardTitle>
+              </CardHeader>
               <CardContent>
-                <TableContainer component={Paper} variant="outlined">
+                <div className="border rounded-lg">
                   <Table>
-                    <TableHead>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell>Product</TableCell>
-                        <TableCell>SKU</TableCell>
-                        <TableCell align="center">Min Stock</TableCell>
-                        <TableCell align="center">Current Stock</TableCell>
-                        <TableCell align="center">Status</TableCell>
-                        <TableCell align="center">Warehouses</TableCell>
+                        <TableHead>Product</TableHead>
+                        <TableHead>SKU</TableHead>
+                        <TableHead className="text-center">Min Stock</TableHead>
+                        <TableHead className="text-center">Current Stock</TableHead>
+                        <TableHead className="text-center">Status</TableHead>
+                        <TableHead className="text-center">Warehouses</TableHead>
                       </TableRow>
-                    </TableHead>
+                    </TableHeader>
                     <TableBody>
                       {products.map((product) => {
                         const totalStock = getTotalStock(product.stocks);
                         const status = getStockStatus(product);
                         
                         return (
-                          <TableRow key={product.id} hover>
+                          <TableRow key={product.id} className="hover:bg-muted/50">
                             <TableCell>
-                              <Typography variant="subtitle2" fontWeight="medium">
-                                {product.name}
-                              </Typography>
+                              <div className="font-medium">{product.name}</div>
                             </TableCell>
                             <TableCell>
-                              <Typography variant="body2" color="text.secondary">
-                                {product.sku}
-                              </Typography>
+                              <div className="text-sm text-muted-foreground">{product.sku}</div>
                             </TableCell>
-                            <TableCell align="center">
-                              <Typography variant="body2" fontWeight="medium">
-                                {product.min_stock}
-                              </Typography>
+                            <TableCell className="text-center">
+                              <div className="font-medium">{product.min_stock}</div>
                             </TableCell>
-                            <TableCell align="center">
-                              <Typography 
-                                variant="body2" 
-                                fontWeight="medium"
-                                color={totalStock === 0 ? 'error.main' : totalStock <= product.min_stock ? 'warning.main' : 'success.main'}
+                            <TableCell className="text-center">
+                              <div 
+                                className={`font-medium ${
+                                  totalStock === 0 
+                                    ? 'text-destructive' 
+                                    : totalStock <= product.min_stock 
+                                    ? 'text-orange-600' 
+                                    : 'text-green-600'
+                                }`}
                               >
                                 {totalStock}
-                              </Typography>
+                              </div>
                             </TableCell>
-                            <TableCell align="center">
-                              <Chip
-                                label={status.label}
-                                color={status.color}
-                                size="small"
-                                icon={status.color === 'error' ? <WarningIcon /> : undefined}
-                              />
+                            <TableCell className="text-center">
+                              <Badge variant={status.variant}>
+                                {status.variant === 'destructive' && (
+                                  <WarningIcon className="mr-1 h-3 w-3" />
+                                )}
+                                {status.label}
+                              </Badge>
                             </TableCell>
                             <TableCell>
-                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                              <div className="flex flex-wrap gap-1 justify-center">
                                 {product.stocks.map((stock) => (
-                                  <Chip
+                                  <Badge
                                     key={stock.id}
-                                    label={`${stock.warehouse.name}: ${stock.qty}`}
-                                    size="small"
-                                    variant="outlined"
-                                    color={stock.qty === 0 ? 'error' : stock.qty <= product.min_stock ? 'warning' : 'default'}
-                                  />
+                                    variant="outline"
+                                    className={
+                                      stock.qty === 0 
+                                        ? 'border-destructive text-destructive' 
+                                        : stock.qty <= product.min_stock 
+                                        ? 'border-orange-500 text-orange-600' 
+                                        : ''
+                                    }
+                                  >
+                                    {stock.warehouse.name}: {stock.qty}
+                                  </Badge>
                                 ))}
-                              </Box>
+                              </div>
                             </TableCell>
                           </TableRow>
                         );
                       })}
                     </TableBody>
                   </Table>
-                </TableContainer>
+                </div>
               </CardContent>
             </Card>
           </>
         )}
-      </Box>
+      </div>
     </Layout>
   );
 }

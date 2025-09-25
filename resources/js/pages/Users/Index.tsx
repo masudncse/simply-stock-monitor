@@ -1,30 +1,17 @@
 import React from 'react';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-    Paper,
-    Stack,
-    Avatar,
-} from '@mui/material';
-import {
-    Add as AddIcon,
-    Edit as EditIcon,
-    Visibility as ViewIcon,
-    Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { Link, router } from '@inertiajs/react';
-import Layout from '@/layouts/Layout';
+import { Link as InertiaLink, router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar } from '@/components/ui/avatar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { 
+  Plus as AddIcon,
+  Edit as EditIcon,
+  Eye as ViewIcon,
+  Trash as DeleteIcon,
+} from 'lucide-react';
+import Layout from '../../layouts/Layout';
 
 interface User {
     id: number;
@@ -91,131 +78,113 @@ export default function UsersIndex({ users }: UsersIndexProps) {
 
     return (
         <Layout title="Users Management">
-            <Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    <Typography variant="h4" component="h1">
-                        Users Management
-                    </Typography>
-                    <Button
-                        component={Link}
-                        href="/users/create"
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                    >
-                        Create User
+            <div className="space-y-6">
+                <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">Users Management</h1>
+                        <p className="text-muted-foreground">Manage user accounts and roles</p>
+                    </div>
+                    <Button asChild>
+                        <InertiaLink href="/users/create">
+                            <AddIcon className="mr-2 h-4 w-4" />
+                            Create User
+                        </InertiaLink>
                     </Button>
-                </Box>
+                </div>
 
                 <Card>
+                    <CardHeader>
+                        <CardTitle>Users List</CardTitle>
+                    </CardHeader>
                     <CardContent>
-                        <TableContainer component={Paper} variant="outlined">
+                        <div className="rounded-md border">
                             <Table>
-                                <TableHead>
+                                <TableHeader>
                                     <TableRow>
-                                        <TableCell>User</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>Roles</TableCell>
-                                        <TableCell>Status</TableCell>
-                                        <TableCell>Created</TableCell>
-                                        <TableCell align="center">Actions</TableCell>
+                                        <TableHead>User</TableHead>
+                                        <TableHead>Email</TableHead>
+                                        <TableHead>Roles</TableHead>
+                                        <TableHead>Status</TableHead>
+                                        <TableHead>Created</TableHead>
+                                        <TableHead className="text-center">Actions</TableHead>
                                     </TableRow>
-                                </TableHead>
+                                </TableHeader>
                                 <TableBody>
                                     {users.data.map((user) => (
-                                        <TableRow key={user.id} hover>
+                                        <TableRow key={user.id}>
                                             <TableCell>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                    <Avatar sx={{ width: 32, height: 32 }}>
-                                                        {getInitials(user.name)}
+                                                <div className="flex items-center gap-2">
+                                                    <Avatar className="h-8 w-8">
+                                                        <div className="flex h-full w-full items-center justify-center text-xs font-medium">
+                                                            {getInitials(user.name)}
+                                                        </div>
                                                     </Avatar>
-                                                    <Typography variant="subtitle2" fontWeight="medium">
-                                                        {user.name}
-                                                    </Typography>
-                                                </Box>
+                                                    <span className="font-medium">{user.name}</span>
+                                                </div>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography variant="body2">
-                                                    {user.email}
-                                                </Typography>
+                                                <span className="text-sm">{user.email}</span>
                                             </TableCell>
                                             <TableCell>
-                                                <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+                                                <div className="flex flex-wrap gap-1">
                                                     {user.roles.map((role) => (
-                                                        <Chip
-                                                            key={role.id}
-                                                            label={role.name}
-                                                            size="small"
-                                                            color={getRoleColor(role.name)}
-                                                            variant="outlined"
-                                                        />
+                                                        <Badge key={role.id} variant="outline" className="text-xs">
+                                                            {role.name}
+                                                        </Badge>
                                                     ))}
                                                     {user.roles.length === 0 && (
-                                                        <Typography variant="body2" color="text.secondary">
-                                                            No roles
-                                                        </Typography>
+                                                        <span className="text-sm text-muted-foreground">No roles</span>
                                                     )}
-                                                </Stack>
+                                                </div>
                                             </TableCell>
                                             <TableCell>
-                                                <Chip
-                                                    label={user.email_verified_at ? 'Verified' : 'Unverified'}
-                                                    size="small"
-                                                    color={user.email_verified_at ? 'success' : 'warning'}
-                                                    variant="outlined"
-                                                />
+                                                <Badge variant={user.email_verified_at ? 'success' : 'secondary'}>
+                                                    {user.email_verified_at ? 'Verified' : 'Unverified'}
+                                                </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography variant="body2" color="text.secondary">
+                                                <span className="text-sm text-muted-foreground">
                                                     {new Date(user.created_at).toLocaleDateString()}
-                                                </Typography>
+                                                </span>
                                             </TableCell>
-                                            <TableCell align="center">
-                                                <Stack direction="row" spacing={1} justifyContent="center">
-                                                    <IconButton
-                                                        component={Link}
-                                                        href={`/users/${user.id}`}
-                                                        size="small"
-                                                        color="info"
-                                                    >
-                                                        <ViewIcon />
-                                                    </IconButton>
-                                                    <IconButton
-                                                        component={Link}
-                                                        href={`/users/${user.id}/edit`}
-                                                        size="small"
-                                                        color="primary"
-                                                    >
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                    <IconButton
+                                            <TableCell className="text-center">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <Button variant="ghost" size="sm" asChild>
+                                                        <InertiaLink href={`/users/${user.id}`}>
+                                                            <ViewIcon className="h-4 w-4" />
+                                                        </InertiaLink>
+                                                    </Button>
+                                                    <Button variant="ghost" size="sm" asChild>
+                                                        <InertiaLink href={`/users/${user.id}/edit`}>
+                                                            <EditIcon className="h-4 w-4" />
+                                                        </InertiaLink>
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-destructive"
                                                         onClick={() => handleDelete(user)}
-                                                        size="small"
-                                                        color="error"
                                                         disabled={user.roles.some(role => role.name === 'Admin') && users.data.filter(u => u.roles.some(r => r.name === 'Admin')).length <= 1}
                                                     >
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                </Stack>
+                                                        <DeleteIcon className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
-                        </TableContainer>
+                        </div>
 
                         {users.data.length === 0 && (
-                            <Box sx={{ textAlign: 'center', py: 4 }}>
-                                <Typography variant="h6" color="text.secondary">
-                                    No users found
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                    Create your first user to get started
-                                </Typography>
-                            </Box>
+                            <div className="text-center py-8">
+                                <h3 className="text-lg font-semibold text-muted-foreground mb-2">No users found</h3>
+                                <p className="text-sm text-muted-foreground">Create your first user to get started</p>
+                            </div>
                         )}
                     </CardContent>
                 </Card>
-            </Box>
+            </div>
         </Layout>
     );
 }

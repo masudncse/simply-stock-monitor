@@ -1,36 +1,26 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
+import { Separator } from '@/components/ui/separator';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Autocomplete,
-  Divider,
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
+  Plus as AddIcon,
+  Trash2 as DeleteIcon,
   Save as SaveIcon,
-  ArrowBack as BackIcon,
-} from '@mui/icons-material';
+  ArrowLeft as BackIcon,
+  Check,
+  ChevronsUpDown,
+} from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { update as updateRoute, show as showRoute } from '@/routes/purchases';
+import { cn } from '@/lib/utils';
 
 interface Supplier {
   id: number;
@@ -96,6 +86,7 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
 
   const [items, setItems] = useState<PurchaseItem[]>(purchase.items);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [productOpen, setProductOpen] = useState(false);
   const [newItem, setNewItem] = useState({
     quantity: 1,
     unit_price: 0,
@@ -174,302 +165,335 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
   const totals = calculateTotals();
 
   return (
-    <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Edit Purchase - {purchase.invoice_number}
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<BackIcon />}
-            onClick={() => router.visit(showRoute.url({ purchase: purchase.id }))}
-          >
+    <Layout title={`Edit Purchase - ${purchase.invoice_number}`}>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Edit Purchase - {purchase.invoice_number}</h1>
+            <p className="text-muted-foreground">
+              Update purchase order details and items
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => router.visit(showRoute.url({ purchase: purchase.id }))}>
+            <BackIcon className="mr-2 h-4 w-4" />
             Back to Purchase
           </Button>
-        </Box>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-2">
             {/* Purchase Details */}
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Purchase Details
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <FormControl fullWidth required>
-                        <InputLabel>Supplier</InputLabel>
-                        <Select
-                          value={formData.supplier_id}
-                          label="Supplier"
-                          onChange={(e) => setFormData({ ...formData, supplier_id: e.target.value })}
-                        >
-                          {suppliers.map((supplier) => (
-                            <MenuItem key={supplier.id} value={supplier.id}>
-                              {supplier.name} ({supplier.code})
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <FormControl fullWidth required>
-                        <InputLabel>Warehouse</InputLabel>
-                        <Select
-                          value={formData.warehouse_id}
-                          label="Warehouse"
-                          onChange={(e) => setFormData({ ...formData, warehouse_id: e.target.value })}
-                        >
-                          {warehouses.map((warehouse) => (
-                            <MenuItem key={warehouse.id} value={warehouse.id}>
-                              {warehouse.name} ({warehouse.code})
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        label="Purchase Date"
-                        type="date"
-                        value={formData.purchase_date}
-                        onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
-                        InputLabelProps={{ shrink: true }}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        label="Due Date"
-                        type="date"
-                        value={formData.due_date}
-                        onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Notes"
-                        multiline
-                        rows={3}
-                        value={formData.notes}
-                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+            <Card>
+              <CardHeader>
+                <CardTitle>Purchase Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="supplier">Supplier *</Label>
+                  <Select value={formData.supplier_id} onValueChange={(value) => setFormData({ ...formData, supplier_id: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a supplier" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {suppliers.map((supplier) => (
+                        <SelectItem key={supplier.id} value={supplier.id.toString()}>
+                          {supplier.name} ({supplier.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="warehouse">Warehouse *</Label>
+                  <Select value={formData.warehouse_id} onValueChange={(value) => setFormData({ ...formData, warehouse_id: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a warehouse" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {warehouses.map((warehouse) => (
+                        <SelectItem key={warehouse.id} value={warehouse.id.toString()}>
+                          {warehouse.name} ({warehouse.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="purchase_date">Purchase Date *</Label>
+                    <Input
+                      id="purchase_date"
+                      type="date"
+                      value={formData.purchase_date}
+                      onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="due_date">Due Date</Label>
+                    <Input
+                      id="due_date"
+                      type="date"
+                      value={formData.due_date}
+                      onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Notes</Label>
+                  <Textarea
+                    id="notes"
+                    placeholder="Additional notes..."
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Add Items */}
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Add Items
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <Autocomplete
-                        options={products}
-                        getOptionLabel={(option) => `${option.name} (${option.sku})`}
-                        value={selectedProduct}
-                        onChange={(_, newValue) => {
-                          setSelectedProduct(newValue);
-                          if (newValue) {
-                            setNewItem({ ...newItem, unit_price: newValue.price });
-                          }
-                        }}
-                        renderInput={(params) => (
-                          <TextField {...params} label="Select Product" />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Quantity"
-                        type="number"
-                        value={newItem.quantity}
-                        onChange={(e) => setNewItem({ ...newItem, quantity: parseFloat(e.target.value) || 0 })}
-                        inputProps={{ min: 0.01, step: 0.01 }}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Unit Price"
-                        type="number"
-                        value={newItem.unit_price}
-                        onChange={(e) => setNewItem({ ...newItem, unit_price: parseFloat(e.target.value) || 0 })}
-                        inputProps={{ min: 0, step: 0.01 }}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Batch"
-                        value={newItem.batch}
-                        onChange={(e) => setNewItem({ ...newItem, batch: e.target.value })}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Expiry Date"
-                        type="date"
-                        value={newItem.expiry_date}
-                        onChange={(e) => setNewItem({ ...newItem, expiry_date: e.target.value })}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
+            <Card>
+              <CardHeader>
+                <CardTitle>Add Items</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Select Product</Label>
+                  <Popover open={productOpen} onOpenChange={setProductOpen}>
+                    <PopoverTrigger asChild>
                       <Button
-                        fullWidth
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={addItem}
-                        disabled={!selectedProduct || newItem.quantity <= 0 || newItem.unit_price <= 0}
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={productOpen}
+                        className="w-full justify-between"
                       >
-                        Add Item
+                        {selectedProduct ? `${selectedProduct.name} (${selectedProduct.sku})` : "Select product..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Items Table */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Purchase Items
-                  </Typography>
-                  <TableContainer component={Paper}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Product</TableCell>
-                          <TableCell>SKU</TableCell>
-                          <TableCell>Quantity</TableCell>
-                          <TableCell>Unit Price</TableCell>
-                          <TableCell>Total Price</TableCell>
-                          <TableCell>Batch</TableCell>
-                          <TableCell>Expiry Date</TableCell>
-                          <TableCell>Actions</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {items.map((item, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{item.product?.name}</TableCell>
-                            <TableCell>{item.product?.sku}</TableCell>
-                            <TableCell>
-                              <TextField
-                                type="number"
-                                value={item.quantity}
-                                onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
-                                inputProps={{ min: 0.01, step: 0.01 }}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                type="number"
-                                value={item.unit_price}
-                                onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
-                                inputProps={{ min: 0, step: 0.01 }}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>${item.total_price.toFixed(2)}</TableCell>
-                            <TableCell>
-                              <TextField
-                                value={item.batch}
-                                onChange={(e) => updateItem(index, 'batch', e.target.value)}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                type="date"
-                                value={item.expiry_date}
-                                onChange={(e) => updateItem(index, 'expiry_date', e.target.value)}
-                                InputLabelProps={{ shrink: true }}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <IconButton
-                                color="error"
-                                onClick={() => removeItem(index)}
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Search products..." />
+                        <CommandList>
+                          <CommandEmpty>No product found.</CommandEmpty>
+                          <CommandGroup>
+                            {products.map((product) => (
+                              <CommandItem
+                                key={product.id}
+                                value={`${product.name} ${product.sku}`}
+                                onSelect={() => {
+                                  setSelectedProduct(product);
+                                  setNewItem({ ...newItem, unit_price: product.price });
+                                  setProductOpen(false);
+                                }}
                               >
-                                <DeleteIcon />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            </Grid>
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedProduct?.id === product.id ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {product.name} ({product.sku})
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
 
-            {/* Totals */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Grid container spacing={2} justifyContent="flex-end">
-                    <Grid item xs={12} md={4}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography>Subtotal:</Typography>
-                        <Typography>${totals.subtotal.toFixed(2)}</Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography>Tax (10%):</Typography>
-                        <Typography>${totals.taxAmount.toFixed(2)}</Typography>
-                      </Box>
-                      <Divider sx={{ my: 1 }} />
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="h6">Total:</Typography>
-                        <Typography variant="h6">${totals.totalAmount.toFixed(2)}</Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="quantity">Quantity</Label>
+                    <Input
+                      id="quantity"
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      value={newItem.quantity}
+                      onChange={(e) => setNewItem({ ...newItem, quantity: parseFloat(e.target.value) || 0 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="unit_price">Unit Price</Label>
+                    <Input
+                      id="unit_price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={newItem.unit_price}
+                      onChange={(e) => setNewItem({ ...newItem, unit_price: parseFloat(e.target.value) || 0 })}
+                    />
+                  </div>
+                </div>
 
-            {/* Submit Button */}
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="batch">Batch</Label>
+                    <Input
+                      id="batch"
+                      value={newItem.batch}
+                      onChange={(e) => setNewItem({ ...newItem, batch: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="expiry_date">Expiry Date</Label>
+                    <Input
+                      id="expiry_date"
+                      type="date"
+                      value={newItem.expiry_date}
+                      onChange={(e) => setNewItem({ ...newItem, expiry_date: e.target.value })}
+                    />
+                  </div>
+                </div>
+
                 <Button
-                  variant="outlined"
-                  onClick={() => router.visit(showRoute.url({ purchase: purchase.id }))}
+                  type="button"
+                  onClick={addItem}
+                  disabled={!selectedProduct || newItem.quantity <= 0 || newItem.unit_price <= 0}
+                  className="w-full"
                 >
-                  Cancel
+                  <AddIcon className="mr-2 h-4 w-4" />
+                  Add Item
                 </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  startIcon={<SaveIcon />}
-                  disabled={items.length === 0}
-                >
-                  Update Purchase
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Items Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Purchase Items</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {items.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>No items added yet. Add items using the form above.</p>
+                </div>
+              ) : (
+                <div className="border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Product</TableHead>
+                        <TableHead>SKU</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Unit Price</TableHead>
+                        <TableHead className="text-right">Total Price</TableHead>
+                        <TableHead>Batch</TableHead>
+                        <TableHead>Expiry Date</TableHead>
+                        <TableHead className="text-center">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {items.map((item, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{item.product?.name}</TableCell>
+                          <TableCell>{item.product?.sku}</TableCell>
+                          <TableCell>
+                            <Input
+                              type="number"
+                              min="0.01"
+                              step="0.01"
+                              value={item.quantity}
+                              onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
+                              className="w-20"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={item.unit_price}
+                              onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                              className="w-24"
+                            />
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            ${item.total_price.toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              value={item.batch}
+                              onChange={(e) => updateItem(index, 'batch', e.target.value)}
+                              className="w-24"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type="date"
+                              value={item.expiry_date}
+                              onChange={(e) => updateItem(index, 'expiry_date', e.target.value)}
+                              className="w-32"
+                            />
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => removeItem(index)}
+                            >
+                              <DeleteIcon className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Totals */}
+          <Card>
+            <CardContent>
+              <div className="flex justify-end">
+                <div className="w-full max-w-sm space-y-2">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>${totals.subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tax (10%):</span>
+                    <span>${totals.taxAmount.toFixed(2)}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between font-semibold text-lg">
+                    <span>Total:</span>
+                    <span>${totals.totalAmount.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Submit Button */}
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.visit(showRoute.url({ purchase: purchase.id }))}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={items.length === 0}
+            >
+              <SaveIcon className="mr-2 h-4 w-4" />
+              Update Purchase
+            </Button>
+          </div>
         </form>
-      </Box>
+      </div>
     </Layout>
   );
 }

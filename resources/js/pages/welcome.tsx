@@ -1,26 +1,12 @@
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import {
-    Box,
-    Button,
-    Paper,
-    Typography,
-    Stack,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Link as MuiLink,
-    useTheme,
-} from '@mui/material';
-import {
-    OpenInNew as ExternalLinkIcon,
-} from '@mui/icons-material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { ExternalLink } from 'lucide-react';
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
-    const theme = useTheme();
 
     return (
         <>
@@ -31,356 +17,103 @@ export default function Welcome() {
                     rel="stylesheet"
                 />
             </Head>
-            <Box
-                sx={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    backgroundColor: '#FDFDFC',
-                    color: '#1b1b18',
-                    p: { xs: 3, lg: 4 },
-                    [theme.breakpoints.up('lg')]: {
-                        justifyContent: 'center',
-                    },
-                }}
-            >
-                <Box
-                    component="header"
-                    sx={{
-                        mb: 3,
-                        width: '100%',
-                        maxWidth: { xs: '335px', lg: '4xl' },
-                        fontSize: '0.875rem',
-                    }}
-                >
-                    <Box
-                        component="nav"
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            gap: 2,
-                        }}
-                    >
+            <div className="min-h-screen flex flex-col items-center bg-[#FDFDFC] text-[#1b1b18] p-3 lg:p-4 lg:justify-center">
+                <header className="mb-3 w-full max-w-[335px] lg:max-w-4xl text-sm">
+                    <nav className="flex items-center justify-end gap-2">
                         {auth.user ? (
-                            <Button
-                                component={Link}
-                                href={dashboard().url}
-                                variant="outlined"
-                                size="small"
-                                sx={{
-                                    borderColor: '#19140035',
-                                    color: '#1b1b18',
-                                    '&:hover': {
-                                        borderColor: '#1915014a',
-                                    },
-                                }}
-                            >
-                                Dashboard
+                            <Button asChild variant="outline" size="sm" className="border-[#19140035] text-[#1b1b18] hover:border-[#1915014a]">
+                                <Link href={dashboard().url}>
+                                    Dashboard
+                                </Link>
                             </Button>
                         ) : (
                             <>
-                                <Button
-                                    component={Link}
-                                    href={login().url}
-                                    variant="text"
-                                    size="small"
-                                    sx={{
-                                        color: '#1b1b18',
-                                        border: '1px solid transparent',
-                                        '&:hover': {
-                                            borderColor: '#19140035',
-                                        },
-                                    }}
-                                >
-                                    Log in
+                                <Button asChild variant="ghost" size="sm" className="text-[#1b1b18] border border-transparent hover:border-[#19140035]">
+                                    <Link href={login().url}>
+                                        Log in
+                                    </Link>
                                 </Button>
-                                <Button
-                                    component={Link}
-                                    href={register().url}
-                                    variant="outlined"
-                                    size="small"
-                                    sx={{
-                                        borderColor: '#19140035',
-                                        color: '#1b1b18',
-                                        '&:hover': {
-                                            borderColor: '#1915014a',
-                                        },
-                                    }}
-                                >
-                                    Register
+                                <Button asChild variant="outline" size="sm" className="border-[#19140035] text-[#1b1b18] hover:border-[#1915014a]">
+                                    <Link href={register().url}>
+                                        Register
+                                    </Link>
                                 </Button>
                             </>
                         )}
-                    </Box>
-                </Box>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        width: '100%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        opacity: 1,
-                        transition: 'opacity 750ms',
-                        [theme.breakpoints.up('lg')]: {
-                            flexGrow: 1,
-                        },
-                    }}
-                >
-                    <Box
-                        component="main"
-                        sx={{
-                            display: 'flex',
-                            width: '100%',
-                            maxWidth: { xs: '335px', lg: '4xl' },
-                            flexDirection: { xs: 'column-reverse', lg: 'row' },
-                        }}
-                    >
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                flex: 1,
-                                backgroundColor: 'white',
-                                p: { xs: 3, lg: 5 },
-                                pb: { xs: 6, lg: 5 },
-                                fontSize: '0.8125rem',
-                                lineHeight: '1.25rem',
-                                border: '1px solid rgba(26,26,0,0.16)',
-                                borderRadius: {
-                                    xs: '0 0 8px 8px',
-                                    lg: '8px 0 0 8px',
-                                },
-                            }}
-                        >
-                            <Typography
-                                variant="h4"
-                                component="h1"
-                                sx={{
-                                    mb: 1,
-                                    fontWeight: 500,
-                                    fontSize: '1.25rem',
-                                }}
-                            >
-                                Let's get started
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{
-                                    mb: 2,
-                                    color: '#706f6c',
-                                    fontSize: '0.8125rem',
-                                    lineHeight: '1.25rem',
-                                }}
-                            >
-                                Laravel has an incredibly rich ecosystem.
-                                <br />
-                                We suggest starting with the following.
-                            </Typography>
-                            <List
-                                sx={{
-                                    mb: { xs: 2, lg: 3 },
-                                    position: 'relative',
-                                }}
-                            >
-                                <ListItem
-                                    sx={{
-                                        position: 'relative',
-                                        alignItems: 'flex-start',
-                                        py: 1,
-                                        '&::before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: '50%',
-                                            bottom: 0,
-                                            left: '0.4rem',
-                                            borderLeft: '1px solid #e3e3e0',
-                                            zIndex: 0,
-                                        },
-                                    }}
-                                >
-                                    <ListItemIcon
-                                        sx={{
-                                            position: 'relative',
-                                            zIndex: 1,
-                                            backgroundColor: 'white',
-                                            py: 0.5,
-                                            minWidth: 'auto',
-                                            mr: 2,
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: 14,
-                                                height: 14,
-                                                borderRadius: '50%',
-                                                border: '1px solid #e3e3e0',
-                                                backgroundColor: '#FDFDFC',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                boxShadow: '0px 0px 1px 0px rgba(0,0,0,0.03), 0px 1px 2px 0px rgba(0,0,0,0.06)',
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    width: 6,
-                                                    height: 6,
-                                                    borderRadius: '50%',
-                                                    backgroundColor: '#dbdbd7',
-                                                }}
-                                            />
-                                        </Box>
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={
-                                            <Typography variant="body2">
+                    </nav>
+                </header>
+                <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:flex-grow">
+                    <main className="flex w-full max-w-[335px] lg:max-w-4xl flex-col-reverse lg:flex-row">
+                        <Card className="flex-1 bg-white p-3 lg:p-5 pb-6 lg:pb-5 text-[0.8125rem] leading-[1.25rem] border border-[rgba(26,26,0,0.16)] rounded-none lg:rounded-l-lg rounded-b-lg lg:rounded-b-none">
+                            <CardContent className="p-0">
+                                <h1 className="mb-1 font-medium text-xl">
+                                    Let's get started
+                                </h1>
+                                <p className="mb-2 text-[#706f6c] text-[0.8125rem] leading-[1.25rem]">
+                                    Laravel has an incredibly rich ecosystem.
+                                    <br />
+                                    We suggest starting with the following.
+                                </p>
+                                <ul className="mb-2 lg:mb-3 relative">
+                                    <li className="relative flex items-start py-1 before:content-[''] before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] before:z-0">
+                                        <div className="relative z-10 bg-white py-0.5 mr-2 min-w-0">
+                                            <div className="w-3.5 h-3.5 rounded-full border border-[#e3e3e0] bg-[#FDFDFC] flex items-center justify-center shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)]">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdbd7]"></div>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-sm">
                                                 Read the{' '}
-                                                <MuiLink
+                                                <a
                                                     href="https://laravel.com/docs"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    sx={{
-                                                        color: '#f53003',
-                                                        textDecoration: 'underline',
-                                                        textUnderlineOffset: 4,
-                                                        fontWeight: 500,
-                                                        display: 'inline-flex',
-                                                        alignItems: 'center',
-                                                        gap: 0.5,
-                                                    }}
+                                                    className="text-[#f53003] underline underline-offset-1 font-medium inline-flex items-center gap-0.5"
                                                 >
                                                     Documentation
-                                                    <ExternalLinkIcon sx={{ fontSize: '0.625rem' }} />
-                                                </MuiLink>
-                                            </Typography>
-                                        }
-                                    />
-                                </ListItem>
-                                <ListItem
-                                    sx={{
-                                        position: 'relative',
-                                        alignItems: 'flex-start',
-                                        py: 1,
-                                        '&::before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: 0,
-                                            bottom: '50%',
-                                            left: '0.4rem',
-                                            borderLeft: '1px solid #e3e3e0',
-                                            zIndex: 0,
-                                        },
-                                    }}
-                                >
-                                    <ListItemIcon
-                                        sx={{
-                                            position: 'relative',
-                                            zIndex: 1,
-                                            backgroundColor: 'white',
-                                            py: 0.5,
-                                            minWidth: 'auto',
-                                            mr: 2,
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: 14,
-                                                height: 14,
-                                                borderRadius: '50%',
-                                                border: '1px solid #e3e3e0',
-                                                backgroundColor: '#FDFDFC',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                boxShadow: '0px 0px 1px 0px rgba(0,0,0,0.03), 0px 1px 2px 0px rgba(0,0,0,0.06)',
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    width: 6,
-                                                    height: 6,
-                                                    borderRadius: '50%',
-                                                    backgroundColor: '#dbdbd7',
-                                                }}
-                                            />
-                                        </Box>
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={
-                                            <Typography variant="body2">
+                                                    <ExternalLink className="w-2.5 h-2.5" />
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </li>
+                                    <li className="relative flex items-start py-1 before:content-[''] before:absolute before:top-0 before:bottom-1/2 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] before:z-0">
+                                        <div className="relative z-10 bg-white py-0.5 mr-2 min-w-0">
+                                            <div className="w-3.5 h-3.5 rounded-full border border-[#e3e3e0] bg-[#FDFDFC] flex items-center justify-center shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)]">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdbd7]"></div>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-sm">
                                                 Watch video tutorials at{' '}
-                                                <MuiLink
+                                                <a
                                                     href="https://laracasts.com"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    sx={{
-                                                        color: '#f53003',
-                                                        textDecoration: 'underline',
-                                                        textUnderlineOffset: 4,
-                                                        fontWeight: 500,
-                                                        display: 'inline-flex',
-                                                        alignItems: 'center',
-                                                        gap: 0.5,
-                                                    }}
+                                                    className="text-[#f53003] underline underline-offset-1 font-medium inline-flex items-center gap-0.5"
                                                 >
                                                     Laracasts
-                                                    <ExternalLinkIcon sx={{ fontSize: '0.625rem' }} />
-                                                </MuiLink>
-                                            </Typography>
-                                        }
-                                    />
-                                </ListItem>
-                            </List>
-                            <Stack direction="row" spacing={1}>
-                                <Button
-                                    component={MuiLink}
-                                    href="https://cloud.laravel.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    variant="contained"
-                                    size="small"
-                                    sx={{
-                                        backgroundColor: '#1b1b18',
-                                        color: 'white',
-                                        border: '1px solid black',
-                                        fontSize: '0.875rem',
-                                        '&:hover': {
-                                            backgroundColor: 'black',
-                                            borderColor: 'black',
-                                        },
-                                    }}
-                                >
-                                    Deploy now
-                                </Button>
-                            </Stack>
-                        </Paper>
-                        <Box
-                            sx={{
-                                position: 'relative',
-                                mb: { xs: '-1px', lg: 0 },
-                                ml: { lg: '-1px' },
-                                aspectRatio: { xs: '335/376', lg: 'auto' },
-                                width: { xs: '100%', lg: '438px' },
-                                flexShrink: 0,
-                                overflow: 'hidden',
-                                backgroundColor: '#fff2f2',
-                                borderRadius: {
-                                    xs: '8px 8px 0 0',
-                                    lg: '0 8px 8px 0',
-                                },
-                            }}
-                        >
-                            <Box
-                                component="svg"
-                                sx={{
-                                    width: '100%',
-                                    maxWidth: 'none',
-                                    color: '#F53003',
-                                    opacity: 1,
-                                    transition: 'all 750ms',
-                                    transform: 'translateY(0)',
-                                }}
+                                                    <ExternalLink className="w-2.5 h-2.5" />
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div className="flex flex-row gap-1">
+                                    <Button asChild variant="default" size="sm" className="bg-[#1b1b18] text-white border border-black hover:bg-black hover:border-black text-sm">
+                                        <a
+                                            href="https://cloud.laravel.com"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Deploy now
+                                        </a>
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <div className="relative mb-[-1px] lg:mb-0 lg:ml-[-1px] aspect-[335/376] lg:aspect-auto w-full lg:w-[438px] flex-shrink-0 overflow-hidden bg-[#fff2f2] rounded-t-lg lg:rounded-t-none lg:rounded-r-lg">
+                            <svg
+                                className="w-full max-w-none text-[#F53003] opacity-100 transition-all duration-750 translate-y-0"
                                 viewBox="0 0 438 104"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -413,21 +146,9 @@ export default function Welcome() {
                                     d="M376.571 30.3656C356.603 30.3656 340.797 46.8497 340.797 67.1828C340.797 89.6597 356.094 104 378.661 104C391.29 104 399.354 99.1488 409.206 88.5848L398.189 80.0226C398.183 80.031 389.874 90.9895 377.468 90.9895C363.048 90.9895 356.977 79.3111 356.977 73.269H411.075C413.917 50.1328 398.775 30.3656 376.571 30.3656ZM357.02 61.0967C357.145 59.7487 359.023 43.3761 376.442 43.3761C393.861 43.3761 395.978 59.7464 396.099 61.0967H357.02Z"
                                     fill="currentColor"
                                 />
-                            </Box>
-                            <Box
-                                component="svg"
-                                sx={{
-                                    position: 'relative',
-                                    mt: '-4.9rem',
-                                    ml: '-2rem',
-                                    width: '448px',
-                                    maxWidth: 'none',
-                                    [theme.breakpoints.up('lg')]: {
-                                        mt: '-6.6rem',
-                                        ml: 0,
-                                    },
-                                    display: { xs: 'block', lg: 'block' },
-                                }}
+                            </svg>
+                            <svg
+                                className="relative -mt-[4.9rem] -ml-8 w-[448px] max-w-none lg:-mt-[6.6rem] lg:ml-0 block"
                                 viewBox="0 0 440 376"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -746,21 +467,9 @@ export default function Welcome() {
                                         strokeWidth={1}
                                     />
                                 </g>
-                            </Box>
-                            <Box
-                                component="svg"
-                                sx={{
-                                    position: 'relative',
-                                    mt: '-4.9rem',
-                                    ml: '-2rem',
-                                    width: '448px',
-                                    maxWidth: 'none',
-                                    display: { xs: 'none', lg: 'block' },
-                                    [theme.breakpoints.up('lg')]: {
-                                        mt: '-6.6rem',
-                                        ml: 0,
-                                    },
-                                }}
+                            </svg>
+                            <svg
+                                className="relative -mt-[4.9rem] -ml-8 w-[448px] max-w-none lg:-mt-[6.6rem] lg:ml-0 block"
                                 viewBox="0 0 440 376"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -1067,28 +776,13 @@ export default function Welcome() {
                                         strokeWidth={1}
                                     />
                                 </g>
-                            </Box>
-                            <Box
-                                sx={{
-                                    position: 'absolute',
-                                    inset: 0,
-                                    borderRadius: {
-                                        xs: '8px 8px 0 0',
-                                        lg: '0 8px 8px 0',
-                                    },
-                                    boxShadow: 'inset 0px 0px 0px 1px rgba(26,26,0,0.16)',
-                                }}
-                            />
-                        </Box>
-                    </Box>
-                </Box>
-                <Box
-                    sx={{
-                        height: '3.625rem',
-                        display: { xs: 'none', lg: 'block' },
-                    }}
-                />
-            </Box>
+                            </svg>
+                            <div className="absolute inset-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)]"></div>
+                        </div>
+                    </main>
+                </div>
+                <div className="h-[3.625rem] hidden lg:block"></div>
+            </div>
         </>
     );
 }

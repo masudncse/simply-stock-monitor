@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
 import { Link as InertiaLink, router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Container,
-  Paper,
-  TextField,
-  Grid,
-} from '@mui/material';
-import {
-  Business as BusinessIcon,
+  Building2 as BusinessIcon,
   Save as SaveIcon,
-} from '@mui/icons-material';
+} from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
 interface CompanySettingsProps {
@@ -89,204 +84,188 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
   ];
 
   return (
-    <Layout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            <BusinessIcon sx={{ mr: 2, verticalAlign: 'middle' }} />
-            Company Settings
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+    <Layout title="Company Settings">
+      <div className="space-y-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <BusinessIcon className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold tracking-tight">Company Settings</h1>
+          </div>
+          <p className="text-muted-foreground">
             Configure your company information and preferences
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
-            {/* Company Information */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Company Information
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Company Name"
-                        value={formData.company_name}
-                        onChange={(e) => handleChange('company_name', e.target.value)}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Tax Number"
-                        value={formData.tax_number}
-                        onChange={(e) => handleChange('tax_number', e.target.value)}
-                        placeholder="VAT, GST, or Tax ID"
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Company Address"
-                        value={formData.company_address}
-                        onChange={(e) => handleChange('company_address', e.target.value)}
-                        multiline
-                        rows={3}
-                      />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Company Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Company Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="company_name">Company Name *</Label>
+                  <Input
+                    id="company_name"
+                    value={formData.company_name}
+                    onChange={(e) => handleChange('company_name', e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tax_number">Tax Number</Label>
+                  <Input
+                    id="tax_number"
+                    value={formData.tax_number}
+                    onChange={(e) => handleChange('tax_number', e.target.value)}
+                    placeholder="VAT, GST, or Tax ID"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="company_address">Company Address</Label>
+                <Textarea
+                  id="company_address"
+                  value={formData.company_address}
+                  onChange={(e) => handleChange('company_address', e.target.value)}
+                  rows={3}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Contact Information */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Contact Information
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Phone Number"
-                        value={formData.company_phone}
-                        onChange={(e) => handleChange('company_phone', e.target.value)}
-                        type="tel"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Email Address"
-                        value={formData.company_email}
-                        onChange={(e) => handleChange('company_email', e.target.value)}
-                        type="email"
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Website"
-                        value={formData.company_website}
-                        onChange={(e) => handleChange('company_website', e.target.value)}
-                        type="url"
-                        placeholder="https://www.example.com"
-                      />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+          {/* Contact Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Contact Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="company_phone">Phone Number</Label>
+                  <Input
+                    id="company_phone"
+                    type="tel"
+                    value={formData.company_phone}
+                    onChange={(e) => handleChange('company_phone', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="company_email">Email Address</Label>
+                  <Input
+                    id="company_email"
+                    type="email"
+                    value={formData.company_email}
+                    onChange={(e) => handleChange('company_email', e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="company_website">Website</Label>
+                <Input
+                  id="company_website"
+                  type="url"
+                  value={formData.company_website}
+                  onChange={(e) => handleChange('company_website', e.target.value)}
+                  placeholder="https://www.example.com"
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Regional Settings */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Regional Settings
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        select
-                        label="Currency"
-                        value={formData.currency}
-                        onChange={(e) => handleChange('currency', e.target.value)}
-                        SelectProps={{ native: true }}
-                      >
-                        {currencies.map((currency) => (
-                          <option key={currency.code} value={currency.code}>
-                            {currency.code} - {currency.name}
-                          </option>
-                        ))}
-                      </TextField>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        select
-                        label="Timezone"
-                        value={formData.timezone}
-                        onChange={(e) => handleChange('timezone', e.target.value)}
-                        SelectProps={{ native: true }}
-                      >
-                        {timezones.map((tz) => (
-                          <option key={tz} value={tz}>
-                            {tz}
-                          </option>
-                        ))}
-                      </TextField>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        select
-                        label="Date Format"
-                        value={formData.date_format}
-                        onChange={(e) => handleChange('date_format', e.target.value)}
-                        SelectProps={{ native: true }}
-                      >
-                        {dateFormats.map((format) => (
-                          <option key={format.value} value={format.value}>
-                            {format.label}
-                          </option>
-                        ))}
-                      </TextField>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        select
-                        label="Time Format"
-                        value={formData.time_format}
-                        onChange={(e) => handleChange('time_format', e.target.value)}
-                        SelectProps={{ native: true }}
-                      >
-                        {timeFormats.map((format) => (
-                          <option key={format.value} value={format.value}>
-                            {format.label}
-                          </option>
-                        ))}
-                      </TextField>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+          {/* Regional Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Regional Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="currency">Currency</Label>
+                  <Select value={formData.currency} onValueChange={(value) => handleChange('currency', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencies.map((currency) => (
+                        <SelectItem key={currency.code} value={currency.code}>
+                          {currency.code} - {currency.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="timezone">Timezone</Label>
+                  <Select value={formData.timezone} onValueChange={(value) => handleChange('timezone', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select timezone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {timezones.map((tz) => (
+                        <SelectItem key={tz} value={tz}>
+                          {tz}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="date_format">Date Format</Label>
+                  <Select value={formData.date_format} onValueChange={(value) => handleChange('date_format', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select date format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {dateFormats.map((format) => (
+                        <SelectItem key={format.value} value={format.value}>
+                          {format.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="time_format">Time Format</Label>
+                  <Select value={formData.time_format} onValueChange={(value) => handleChange('time_format', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select time format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {timeFormats.map((format) => (
+                        <SelectItem key={format.value} value={format.value}>
+                          {format.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Actions */}
-            <Grid item xs={12}>
-              <Paper sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                  <Button
-                    component={InertiaLink}
-                    href="/settings"
-                    variant="outlined"
-                  >
+          {/* Actions */}
+          <Card>
+            <CardContent>
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" asChild>
+                  <InertiaLink href="/settings">
                     Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    startIcon={<SaveIcon />}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Saving...' : 'Save Settings'}
-                  </Button>
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
+                  </InertiaLink>
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  <SaveIcon className="mr-2 h-4 w-4" />
+                  {isSubmitting ? 'Saving...' : 'Save Settings'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </form>
-      </Container>
+      </div>
     </Layout>
   );
 };

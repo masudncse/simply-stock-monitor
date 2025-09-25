@@ -4,7 +4,12 @@ import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 import { useRef } from 'react';
-import { Button, TextField, Box, Fade } from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CheckCircle } from 'lucide-react';
 
 import HeadingSmall from '@/components/heading-small';
 import { edit } from '@/routes/password';
@@ -25,7 +30,7 @@ export default function Password() {
             <Head title="Password settings" />
 
             <SettingsLayout>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <div className="space-y-6">
                     <HeadingSmall
                         title="Update password"
                         description="Ensure your account is using a long, random password to stay secure"
@@ -53,65 +58,81 @@ export default function Password() {
                         }}
                     >
                         {({ errors, processing, recentlySuccessful }) => (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                                <TextField
-                                    id="current_password"
-                                    inputRef={currentPasswordInput}
-                                    name="current_password"
-                                    type="password"
-                                    label="Current password"
-                                    autoComplete="current-password"
-                                    placeholder="Current password"
-                                    fullWidth
-                                    error={!!errors.current_password}
-                                    helperText={errors.current_password}
-                                />
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Change Password</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="current_password">Current password</Label>
+                                        <Input
+                                            id="current_password"
+                                            ref={currentPasswordInput}
+                                            name="current_password"
+                                            type="password"
+                                            autoComplete="current-password"
+                                            placeholder="Current password"
+                                            className={errors.current_password ? 'border-destructive' : ''}
+                                        />
+                                        {errors.current_password && (
+                                            <p className="text-sm text-destructive">{errors.current_password}</p>
+                                        )}
+                                    </div>
 
-                                <TextField
-                                    id="password"
-                                    inputRef={passwordInput}
-                                    name="password"
-                                    type="password"
-                                    label="New password"
-                                    autoComplete="new-password"
-                                    placeholder="New password"
-                                    fullWidth
-                                    error={!!errors.password}
-                                    helperText={errors.password}
-                                />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="password">New password</Label>
+                                        <Input
+                                            id="password"
+                                            ref={passwordInput}
+                                            name="password"
+                                            type="password"
+                                            autoComplete="new-password"
+                                            placeholder="New password"
+                                            className={errors.password ? 'border-destructive' : ''}
+                                        />
+                                        {errors.password && (
+                                            <p className="text-sm text-destructive">{errors.password}</p>
+                                        )}
+                                    </div>
 
-                                <TextField
-                                    id="password_confirmation"
-                                    name="password_confirmation"
-                                    type="password"
-                                    label="Confirm password"
-                                    autoComplete="new-password"
-                                    placeholder="Confirm password"
-                                    fullWidth
-                                    error={!!errors.password_confirmation}
-                                    helperText={errors.password_confirmation}
-                                />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="password_confirmation">Confirm password</Label>
+                                        <Input
+                                            id="password_confirmation"
+                                            name="password_confirmation"
+                                            type="password"
+                                            autoComplete="new-password"
+                                            placeholder="Confirm password"
+                                            className={errors.password_confirmation ? 'border-destructive' : ''}
+                                        />
+                                        {errors.password_confirmation && (
+                                            <p className="text-sm text-destructive">{errors.password_confirmation}</p>
+                                        )}
+                                    </div>
 
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        disabled={processing}
-                                        data-test="update-password-button"
-                                    >
-                                        Save password
-                                    </Button>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            type="submit"
+                                            disabled={processing}
+                                            data-test="update-password-button"
+                                        >
+                                            Save password
+                                        </Button>
 
-                                    <Fade in={recentlySuccessful}>
-                                        <Box component="p" sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>
-                                            Saved
-                                        </Box>
-                                    </Fade>
-                                </Box>
-                            </Box>
+                                        {recentlySuccessful && (
+                                            <Alert className="border-green-200 bg-green-50">
+                                                <CheckCircle className="h-4 w-4 text-green-600" />
+                                                <AlertDescription className="text-green-800">
+                                                    Password updated successfully
+                                                </AlertDescription>
+                                            </Alert>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
                         )}
                     </Form>
-                </Box>
+                </div>
             </SettingsLayout>
         </AppLayout>
     );

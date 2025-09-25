@@ -1,5 +1,3 @@
-import { Icon } from '@/components/icon';
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { type NavItem } from '@/types';
 
 export function NavFooter({
@@ -8,37 +6,25 @@ export function NavFooter({
     items: NavItem[];
 }) {
     return (
-        <List>
+        <nav className="space-y-1">
             {items.map((item) => (
-                <ListItem key={item.title} disablePadding>
-                    <ListItemButton
-                        component="a"
-                        href={
-                            typeof item.href === 'string'
-                                ? item.href
-                                : item.href.url
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{
-                            color: 'text.secondary',
-                            '&:hover': {
-                                color: 'text.primary',
-                            }
-                        }}
-                    >
-                        {item.icon && (
-                            <ListItemIcon>
-                                <Icon
-                                    iconNode={item.icon}
-                                    style={{ width: 20, height: 20 }}
-                                />
-                            </ListItemIcon>
-                        )}
-                        <ListItemText primary={item.title} />
-                    </ListItemButton>
-                </ListItem>
+                <a
+                    key={item.title}
+                    href={
+                        typeof item.href === 'string'
+                            ? item.href
+                            : item.href.url
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                    {item.icon && (
+                        <item.icon className="h-5 w-5" />
+                    )}
+                    <span>{item.title}</span>
+                </a>
             ))}
-        </List>
+        </nav>
     );
 }

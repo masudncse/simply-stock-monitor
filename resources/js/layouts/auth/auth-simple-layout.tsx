@@ -2,13 +2,7 @@ import AppLogoIcon from '@/components/app-logo-icon';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
-import {
-    Box,
-    Container,
-    Typography,
-    Link as MuiLink,
-    Paper,
-} from '@mui/material';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface AuthLayoutProps {
     name?: string;
@@ -22,92 +16,36 @@ export default function AuthSimpleLayout({
     description,
 }: PropsWithChildren<AuthLayoutProps>) {
     return (
-        <Box
-            component="div"
-            sx={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: 'background.default',
-                p: { xs: 2, md: 3 },
-            }}
-        >
-            <Container maxWidth="sm">
-                <Paper
-                    elevation={1}
-                    sx={{
-                        p: 4,
-                        borderRadius: 2,
-                        bgcolor: 'background.paper',
-                    }}
-                >
-                    <Box
-                        component="div"
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 4,
-                        }}
-                    >
-                        <Box
-                            component="div"
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: 2,
-                            }}
-                        >
-                            <MuiLink
-                                component={Link}
-                                href={home()}
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    gap: 1,
-                                    textDecoration: 'none',
-                                    color: 'inherit',
-                                }}
-                            >
-                                <Box
-                                    component="div"
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        width: 40,
-                                        height: 40,
-                                        borderRadius: 1,
-                                    }}
+        <div className="min-h-screen flex items-center justify-center bg-background p-2 md:p-3">
+            <div className="w-full max-w-sm">
+                <Card>
+                    <CardContent className="p-4">
+                        <div className="flex flex-col gap-4">
+                            <div className="flex flex-col items-center gap-2">
+                                <Link
+                                    href={home()}
+                                    className="flex flex-col items-center gap-1 text-foreground hover:text-primary transition-colors"
                                 >
-                                    <AppLogoIcon sx={{ width: 36, height: 36, fill: 'currentColor' }} />
-                                </Box>
-                                <Typography variant="srOnly">{title}</Typography>
-                            </MuiLink>
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                                        <AppLogoIcon className="w-9 h-9 fill-current text-primary" />
+                                    </div>
+                                    <span className="sr-only">{title}</span>
+                                </Link>
 
-                            <Box
-                                component="div"
-                                sx={{
-                                    textAlign: 'center',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 1,
-                                }}
-                            >
-                                <Typography variant="h4" component="h1" fontWeight="medium">
-                                    {title}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {description}
-                                </Typography>
-                            </Box>
-                        </Box>
-                        {children}
-                    </Box>
-                </Paper>
-            </Container>
-        </Box>
+                                <div className="text-center flex flex-col gap-1">
+                                    <h1 className="text-2xl font-medium">
+                                        {title}
+                                    </h1>
+                                    <p className="text-sm text-muted-foreground">
+                                        {description}
+                                    </p>
+                                </div>
+                            </div>
+                            {children}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
     );
 }

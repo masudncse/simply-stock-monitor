@@ -1,6 +1,6 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { Box, IconButton } from '@mui/material';
-import { Menu as MenuIcon } from '@mui/icons-material';
+import { Button } from '@/components/ui/button';
+import { Menu as MenuIcon } from 'lucide-react';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
 export function AppSidebarHeader({
@@ -9,25 +9,13 @@ export function AppSidebarHeader({
     breadcrumbs?: BreadcrumbItemType[];
 }) {
     return (
-        <Box
-            component="header"
-            sx={{
-                display: 'flex',
-                height: 64,
-                flexShrink: 0,
-                alignItems: 'center',
-                gap: 2,
-                borderBottom: 1,
-                borderColor: 'divider',
-                px: 3,
-            }}
-        >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <IconButton size="small" sx={{ ml: -1 }}>
-                    <MenuIcon />
-                </IconButton>
+        <header className="flex h-16 flex-shrink-0 items-center gap-2 border-b px-3">
+            <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8 -ml-1">
+                    <MenuIcon className="h-4 w-4" />
+                </Button>
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
-            </Box>
-        </Box>
+            </div>
+        </header>
     );
 }

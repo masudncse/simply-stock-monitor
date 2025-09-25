@@ -1,38 +1,20 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Chip,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
-import {
-  Add as AddIcon,
+  Plus as AddIcon,
   Search as SearchIcon,
-  Visibility as ViewIcon,
+  Eye as ViewIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  Assessment as TrialBalanceIcon,
-} from '@mui/icons-material';
+  Trash2 as DeleteIcon,
+  BarChart3 as TrialBalanceIcon,
+} from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute, trialBalance as trialBalanceRoute } from '@/routes/accounts';
@@ -53,9 +35,9 @@ interface Account {
 
 interface AccountsIndexProps {
   accounts: {
-  data: Account[];
-  links: Array<{ url: string | null; label: string; active: boolean }>;
-  meta: { current_page: number; last_page: number; per_page: number; total: number };
+    data: Account[];
+    links: Array<{ url: string | null; label: string; active: boolean }>;
+    meta: { current_page: number; last_page: number; per_page: number; total: number };
   };
   filters: {
     search?: string;
@@ -95,20 +77,20 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
     setAccountToDelete(null);
   };
 
-  const getTypeColor = (type: string) => {
+  const getTypeVariant = (type: string) => {
     switch (type) {
       case 'asset':
-        return 'success';
-      case 'liability':
-        return 'error';
-      case 'equity':
-        return 'info';
-      case 'income':
-        return 'primary';
-      case 'expense':
-        return 'warning';
-      default:
         return 'default';
+      case 'liability':
+        return 'destructive';
+      case 'equity':
+        return 'secondary';
+      case 'income':
+        return 'outline';
+      case 'expense':
+        return 'secondary';
+      default:
+        return 'secondary';
     }
   };
 
@@ -121,191 +103,208 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
   ];
 
   return (
-    <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Chart of Accounts
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<TrialBalanceIcon />}
-              onClick={() => router.visit(trialBalanceRoute.url())}
-            >
+    <Layout title="Chart of Accounts">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Chart of Accounts</h1>
+            <p className="text-muted-foreground">
+              Manage your accounting chart of accounts
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => router.visit(trialBalanceRoute.url())}>
+              <TrialBalanceIcon className="mr-2 h-4 w-4" />
               Trial Balance
             </Button>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => router.visit(createRoute.url())}
-            >
+            <Button onClick={() => router.visit(createRoute.url())}>
+              <AddIcon className="mr-2 h-4 w-4" />
               New Account
             </Button>
-          </Box>
-        </Box>
+          </div>
+        </div>
 
         {/* Filters */}
-        <Card sx={{ mb: 3 }}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+          </CardHeader>
           <CardContent>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  label="Search"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton onClick={handleSearch}>
-                        <SearchIcon />
-                      </IconButton>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Account Type</InputLabel>
-                  <Select
-                    value={typeFilter}
-                    label="Account Type"
-                    onChange={(e) => setTypeFilter(e.target.value)}
-                  >
-                    <MenuItem value="">All Types</MenuItem>
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label htmlFor="search">Search</Label>
+                <div className="relative">
+                  <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="search"
+                    placeholder="Search accounts..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9"
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="type">Account Type</Label>
+                <Select value={typeFilter || "all"} onValueChange={(value) => setTypeFilter(value === "all" ? "" : value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Types" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
                     {accountTypes.map((type) => (
-                      <MenuItem key={type.value} value={type.value}>
+                      <SelectItem key={type.value} value={type.value}>
                         {type.label}
-                      </MenuItem>
+                      </SelectItem>
                     ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  label="Sub Type"
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="sub_type">Sub Type</Label>
+                <Input
+                  id="sub_type"
+                  placeholder="Sub type..."
                   value={subTypeFilter}
                   onChange={(e) => setSubTypeFilter(e.target.value)}
                 />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <Button
-                  variant="outlined"
-                  onClick={handleSearch}
-                  sx={{ height: '56px' }}
-                >
+              </div>
+              
+              <div className="space-y-2">
+                <Label>&nbsp;</Label>
+                <Button variant="outline" onClick={handleSearch} className="w-full">
+                  <SearchIcon className="mr-2 h-4 w-4" />
                   Apply Filters
                 </Button>
-              </Grid>
-            </Grid>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* Accounts Table */}
         <Card>
+          <CardHeader>
+            <CardTitle>Accounts ({accounts.meta.total})</CardTitle>
+          </CardHeader>
           <CardContent>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Code</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Sub Type</TableCell>
-                    <TableCell>Parent Account</TableCell>
-                    <TableCell>Opening Balance</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {accounts.data.map((account) => (
-                    <TableRow key={account.id}>
-                      <TableCell>{account.code}</TableCell>
-                      <TableCell>{account.name}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={account.type}
-                          color={getTypeColor(account.type) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>{account.sub_type || 'N/A'}</TableCell>
-                      <TableCell>{account.parent_account?.name || 'N/A'}</TableCell>
-                      <TableCell>${account.opening_balance.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={account.is_active ? 'Active' : 'Inactive'}
-                          color={account.is_active ? 'success' : 'default'}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                          <IconButton
-                            size="small"
-                            onClick={() => router.visit(showRoute.url({ account: account.id }))}
-                          >
-                            <ViewIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => router.visit(editRoute.url({ account: account.id }))}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDelete(account)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
+            {accounts.data.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <h3 className="text-lg font-semibold">No accounts found</h3>
+                <p className="text-sm">Try adjusting your search criteria</p>
+              </div>
+            ) : (
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Sub Type</TableHead>
+                      <TableHead>Parent Account</TableHead>
+                      <TableHead className="text-right">Opening Balance</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHeader>
+                  <TableBody>
+                    {accounts.data.map((account) => (
+                      <TableRow key={account.id}>
+                        <TableCell className="font-medium">{account.code}</TableCell>
+                        <TableCell>{account.name}</TableCell>
+                        <TableCell>
+                          <Badge variant={getTypeVariant(account.type)}>
+                            {account.type}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{account.sub_type || 'N/A'}</TableCell>
+                        <TableCell>{account.parent_account?.name || 'N/A'}</TableCell>
+                        <TableCell className="text-right">${account.opening_balance.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge variant={account.is_active ? 'default' : 'secondary'}>
+                            {account.is_active ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => router.visit(showRoute.url({ account: account.id }))}
+                            >
+                              <ViewIcon className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => router.visit(editRoute.url({ account: account.id }))}
+                            >
+                              <EditIcon className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => handleDelete(account)}
+                            >
+                              <DeleteIcon className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
 
             {/* Pagination */}
             {accounts.links && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                {accounts.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
-                  <Button
-                    key={index}
-                    variant={link.active ? 'contained' : 'outlined'}
-                    onClick={() => link.url && router.visit(link.url)}
-                    disabled={!link.url}
-                    sx={{ mx: 0.5 }}
-                  >
-                    {link.label}
-                  </Button>
-                ))}
-              </Box>
+              <div className="flex justify-center mt-4">
+                <div className="flex gap-1">
+                  {accounts.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
+                    <Button
+                      key={index}
+                      variant={link.active ? "default" : "outline"}
+                      onClick={() => link.url && router.visit(link.url)}
+                      disabled={!link.url}
+                      size="sm"
+                    >
+                      {link.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>
 
         {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-          <DialogTitle>Confirm Delete</DialogTitle>
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <DialogContent>
-            <Typography>
-              Are you sure you want to delete account {accountToDelete?.name}?
-              This action cannot be undone.
-            </Typography>
+            <DialogHeader>
+              <DialogTitle>Confirm Delete</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete account {accountToDelete?.name}?
+                This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDelete}>
+                Delete
+              </Button>
+            </DialogFooter>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-            <Button onClick={confirmDelete} color="error" variant="contained">
-              Delete
-            </Button>
-          </DialogActions>
         </Dialog>
-      </Box>
+      </div>
     </Layout>
   );
 }

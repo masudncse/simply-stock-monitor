@@ -1,25 +1,16 @@
 import React from 'react';
 import { Link as InertiaLink } from '@inertiajs/react';
-import {
-  Box,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-  Grid,
-  Container,
-  Paper,
-} from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Settings as SettingsIcon,
-  Business as BusinessIcon,
-  Tune as TuneIcon,
-  People as PeopleIcon,
-  Security as SecurityIcon,
-  Backup as BackupIcon,
+  Building2 as BusinessIcon,
+  Settings2 as TuneIcon,
+  Users as PeopleIcon,
+  Shield as SecurityIcon,
+  Database as BackupIcon,
   Palette as PaletteIcon,
-} from '@mui/icons-material';
+} from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
 const SettingsIndex: React.FC = () => {
@@ -27,201 +18,149 @@ const SettingsIndex: React.FC = () => {
     {
       title: 'Company Settings',
       description: 'Configure company information, contact details, and branding',
-      icon: <BusinessIcon sx={{ fontSize: 40 }} />,
+      icon: <BusinessIcon className="h-10 w-10" />,
       href: '/settings/company',
-      color: '#1976d2',
+      color: 'text-blue-600',
     },
     {
       title: 'System Settings',
       description: 'Configure system behavior, defaults, and operational settings',
-      icon: <TuneIcon sx={{ fontSize: 40 }} />,
+      icon: <TuneIcon className="h-10 w-10" />,
       href: '/settings/system',
-      color: '#388e3c',
+      color: 'text-green-600',
     },
     {
       title: 'User Management',
       description: 'Manage users, roles, and permissions',
-      icon: <PeopleIcon sx={{ fontSize: 40 }} />,
+      icon: <PeopleIcon className="h-10 w-10" />,
       href: '/settings/users',
-      color: '#f57c00',
+      color: 'text-orange-600',
     },
     {
       title: 'Roles & Permissions',
       description: 'Configure user roles and access permissions',
-      icon: <SecurityIcon sx={{ fontSize: 40 }} />,
+      icon: <SecurityIcon className="h-10 w-10" />,
       href: '/settings/roles',
-      color: '#7b1fa2',
+      color: 'text-purple-600',
     },
     {
       title: 'Backup & Maintenance',
       description: 'Database backup, maintenance, and system health',
-      icon: <BackupIcon sx={{ fontSize: 40 }} />,
+      icon: <BackupIcon className="h-10 w-10" />,
       href: '/settings/backup',
-      color: '#d32f2f',
+      color: 'text-red-600',
     },
     {
       title: 'Appearance',
       description: 'Customize theme, colors, and display preferences',
-      icon: <PaletteIcon sx={{ fontSize: 40 }} />,
+      icon: <PaletteIcon className="h-10 w-10" />,
       href: '/settings/appearance',
-      color: '#5d4037',
+      color: 'text-amber-600',
     },
   ];
 
   return (
-    <Layout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            <SettingsIcon sx={{ mr: 2, verticalAlign: 'middle' }} />
-            Settings
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+    <Layout title="Settings">
+      <div className="space-y-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <SettingsIcon className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+          </div>
+          <p className="text-muted-foreground">
             Configure your Stock Management System
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {settingsCards.map((setting, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 4,
-                  },
-                }}
-              >
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      mb: 2,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        color: setting.color,
-                        mr: 2,
-                      }}
-                    >
-                      {setting.icon}
-                    </Box>
-                    <Typography variant="h6" component="h2">
-                      {setting.title}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {setting.description}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ p: 2, pt: 0 }}>
-                  <Button
-                    component={InertiaLink}
-                    href={setting.href}
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      backgroundColor: setting.color,
-                      '&:hover': {
-                        backgroundColor: setting.color,
-                        opacity: 0.9,
-                      },
-                    }}
-                  >
+            <Card key={index} className="h-full flex flex-col transition-all hover:shadow-lg hover:-translate-y-1">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className={setting.color}>
+                    {setting.icon}
+                  </div>
+                  <CardTitle className="text-lg">{setting.title}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <p className="text-sm text-muted-foreground">
+                  {setting.description}
+                </p>
+              </CardContent>
+              <div className="p-6 pt-0">
+                <Button asChild className="w-full">
+                  <InertiaLink href={setting.href}>
                     Configure
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
+                  </InertiaLink>
+                </Button>
+              </div>
+            </Card>
           ))}
-        </Grid>
+        </div>
 
-        <Paper sx={{ p: 3, mt: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            Quick Actions
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <Button
-              variant="outlined"
-              startIcon={<BusinessIcon />}
-              component={InertiaLink}
-              href="/settings/company"
-            >
-              Company Info
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<TuneIcon />}
-              component={InertiaLink}
-              href="/settings/system"
-            >
-              System Config
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<PeopleIcon />}
-              component={InertiaLink}
-              href="/settings/users"
-            >
-              Manage Users
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<BackupIcon />}
-              component={InertiaLink}
-              href="/settings/backup"
-            >
-              Backup Data
-            </Button>
-          </Box>
-        </Paper>
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" asChild>
+                <InertiaLink href="/settings/company">
+                  <BusinessIcon className="mr-2 h-4 w-4" />
+                  Company Info
+                </InertiaLink>
+              </Button>
+              <Button variant="outline" asChild>
+                <InertiaLink href="/settings/system">
+                  <TuneIcon className="mr-2 h-4 w-4" />
+                  System Config
+                </InertiaLink>
+              </Button>
+              <Button variant="outline" asChild>
+                <InertiaLink href="/settings/users">
+                  <PeopleIcon className="mr-2 h-4 w-4" />
+                  Manage Users
+                </InertiaLink>
+              </Button>
+              <Button variant="outline" asChild>
+                <InertiaLink href="/settings/backup">
+                  <BackupIcon className="mr-2 h-4 w-4" />
+                  Backup Data
+                </InertiaLink>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-        <Paper sx={{ p: 3, mt: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            System Information
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="body2" color="text.secondary">
-                Application Version
-              </Typography>
-              <Typography variant="body1">
-                v1.0.0
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="body2" color="text.secondary">
-                PHP Version
-              </Typography>
-              <Typography variant="body1">
-                {typeof window !== 'undefined' ? '8.3.21' : 'PHP 8.3+'}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="body2" color="text.secondary">
-                Laravel Version
-              </Typography>
-              <Typography variant="body1">
-                12.x
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="body2" color="text.secondary">
-                Database
-              </Typography>
-              <Typography variant="body1">
-                MySQL
-              </Typography>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Container>
+        {/* System Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>System Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Application Version</p>
+                <p className="font-medium">v1.0.0</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">PHP Version</p>
+                <p className="font-medium">{typeof window !== 'undefined' ? '8.3.21' : 'PHP 8.3+'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Laravel Version</p>
+                <p className="font-medium">12.x</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Database</p>
+                <p className="font-medium">MySQL</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </Layout>
   );
 };
