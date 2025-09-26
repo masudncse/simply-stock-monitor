@@ -14,21 +14,33 @@ import Layout from '../../layouts/Layout';
 
 interface CompanySettingsProps {
   settings: {
-    company_name: string;
-    company_address: string;
-    company_phone: string;
-    company_email: string;
-    company_website: string;
-    tax_number: string;
-    currency: string;
-    timezone: string;
-    date_format: string;
-    time_format: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    postal_code?: string;
+    country?: string;
+    tax_id?: string;
+    website?: string;
+    logo?: string;
   };
 }
 
 const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
-  const [formData, setFormData] = useState(settings);
+  const [formData, setFormData] = useState({
+    name: settings.name || '',
+    email: settings.email || '',
+    phone: settings.phone || '',
+    address: settings.address || '',
+    city: settings.city || '',
+    state: settings.state || '',
+    postal_code: settings.postal_code || '',
+    country: settings.country || '',
+    tax_id: settings.tax_id || '',
+    website: settings.website || '',
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string) => {
@@ -106,30 +118,30 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="company_name">Company Name *</Label>
+                  <Label htmlFor="name">Company Name *</Label>
                   <Input
-                    id="company_name"
-                    value={formData.company_name}
-                    onChange={(e) => handleChange('company_name', e.target.value)}
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => handleChange('name', e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="tax_number">Tax Number</Label>
+                  <Label htmlFor="tax_id">Tax ID</Label>
                   <Input
-                    id="tax_number"
-                    value={formData.tax_number}
-                    onChange={(e) => handleChange('tax_number', e.target.value)}
+                    id="tax_id"
+                    value={formData.tax_id}
+                    onChange={(e) => handleChange('tax_id', e.target.value)}
                     placeholder="VAT, GST, or Tax ID"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="company_address">Company Address</Label>
+                <Label htmlFor="address">Company Address</Label>
                 <Textarea
-                  id="company_address"
-                  value={formData.company_address}
-                  onChange={(e) => handleChange('company_address', e.target.value)}
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => handleChange('address', e.target.value)}
                   rows={3}
                 />
               </div>
@@ -144,107 +156,74 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="company_phone">Phone Number</Label>
+                  <Label htmlFor="phone">Phone Number</Label>
                   <Input
-                    id="company_phone"
+                    id="phone"
                     type="tel"
-                    value={formData.company_phone}
-                    onChange={(e) => handleChange('company_phone', e.target.value)}
+                    value={formData.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="company_email">Email Address</Label>
+                  <Label htmlFor="email">Email Address *</Label>
                   <Input
-                    id="company_email"
+                    id="email"
                     type="email"
-                    value={formData.company_email}
-                    onChange={(e) => handleChange('company_email', e.target.value)}
+                    value={formData.email}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    value={formData.city}
+                    onChange={(e) => handleChange('city', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">State/Province</Label>
+                  <Input
+                    id="state"
+                    value={formData.state}
+                    onChange={(e) => handleChange('state', e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="postal_code">Postal Code</Label>
+                  <Input
+                    id="postal_code"
+                    value={formData.postal_code}
+                    onChange={(e) => handleChange('postal_code', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Input
+                    id="country"
+                    value={formData.country}
+                    onChange={(e) => handleChange('country', e.target.value)}
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="company_website">Website</Label>
+                <Label htmlFor="website">Website</Label>
                 <Input
-                  id="company_website"
+                  id="website"
                   type="url"
-                  value={formData.company_website}
-                  onChange={(e) => handleChange('company_website', e.target.value)}
+                  value={formData.website}
+                  onChange={(e) => handleChange('website', e.target.value)}
                   placeholder="https://www.example.com"
                 />
               </div>
             </CardContent>
           </Card>
 
-          {/* Regional Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Regional Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="currency">Currency</Label>
-                  <Select value={formData.currency} onValueChange={(value) => handleChange('currency', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currencies.map((currency) => (
-                        <SelectItem key={currency.code} value={currency.code}>
-                          {currency.code} - {currency.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="timezone">Timezone</Label>
-                  <Select value={formData.timezone} onValueChange={(value) => handleChange('timezone', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select timezone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {timezones.map((tz) => (
-                        <SelectItem key={tz} value={tz}>
-                          {tz}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="date_format">Date Format</Label>
-                  <Select value={formData.date_format} onValueChange={(value) => handleChange('date_format', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select date format" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {dateFormats.map((format) => (
-                        <SelectItem key={format.value} value={format.value}>
-                          {format.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="time_format">Time Format</Label>
-                  <Select value={formData.time_format} onValueChange={(value) => handleChange('time_format', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select time format" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {timeFormats.map((format) => (
-                        <SelectItem key={format.value} value={format.value}>
-                          {format.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Actions */}
           <Card>

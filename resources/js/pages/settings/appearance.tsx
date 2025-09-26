@@ -15,7 +15,7 @@ import Layout from '../../layouts/Layout';
 
 interface AppearanceSettings {
   theme: string;
-  sidebar_collapsed: boolean;
+  sidebar_collapsed: string;
   language: string;
   date_format: string;
   time_format: string;
@@ -23,25 +23,31 @@ interface AppearanceSettings {
   timezone: string;
 }
 
-export default function Appearance() {
+interface AppearanceProps {
+  settings: AppearanceSettings;
+}
+
+export default function Appearance({ settings: initialSettings }: AppearanceProps) {
   const [settings, setSettings] = useState<AppearanceSettings>({
-    theme: 'system',
-    sidebar_collapsed: false,
-    language: 'en',
-    date_format: 'Y-m-d',
-    time_format: 'H:i:s',
-    currency: 'USD',
-    timezone: 'UTC',
+    theme: initialSettings.theme || 'system',
+    sidebar_collapsed: initialSettings.sidebar_collapsed || 'false',
+    language: initialSettings.language || 'en',
+    date_format: initialSettings.date_format || 'Y-m-d',
+    time_format: initialSettings.time_format || 'H:i:s',
+    currency: initialSettings.currency || 'USD',
+    timezone: initialSettings.timezone || 'UTC',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string | boolean) => {
     setSettings(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
-    // TODO: Implement save functionality
-    console.log('Saving appearance settings:', settings);
-    // router.post('/settings/appearance', settings);
+    setIsSubmitting(true);
+    router.post('/settings/appearance', settings, {
+      onFinish: () => setIsSubmitting(false),
+    });
   };
 
   const handleBack = () => {
@@ -63,9 +69,9 @@ export default function Appearance() {
               <BackIcon className="mr-2 h-4 w-4" />
               Back to Settings
             </Button>
-            <Button onClick={handleSave}>
+            <Button onClick={handleSave} disabled={isSubmitting}>
               <SaveIcon className="mr-2 h-4 w-4" />
-              Save Settings
+              {isSubmitting ? 'Saving...' : 'Save Settings'}
             </Button>
           </div>
         </div>
@@ -93,8 +99,8 @@ export default function Appearance() {
               <div className="flex items-center space-x-2">
                 <Switch
                   id="sidebar_collapsed"
-                  checked={settings.sidebar_collapsed}
-                  onCheckedChange={(checked) => handleChange('sidebar_collapsed', checked)}
+                  checked={settings.sidebar_collapsed === 'true'}
+                  onCheckedChange={(checked) => handleChange('sidebar_collapsed', checked.toString())}
                 />
                 <Label htmlFor="sidebar_collapsed">Collapse Sidebar by Default</Label>
               </div>
@@ -239,7 +245,7 @@ export default function Appearance() {
                 <p><strong>Time Format:</strong> {settings.time_format}</p>
                 <p><strong>Currency:</strong> {settings.currency}</p>
                 <p><strong>Timezone:</strong> {settings.timezone}</p>
-                <p><strong>Sidebar Collapsed:</strong> {settings.sidebar_collapsed ? 'Yes' : 'No'}</p>
+                <p><strong>Sidebar Collapsed:</strong> {settings.sidebar_collapsed === 'true' ? 'Yes' : 'No'}</p>
               </div>
             </div>
           </CardContent>
