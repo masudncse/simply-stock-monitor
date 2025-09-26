@@ -96,10 +96,10 @@ export default function SettingsUsers() {
                                         Manage Roles
                                     </Link>
                                 </Button>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
 
                 <Card className="mt-6">
                     <CardHeader>

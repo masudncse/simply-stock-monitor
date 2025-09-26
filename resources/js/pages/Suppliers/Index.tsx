@@ -236,7 +236,7 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
             </Button>
           </DialogActions>
         </Dialog>
-      </Box>
+      </div>
     </Layout>
   );
 }
