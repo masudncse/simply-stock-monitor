@@ -1,11 +1,5 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Icon } from '@/components/icon';
-import { 
-    Avatar, 
-    Button, 
-    Box,
-    Tooltip
-} from '@mui/material';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
@@ -13,9 +7,34 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
-import { Box } from '@mui/material';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+    NavigationMenu,
+    NavigationMenuItem,
+    NavigationMenuList,
+    navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu';
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const mainNavItems: NavItem[] = [
     {
@@ -65,32 +84,21 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     <Menu className="h-5 w-5" />
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent
-                                side="left"
-                                sx={{
-                                    display: 'flex',
-                                    height: '100%',
-                                    width: 256,
-                                    flexDirection: 'column',
-                                    alignItems: 'stretch',
-                                    justifyContent: 'space-between',
-                                    backgroundColor: 'background.paper',
-                                }}
-                            >
-                                <SheetTitle sx={{ position: 'absolute', left: -10000 }}>
+                            <SheetContent side="left" className="w-64">
+                                <SheetTitle className="sr-only">
                                     Navigation Menu
                                 </SheetTitle>
-                                <SheetHeader sx={{ display: 'flex', justifyContent: 'flex-start', textAlign: 'left' }}>
-                                    <AppLogoIcon sx={{ height: 24, width: 24, fill: 'currentColor' }} />
+                                <SheetHeader className="flex justify-start text-left">
+                                    <AppLogoIcon className="h-6 w-6 fill-current" />
                                 </SheetHeader>
-                                <Box sx={{ display: 'flex', height: '100%', flex: 1, flexDirection: 'column', gap: 2, p: 2 }}>
-                                    <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                <div className="flex h-full flex-1 flex-col gap-2 p-2">
+                                    <div className="flex h-full flex-col justify-between">
+                                        <div className="flex flex-col gap-2">
                                             {mainNavItems.map((item) => (
                                                 <Link
                                                     key={item.title}
                                                     href={item.href}
-                                                    style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500 }}
+                                                    className="flex items-center gap-2 font-medium"
                                                 >
                                                     {item.icon && (
                                                         <Icon
@@ -101,9 +109,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     <span>{item.title}</span>
                                                 </Link>
                                             ))}
-                                        </Box>
+                                        </div>
 
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        <div className="flex flex-col gap-2">
                                             {rightNavItems.map((item) => (
                                                 <a
                                                     key={item.title}
@@ -126,9 +134,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     <span>{item.title}</span>
                                                 </a>
                                             ))}
-                                        </Box>
-                                    </Box>
-                                </Box>
+                                        </div>
+                                    </div>
+                                </div>
                             </SheetContent>
                         </Sheet>
                     </div>

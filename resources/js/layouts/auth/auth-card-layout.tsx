@@ -2,15 +2,7 @@ import AppLogoIcon from '@/components/app-logo-icon';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
-import {
-    Box,
-    Container,
-    Typography,
-    Link as MuiLink,
-    Card,
-    CardContent,
-    CardHeader,
-} from '@mui/material';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AuthCardLayout({
     children,
@@ -22,81 +14,35 @@ export default function AuthCardLayout({
     description?: string;
 }>) {
     return (
-        <Box
-            component="div"
-            sx={{
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'grey.50',
-                p: { xs: 2, md: 3 },
-            }}
-        >
-            <Container maxWidth="sm">
-                <Box
-                    component="div"
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 3,
-                    }}
-                >
-                    <MuiLink
-                        component={Link}
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4 md:p-6">
+            <div className="w-full max-w-sm">
+                <div className="flex flex-col gap-6">
+                    <Link
                         href={home()}
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            alignSelf: 'center',
-                            fontWeight: 500,
-                            textDecoration: 'none',
-                            color: 'inherit',
-                        }}
+                        className="flex items-center gap-2 self-center font-medium text-inherit no-underline"
                     >
-                        <Box
-                            component="div"
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: 36,
-                                height: 36,
-                            }}
-                        >
-                            <AppLogoIcon sx={{ width: 36, height: 36, fill: 'currentColor' }} />
-                        </Box>
-                    </MuiLink>
+                        <div className="flex items-center justify-center w-9 h-9">
+                            <AppLogoIcon className="w-9 h-9 fill-current" />
+                        </div>
+                    </Link>
 
-                    <Card
-                        sx={{
-                            borderRadius: 2,
-                            boxShadow: 2,
-                        }}
-                    >
-                        <CardHeader
-                            sx={{
-                                textAlign: 'center',
-                                px: 5,
-                                pt: 4,
-                                pb: 0,
-                            }}
-                        >
-                            <Typography variant="h5" component="h1" fontWeight="medium">
+                    <Card className="rounded-lg shadow-lg">
+                        <CardHeader className="text-center px-6 pt-6 pb-0">
+                            <CardTitle className="text-xl font-medium">
                                 {title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                {description}
-                            </Typography>
+                            </CardTitle>
+                            {description && (
+                                <p className="text-sm text-muted-foreground mt-2">
+                                    {description}
+                                </p>
+                            )}
                         </CardHeader>
-                        <CardContent sx={{ px: 5, py: 4 }}>
+                        <CardContent className="px-6 py-6">
                             {children}
                         </CardContent>
                     </Card>
-                </Box>
-            </Container>
-        </Box>
+                </div>
+            </div>
+        </div>
     );
 }

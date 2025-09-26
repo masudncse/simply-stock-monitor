@@ -1,26 +1,13 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-  Divider,
-} from '@mui/material';
-import {
-  Edit as EditIcon,
-  CheckCircle as ProcessIcon,
-  ArrowBack as BackIcon,
-} from '@mui/icons-material';
+  Edit,
+  CheckCircle,
+  ArrowLeft,
+} from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as indexRoute, edit as editRoute, process as processRoute } from '@/routes/sales';
@@ -123,299 +110,220 @@ export default function SalesShow({ sale }: SalesShowProps) {
 
   return (
     <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">
             Sale Details
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          </h1>
+          <div className="flex gap-2">
             <Button
-              variant="outlined"
-              startIcon={<BackIcon />}
+              variant="outline"
               onClick={() => router.visit(indexRoute.url())}
             >
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
             {sale.status === 'pending' && (
               <>
                 <Button
-                  variant="contained"
-                  startIcon={<EditIcon />}
                   onClick={() => router.visit(editRoute.url({ sale: sale.id }))}
                 >
+                  <Edit className="mr-2 h-4 w-4" />
                   Edit
                 </Button>
                 <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<ProcessIcon />}
                   onClick={handleProcess}
+                  className="bg-green-600 hover:bg-green-700"
                 >
+                  <CheckCircle className="mr-2 h-4 w-4" />
                   Process Sale
                 </Button>
               </>
             )}
-          </Box>
-        </Box>
+          </div>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Sale Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Sale Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Invoice Number
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {sale.invoice_number}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Status
-                    </Typography>
-                    <Chip
-                      label={sale.status}
-                      color={getStatusColor(sale.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Sale Date
-                    </Typography>
-                    <Typography variant="body1">
-                      {new Date(sale.sale_date).toLocaleDateString()}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Payment Status
-                    </Typography>
-                    <Chip
-                      label={sale.payment_status}
-                      color={getPaymentStatusColor(sale.payment_status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Notes
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.notes || 'No notes'}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Sale Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Invoice Number</p>
+                  <p className="font-bold">{sale.invoice_number}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <Badge variant="outline" className="text-xs">
+                    {sale.status}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Sale Date</p>
+                  <p className="font-medium">{new Date(sale.sale_date).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Payment Status</p>
+                  <Badge variant="outline" className="text-xs">
+                    {sale.payment_status}
+                  </Badge>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-sm text-muted-foreground">Notes</p>
+                  <p className="font-medium">{sale.notes || 'No notes'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Customer Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Customer Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Name
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {sale.customer.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Code
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.customer.code}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Contact Person
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.customer.contact_person || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Phone
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.customer.phone || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Email
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.customer.email || 'N/A'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Address
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.customer.address || 'N/A'}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <p className="text-sm text-muted-foreground">Name</p>
+                  <p className="font-bold">{sale.customer.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Code</p>
+                  <p className="font-medium">{sale.customer.code}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Contact Person</p>
+                  <p className="font-medium">{sale.customer.contact_person || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Phone</p>
+                  <p className="font-medium">{sale.customer.phone || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="font-medium">{sale.customer.email || 'N/A'}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-sm text-muted-foreground">Address</p>
+                  <p className="font-medium">{sale.customer.address || 'N/A'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Warehouse Information */}
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Warehouse Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Name
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {sale.warehouse.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Code
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.warehouse.code}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      Address
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.warehouse.address || 'N/A'}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card>
+            <CardHeader>
+              <CardTitle>Warehouse Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Name</p>
+                  <p className="font-bold">{sale.warehouse.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Code</p>
+                  <p className="font-medium">{sale.warehouse.code}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-sm text-muted-foreground">Address</p>
+                  <p className="font-medium">{sale.warehouse.address || 'N/A'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          {/* Sale Items */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Sale Items
-                </Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Product</TableCell>
-                        <TableCell>SKU</TableCell>
-                        <TableCell>Unit</TableCell>
-                        <TableCell align="right">Quantity</TableCell>
-                        <TableCell align="right">Unit Price</TableCell>
-                        <TableCell align="right">Total Price</TableCell>
-                        <TableCell>Batch</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {sale.sale_items.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>{item.product.name}</TableCell>
-                          <TableCell>{item.product.sku}</TableCell>
-                          <TableCell>{item.product.unit}</TableCell>
-                          <TableCell align="right">{item.quantity}</TableCell>
-                          <TableCell align="right">${item.unit_price.toFixed(2)}</TableCell>
-                          <TableCell align="right">${item.total_price.toFixed(2)}</TableCell>
-                          <TableCell>{item.batch || 'N/A'}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </CardContent>
-            </Card>
-          </Grid>
+        {/* Sale Items */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Sale Items</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>SKU</TableHead>
+                  <TableHead>Unit</TableHead>
+                  <TableHead className="text-right">Quantity</TableHead>
+                  <TableHead className="text-right">Unit Price</TableHead>
+                  <TableHead className="text-right">Total Price</TableHead>
+                  <TableHead>Batch</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sale.sale_items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.product.name}</TableCell>
+                    <TableCell>{item.product.sku}</TableCell>
+                    <TableCell>{item.product.unit}</TableCell>
+                    <TableCell className="text-right">{item.quantity}</TableCell>
+                    <TableCell className="text-right">${item.unit_price.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">${item.total_price.toFixed(2)}</TableCell>
+                    <TableCell>{item.batch || 'N/A'}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-          {/* Totals */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Grid container spacing={2} justifyContent="flex-end">
-                  <Grid item xs={12} md={4}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography>Subtotal:</Typography>
-                      <Typography>${sale.subtotal.toFixed(2)}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography>Tax Amount:</Typography>
-                      <Typography>${sale.tax_amount.toFixed(2)}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography>Discount Amount:</Typography>
-                      <Typography>${sale.discount_amount.toFixed(2)}</Typography>
-                    </Box>
-                    <Divider sx={{ my: 1 }} />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="h6">Total Amount:</Typography>
-                      <Typography variant="h6">${sale.total_amount.toFixed(2)}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography>Paid Amount:</Typography>
-                      <Typography>${sale.paid_amount.toFixed(2)}</Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+        {/* Totals */}
+        <Card className="mt-6">
+          <CardContent>
+            <div className="flex justify-end">
+              <div className="w-full max-w-md space-y-2">
+                <div className="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span>${sale.subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tax Amount:</span>
+                  <span>${sale.tax_amount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Discount Amount:</span>
+                  <span>${sale.discount_amount.toFixed(2)}</span>
+                </div>
+                <div className="border-t pt-2">
+                  <div className="flex justify-between font-semibold text-lg">
+                    <span>Total Amount:</span>
+                    <span>${sale.total_amount.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between">
+                  <span>Paid Amount:</span>
+                  <span>${sale.paid_amount.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Created By */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Additional Information
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Created By
-                    </Typography>
-                    <Typography variant="body1">
-                      {sale.created_by.name} ({sale.created_by.email})
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2" color="textSecondary">
-                      Created At
-                    </Typography>
-                    <Typography variant="body1">
-                      {new Date(sale.created_at).toLocaleString()}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Box>
+        {/* Additional Information */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Additional Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Created By</p>
+                <p className="font-medium">{sale.created_by.name} ({sale.created_by.email})</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Created At</p>
+                <p className="font-medium">{new Date(sale.created_at).toLocaleString()}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </Layout>
   );
 }

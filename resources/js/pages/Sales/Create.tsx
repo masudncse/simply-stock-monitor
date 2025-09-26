@@ -1,32 +1,16 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Autocomplete,
-  Divider,
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Save as SaveIcon,
-} from '@mui/icons-material';
+  Plus,
+  Trash2,
+  Save,
+} from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as indexRoute } from '@/routes/sales';
@@ -168,270 +152,287 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
 
   return (
     <Layout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">
             Create Sale
-          </Typography>
+          </h1>
           <Button
-            variant="outlined"
+            variant="outline"
             onClick={() => router.visit(indexRoute.url())}
           >
             Back to Sales
           </Button>
-        </Box>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Sale Details */}
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Sale Details
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <FormControl fullWidth required>
-                        <InputLabel>Customer</InputLabel>
-                        <Select
-                          value={formData.customer_id}
-                          label="Customer"
-                          onChange={(e) => setFormData({ ...formData, customer_id: e.target.value })}
-                        >
-                          {customers.map((customer) => (
-                            <MenuItem key={customer.id} value={customer.id}>
-                              {customer.name} ({customer.code})
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <FormControl fullWidth required>
-                        <InputLabel>Warehouse</InputLabel>
-                        <Select
-                          value={formData.warehouse_id}
-                          label="Warehouse"
-                          onChange={(e) => setFormData({ ...formData, warehouse_id: e.target.value })}
-                        >
-                          {warehouses.map((warehouse) => (
-                            <MenuItem key={warehouse.id} value={warehouse.id}>
-                              {warehouse.name} ({warehouse.code})
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Sale Date"
-                        type="date"
-                        value={formData.sale_date}
-                        onChange={(e) => setFormData({ ...formData, sale_date: e.target.value })}
-                        InputLabelProps={{ shrink: true }}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Notes"
-                        multiline
-                        rows={3}
-                        value={formData.notes}
-                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+            <Card>
+              <CardHeader>
+                <CardTitle>Sale Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="customer">Customer</Label>
+                  <Select
+                    value={formData.customer_id}
+                    onValueChange={(value) => setFormData({ ...formData, customer_id: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select customer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {customers.map((customer) => (
+                        <SelectItem key={customer.id} value={customer.id.toString()}>
+                          {customer.name} ({customer.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="warehouse">Warehouse</Label>
+                  <Select
+                    value={formData.warehouse_id}
+                    onValueChange={(value) => setFormData({ ...formData, warehouse_id: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select warehouse" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {warehouses.map((warehouse) => (
+                        <SelectItem key={warehouse.id} value={warehouse.id.toString()}>
+                          {warehouse.name} ({warehouse.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="sale_date">Sale Date</Label>
+                  <Input
+                    id="sale_date"
+                    type="date"
+                    value={formData.sale_date}
+                    onChange={(e) => setFormData({ ...formData, sale_date: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Notes</Label>
+                  <textarea
+                    id="notes"
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Add Items */}
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Add Items
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <Autocomplete
-                        options={products}
-                        getOptionLabel={(option) => `${option.name} (${option.sku})`}
-                        value={selectedProduct}
-                        onChange={(_, newValue) => {
-                          setSelectedProduct(newValue);
-                          if (newValue) {
-                            setNewItem({ ...newItem, unit_price: newValue.price });
-                          }
-                        }}
-                        renderInput={(params) => (
-                          <TextField {...params} label="Select Product" />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Quantity"
+            <Card>
+              <CardHeader>
+                <CardTitle>Add Items</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="product">Product</Label>
+                  <Select
+                    value={selectedProduct?.id.toString() || ''}
+                    onValueChange={(value) => {
+                      const product = products.find(p => p.id.toString() === value);
+                      setSelectedProduct(product || null);
+                      if (product) {
+                        setNewItem({ ...newItem, unit_price: product.price });
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products.map((product) => (
+                        <SelectItem key={product.id} value={product.id.toString()}>
+                          {product.name} ({product.sku})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {selectedProduct && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="quantity">Quantity</Label>
+                      <Input
+                        id="quantity"
                         type="number"
+                        min="1"
                         value={newItem.quantity}
-                        onChange={(e) => setNewItem({ ...newItem, quantity: parseFloat(e.target.value) || 0 })}
-                        inputProps={{ min: 0.01, step: 0.01 }}
+                        onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 1 })}
                       />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Unit Price"
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="unit_price">Unit Price</Label>
+                      <Input
+                        id="unit_price"
                         type="number"
+                        step="0.01"
+                        min="0"
                         value={newItem.unit_price}
                         onChange={(e) => setNewItem({ ...newItem, unit_price: parseFloat(e.target.value) || 0 })}
-                        inputProps={{ min: 0, step: 0.01 }}
                       />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Batch"
-                        value={newItem.batch}
-                        onChange={(e) => setNewItem({ ...newItem, batch: e.target.value })}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={addItem}
-                        disabled={!selectedProduct || newItem.quantity <= 0 || newItem.unit_price <= 0}
-                      >
-                        Add Item
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+                    </div>
+                  </div>
+                )}
 
-            {/* Items Table */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Sale Items
-                  </Typography>
-                  <TableContainer component={Paper}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Product</TableCell>
-                          <TableCell>SKU</TableCell>
-                          <TableCell>Quantity</TableCell>
-                          <TableCell>Unit Price</TableCell>
-                          <TableCell>Total Price</TableCell>
-                          <TableCell>Batch</TableCell>
-                          <TableCell>Actions</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {items.map((item, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{item.product?.name}</TableCell>
-                            <TableCell>{item.product?.sku}</TableCell>
-                            <TableCell>
-                              <TextField
-                                type="number"
-                                value={item.quantity}
-                                onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
-                                inputProps={{ min: 0.01, step: 0.01 }}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                type="number"
-                                value={item.unit_price}
-                                onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
-                                inputProps={{ min: 0, step: 0.01 }}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>${item.total_price.toFixed(2)}</TableCell>
-                            <TableCell>
-                              <TextField
-                                value={item.batch}
-                                onChange={(e) => updateItem(index, 'batch', e.target.value)}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <IconButton
-                                color="error"
-                                onClick={() => removeItem(index)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            </Grid>
+                {selectedProduct && (
+                  <div className="space-y-2">
+                    <Label htmlFor="batch">Batch (Optional)</Label>
+                    <Input
+                      id="batch"
+                      value={newItem.batch}
+                      onChange={(e) => setNewItem({ ...newItem, batch: e.target.value })}
+                      placeholder="Enter batch number"
+                    />
+                  </div>
+                )}
 
-            {/* Totals */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Grid container spacing={2} justifyContent="flex-end">
-                    <Grid item xs={12} md={4}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography>Subtotal:</Typography>
-                        <Typography>${totals.subtotal.toFixed(2)}</Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography>Tax (10%):</Typography>
-                        <Typography>${totals.taxAmount.toFixed(2)}</Typography>
-                      </Box>
-                      <Divider sx={{ my: 1 }} />
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="h6">Total:</Typography>
-                        <Typography variant="h6">${totals.totalAmount.toFixed(2)}</Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Submit Button */}
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button
-                  variant="outlined"
-                  onClick={() => router.visit(indexRoute.url())}
+                  type="button"
+                  onClick={addItem}
+                  disabled={!selectedProduct}
+                  className="w-full"
                 >
-                  Cancel
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Item
                 </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  startIcon={<SaveIcon />}
-                  disabled={items.length === 0}
-                >
-                  Create Sale
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Items Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Sale Items</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {items.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No items added yet. Add items using the form above.</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead>SKU</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Unit Price</TableHead>
+                      <TableHead>Total Price</TableHead>
+                      <TableHead>Batch</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {items.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{item.product?.name}</TableCell>
+                        <TableCell>{item.product?.sku}</TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
+                            min={0.01}
+                            step={0.01}
+                            className="w-20"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            value={item.unit_price}
+                            onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                            min={0}
+                            step={0.01}
+                            className="w-24"
+                          />
+                        </TableCell>
+                        <TableCell>${item.total_price.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Input
+                            value={item.batch}
+                            onChange={(e) => updateItem(index, 'batch', e.target.value)}
+                            className="w-24"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeItem(index)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Totals */}
+          <Card>
+            <CardContent>
+              <div className="flex justify-end">
+                <div className="w-full max-w-md space-y-2">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>${totals.subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tax (10%):</span>
+                    <span>${totals.taxAmount.toFixed(2)}</span>
+                  </div>
+                  <div className="border-t pt-2">
+                    <div className="flex justify-between font-semibold text-lg">
+                      <span>Total:</span>
+                      <span>${totals.totalAmount.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Submit Button */}
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => router.visit(indexRoute.url())}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={items.length === 0}
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Create Sale
+            </Button>
+          </div>
         </form>
-      </Box>
+      </div>
     </Layout>
   );
 }

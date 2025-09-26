@@ -1,23 +1,13 @@
 import React, { useState } from 'react';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    FormLabel,
-    Grid,
-    TextField,
-    Typography,
-    Alert,
-    Divider,
-    Chip,
-    Avatar,
-} from '@mui/material';
-import { Save as SaveIcon, ArrowBack as BackIcon } from '@mui/icons-material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Save, ArrowLeft } from 'lucide-react';
 import { Link, useForm } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
 
@@ -93,188 +83,159 @@ export default function UsersEdit({ user, roles }: UsersEditProps) {
 
     return (
         <Layout title={`Edit User: ${user.name}`}>
-            <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+            <div>
+                <div className="flex items-center gap-4 mb-6">
                     <Button
-                        component={Link}
-                        href="/users"
-                        startIcon={<BackIcon />}
-                        variant="outlined"
+                        asChild
+                        variant="outline"
                     >
-                        Back to Users
+                        <Link href="/users">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back to Users
+                        </Link>
                     </Button>
-                    <Typography variant="h4" component="h1">
+                    <h1 className="text-3xl font-bold">
                         Edit User: {user.name}
-                    </Typography>
-                </Box>
+                    </h1>
+                </div>
 
-                <form onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
-                            <Card>
-                                <CardContent>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                                        <Avatar sx={{ width: 48, height: 48 }}>
-                                            {getInitials(user.name)}
-                                        </Avatar>
-                                        <Box>
-                                            <Typography variant="h6">
-                                                {user.name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {user.email}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <Card>
+                            <CardContent>
+                                <div className="flex items-center gap-4 mb-6">
+                                    <Avatar className="h-12 w-12">
+                                        <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <h3 className="text-lg font-semibold">{user.name}</h3>
+                                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                                    </div>
+                                </div>
 
-                                    <Divider sx={{ mb: 3 }} />
-
-                                    <Typography variant="h6" gutterBottom>
-                                        User Information
-                                    </Typography>
+                                <div className="border-t pt-6">
+                                    <h4 className="text-lg font-medium mb-4">User Information</h4>
                                     
-                                    <TextField
-                                        fullWidth
-                                        label="Full Name"
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        error={!!errors.name}
-                                        helperText={errors.name}
-                                        margin="normal"
-                                        required
-                                    />
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="name">Full Name</Label>
+                                            <Input
+                                                id="name"
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                required
+                                            />
+                                            {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                                        </div>
 
-                                    <TextField
-                                        fullWidth
-                                        label="Email Address"
-                                        type="email"
-                                        value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
-                                        error={!!errors.email}
-                                        helperText={errors.email}
-                                        margin="normal"
-                                        required
-                                    />
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email">Email Address</Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                required
+                                            />
+                                            {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+                                        </div>
 
-                                    <TextField
-                                        fullWidth
-                                        label="New Password (leave blank to keep current)"
-                                        type="password"
-                                        value={data.password}
-                                        onChange={(e) => setData('password', e.target.value)}
-                                        error={!!errors.password}
-                                        helperText={errors.password}
-                                        margin="normal"
-                                    />
+                                        <div className="space-y-2">
+                                            <Label htmlFor="password">New Password (leave blank to keep current)</Label>
+                                            <Input
+                                                id="password"
+                                                type="password"
+                                                value={data.password}
+                                                onChange={(e) => setData('password', e.target.value)}
+                                            />
+                                            {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+                                        </div>
 
-                                    <TextField
-                                        fullWidth
-                                        label="Confirm New Password"
-                                        type="password"
-                                        value={data.password_confirmation}
-                                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                                        error={!!errors.password_confirmation}
-                                        helperText={errors.password_confirmation}
-                                        margin="normal"
-                                    />
+                                        <div className="space-y-2">
+                                            <Label htmlFor="password_confirmation">Confirm New Password</Label>
+                                            <Input
+                                                id="password_confirmation"
+                                                type="password"
+                                                value={data.password_confirmation}
+                                                onChange={(e) => setData('password_confirmation', e.target.value)}
+                                            />
+                                            {errors.password_confirmation && <p className="text-sm text-destructive">{errors.password_confirmation}</p>}
+                                        </div>
 
-                                    <Box sx={{ mt: 2 }}>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Selected Roles: {selectedRoles.length}
-                                        </Typography>
-                                    </Box>
+                                        <div className="pt-4">
+                                            <p className="text-sm text-muted-foreground">
+                                                Selected Roles: {selectedRoles.length}
+                                            </p>
+                                        </div>
 
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        fullWidth
-                                        startIcon={<SaveIcon />}
-                                        disabled={processing}
-                                        sx={{ mt: 3 }}
-                                    >
-                                        {processing ? 'Saving...' : 'Save Changes'}
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                        <Button
+                                            type="submit"
+                                            className="w-full"
+                                            disabled={processing}
+                                        >
+                                            <Save className="mr-2 h-4 w-4" />
+                                            {processing ? 'Saving...' : 'Save Changes'}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
 
-                        <Grid item xs={12} md={6}>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h6" gutterBottom>
-                                        Assign Roles
-                                    </Typography>
-                                    
-                                    {errors.roles && (
-                                        <Alert severity="error" sx={{ mb: 2 }}>
-                                            {errors.roles}
-                                        </Alert>
-                                    )}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Assign Roles</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {errors.roles && (
+                                    <Alert variant="destructive">
+                                        <AlertDescription>{errors.roles}</AlertDescription>
+                                    </Alert>
+                                )}
 
-                                    <FormControl component="fieldset" fullWidth>
-                                        <FormLabel component="legend" sx={{ mb: 2 }}>
-                                            <Typography variant="subtitle1">
-                                                Available Roles ({roles.length})
-                                            </Typography>
-                                        </FormLabel>
-                                        
-                                        <Divider sx={{ mb: 2 }} />
-                                        
-                                        <FormGroup>
-                                            <Grid container spacing={1}>
-                                                {roles.map((role) => (
-                                                    <Grid item xs={12} key={role.id}>
-                                                        <FormControlLabel
-                                                            control={
-                                                                <Checkbox
-                                                                    checked={selectedRoles.includes(role.name)}
-                                                                    onChange={(e) => handleRoleChange(role.name, e.target.checked)}
-                                                                />
-                                                            }
-                                                            label={
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                    <Typography variant="body1">
-                                                                        {role.name}
-                                                                    </Typography>
-                                                                    <Chip
-                                                                        label={role.name}
-                                                                        size="small"
-                                                                        color={getRoleColor(role.name)}
-                                                                        variant="outlined"
-                                                                    />
-                                                                </Box>
-                                                            }
-                                                        />
-                                                    </Grid>
-                                                ))}
-                                            </Grid>
-                                        </FormGroup>
-                                    </FormControl>
-
-                                    {selectedRoles.length > 0 && (
-                                        <Box sx={{ mt: 3 }}>
-                                            <Typography variant="subtitle2" gutterBottom>
-                                                Selected Roles:
-                                            </Typography>
-                                            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                                                {selectedRoles.map((roleName) => (
-                                                    <Chip
-                                                        key={roleName}
-                                                        label={roleName}
-                                                        color={getRoleColor(roleName)}
-                                                        variant="filled"
-                                                        size="small"
+                                <div>
+                                    <Label className="text-base font-medium">
+                                        Available Roles ({roles.length})
+                                    </Label>
+                                    <div className="border-t mt-2 pt-4">
+                                        <div className="space-y-3">
+                                            {roles.map((role) => (
+                                                <div key={role.id} className="flex items-center space-x-3">
+                                                    <Checkbox
+                                                        id={`role-${role.id}`}
+                                                        checked={selectedRoles.includes(role.name)}
+                                                        onCheckedChange={(checked) => handleRoleChange(role.name, checked as boolean)}
                                                     />
-                                                ))}
-                                            </Stack>
-                                        </Box>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
+                                                    <div className="flex items-center gap-2">
+                                                        <Label htmlFor={`role-${role.id}`} className="font-normal">
+                                                            {role.name}
+                                                        </Label>
+                                                        <Badge variant="outline" className="text-xs">
+                                                            {role.name}
+                                                        </Badge>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {selectedRoles.length > 0 && (
+                                    <div className="pt-4">
+                                        <Label className="text-sm font-medium">Selected Roles:</Label>
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {selectedRoles.map((roleName) => (
+                                                <Badge key={roleName} variant="default" className="text-xs">
+                                                    {roleName}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
                 </form>
-            </Box>
+            </div>
         </Layout>
     );
 }

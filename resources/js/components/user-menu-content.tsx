@@ -1,4 +1,3 @@
-import { MenuItem, ListItemIcon, ListItemText, Divider, Box } from '@mui/material';
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
@@ -21,23 +20,28 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
 
     return (
         <>
-            <Box sx={{ p: 1 }}>
+            <div className="p-2">
                 <UserInfo user={user} showEmail={true} />
-            </Box>
-            <Divider />
-            <MenuItem component={Link} href={edit()} onClick={cleanup}>
-                <ListItemIcon>
-                    <Settings style={{ width: 16, height: 16 }} />
-                </ListItemIcon>
-                <ListItemText>Settings</ListItemText>
-            </MenuItem>
-            <Divider />
-            <MenuItem component={Link} href={logout()} onClick={handleLogout} data-test="logout-button">
-                <ListItemIcon>
-                    <LogOut style={{ width: 16, height: 16 }} />
-                </ListItemIcon>
-                <ListItemText>Log out</ListItemText>
-            </MenuItem>
+            </div>
+            <div className="border-t" />
+            <Link 
+                href={edit()} 
+                onClick={cleanup}
+                className="flex items-center px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+            >
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+            </Link>
+            <div className="border-t" />
+            <Link 
+                href={logout()} 
+                onClick={handleLogout} 
+                data-test="logout-button"
+                className="flex items-center px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+            >
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+            </Link>
         </>
     );
 }

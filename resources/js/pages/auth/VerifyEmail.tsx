@@ -2,15 +2,10 @@
 import EmailVerificationNotificationController from '@/actions/App/Http/Controllers/Auth/EmailVerificationNotificationController';
 import AuthLayout from '@/layouts/auth-layout';
 import { logout } from '@/routes';
-import { Form, Head } from '@inertiajs/react';
-import {
-    Box,
-    Button,
-    CircularProgress,
-    Alert,
-    Link as MuiLink,
-} from '@mui/material';
-import { Link } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2 } from 'lucide-react';
 
 export default function VerifyEmail({ status }: { status?: string }) {
     return (
@@ -21,40 +16,41 @@ export default function VerifyEmail({ status }: { status?: string }) {
             <Head title="Email verification" />
 
             {status === 'verification-link-sent' && (
-                <Alert severity="success" sx={{ mb: 2 }}>
-                    A new verification link has been sent to the email address
-                    you provided during registration.
+                <Alert className="mb-4">
+                    <AlertDescription>
+                        A new verification link has been sent to the email address
+                        you provided during registration.
+                    </AlertDescription>
                 </Alert>
             )}
 
-            <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 3, textAlign: 'center' }}>
+            <div className="flex flex-col gap-4 text-center">
                 <Form
                     {...EmailVerificationNotificationController.store.form()}
                 >
                     {({ processing }) => (
                         <>
                             <Button 
-                                variant="outlined" 
+                                variant="outline" 
                                 disabled={processing}
-                                sx={{ mb: 2 }}
+                                className="mb-4"
                             >
                                 {processing && (
-                                    <CircularProgress size={20} sx={{ mr: 1 }} />
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 )}
                                 Resend verification email
                             </Button>
 
-                            <MuiLink
-                                component={Link}
+                            <Link
                                 href={logout()}
-                                sx={{ textDecoration: 'none', display: 'block' }}
+                                className="text-sm text-muted-foreground hover:underline"
                             >
                                 Log out
-                            </MuiLink>
+                            </Link>
                         </>
                     )}
                 </Form>
-            </Box>
+            </div>
         </AuthLayout>
     );
 }

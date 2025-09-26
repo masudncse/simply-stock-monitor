@@ -1,14 +1,14 @@
-import { 
-    Button, 
-    Dialog, 
-    DialogContent, 
-    DialogContentText, 
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
     DialogTitle,
-    TextField,
-    Box,
-    Typography,
-    IconButton
-} from '@mui/material';
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
 import { confirm } from '@/routes/two-factor';
@@ -19,63 +19,27 @@ import AlertError from './alert-error';
 
 function GridScanIcon() {
     return (
-        <Box sx={{ 
-            mb: 3, 
-            borderRadius: '50%', 
-            border: 1, 
-            borderColor: 'divider', 
-            bgcolor: 'background.paper', 
-            p: 0.5, 
-            boxShadow: 1 
-        }}>
-            <Box sx={{ 
-                position: 'relative', 
-                overflow: 'hidden', 
-                borderRadius: '50%', 
-                border: 1, 
-                borderColor: 'divider', 
-                bgcolor: 'action.hover', 
-                p: 2.5 
-            }}>
-                <Box sx={{ 
-                    position: 'absolute', 
-                    inset: 0, 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(5, 1fr)',
-                    opacity: 0.5 
-                }}>
+        <div className="mb-6 rounded-full border border-border bg-background p-1 shadow-sm">
+            <div className="relative overflow-hidden rounded-full border border-border bg-muted p-6">
+                <div className="absolute inset-0 grid grid-cols-5 opacity-50">
                     {Array.from({ length: 5 }, (_, i) => (
-                        <Box
+                        <div
                             key={`col-${i + 1}`}
-                            sx={{ 
-                                borderRight: 1, 
-                                borderColor: 'divider',
-                                '&:last-child': { borderRight: 0 }
-                            }}
+                            className={`border-r border-border ${i === 4 ? 'border-r-0' : ''}`}
                         />
                     ))}
-                </Box>
-                <Box sx={{ 
-                    position: 'absolute', 
-                    inset: 0, 
-                    display: 'grid', 
-                    gridTemplateRows: 'repeat(5, 1fr)',
-                    opacity: 0.5 
-                }}>
+                </div>
+                <div className="absolute inset-0 grid grid-rows-5 opacity-50">
                     {Array.from({ length: 5 }, (_, i) => (
-                        <Box
+                        <div
                             key={`row-${i + 1}`}
-                            sx={{ 
-                                borderBottom: 1, 
-                                borderColor: 'divider',
-                                '&:last-child': { borderBottom: 0 }
-                            }}
+                            className={`border-b border-border ${i === 4 ? 'border-b-0' : ''}`}
                         />
                     ))}
-                </Box>
-                <ScanLine style={{ position: 'relative', zIndex: 20, width: 24, height: 24 }} />
-            </Box>
-        </Box>
+                </div>
+                <ScanLine className="relative z-20 w-6 h-6" />
+            </div>
+        </div>
     );
 }
 
@@ -101,62 +65,42 @@ function TwoFactorSetupStep({
                 <AlertError errors={errors} />
             ) : (
                 <>
-                    <Box sx={{ mx: 'auto', maxWidth: '400px', overflow: 'hidden' }}>
+                    <div className="mx-auto max-w-md overflow-hidden">
                         <GridScanIcon />
                         {qrCodeSvg && (
-                            <Box 
-                                sx={{ 
-                                    display: 'flex', 
-                                    justifyContent: 'center',
-                                    '& svg': { maxWidth: '100%', height: 'auto' }
-                                }}
+                            <div 
+                                className="flex justify-center [&_svg]:max-w-full [&_svg]:h-auto"
                                 dangerouslySetInnerHTML={{ __html: qrCodeSvg }}
                             />
                         )}
-                    </Box>
+                    </div>
 
-                    <Box sx={{ textAlign: 'center', mt: 2 }}>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    <div className="text-center mt-4">
+                        <p className="text-sm text-muted-foreground mb-4">
                             Scan this QR code with your authenticator app, or enter the code manually:
-                        </Typography>
+                        </p>
                         
                         {manualSetupKey && (
-                            <Box sx={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center',
-                                gap: 1,
-                                p: 2,
-                                border: 1,
-                                borderColor: 'divider',
-                                borderRadius: 1,
-                                bgcolor: 'action.hover'
-                            }}>
-                                <Typography 
-                                    variant="body2" 
-                                    sx={{ 
-                                        fontFamily: 'monospace',
-                                        wordBreak: 'break-all'
-                                    }}
-                                >
+                            <div className="flex items-center justify-center gap-2 p-4 border border-border rounded bg-muted">
+                                <p className="text-sm font-mono break-all">
                                     {manualSetupKey}
-                                </Typography>
-                                <IconButton
-                                    size="small"
+                                </p>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
                                     onClick={() => copy(manualSetupKey)}
                                     aria-label="Copy setup key"
+                                    className="h-8 w-8 p-0"
                                 >
-                                    <IconComponent style={{ width: 16, height: 16 }} />
-                                </IconButton>
-                            </Box>
+                                    <IconComponent className="h-4 w-4" />
+                                </Button>
+                            </div>
                         )}
-                    </Box>
+                    </div>
 
                     <Button
-                        variant="contained"
                         onClick={onNextStep}
-                        fullWidth
-                        sx={{ mt: 3 }}
+                        className="w-full mt-6"
                     >
                         {buttonText}
                     </Button>
@@ -182,9 +126,9 @@ function TwoFactorConfirmationStep({
                 <AlertError errors={errors} />
             ) : (
                 <>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    <p className="text-sm text-muted-foreground mb-6">
                         Enter the code from your authenticator app to confirm setup:
-                    </Typography>
+                    </p>
 
                     <Form
                         {...confirm.form()}
@@ -194,42 +138,42 @@ function TwoFactorConfirmationStep({
                         resetOnSuccess
                     >
                         {({ processing }) => (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                <TextField
-                                    ref={codeInputRef}
-                                    name="code"
-                                    label="Verification Code"
-                                    value={code}
-                                    onChange={(e) => setCode(e.target.value)}
-                                    inputProps={{
-                                        maxLength: OTP_MAX_LENGTH,
-                                        pattern: '[0-9]*',
-                                        inputMode: 'numeric',
-                                    }}
-                                    fullWidth
-                                    autoComplete="one-time-code"
-                                    autoFocus
-                                />
+                            <div className="flex flex-col gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="code">Verification Code</Label>
+                                    <Input
+                                        ref={codeInputRef}
+                                        id="code"
+                                        name="code"
+                                        value={code}
+                                        onChange={(e) => setCode(e.target.value)}
+                                        maxLength={OTP_MAX_LENGTH}
+                                        pattern="[0-9]*"
+                                        inputMode="numeric"
+                                        autoComplete="one-time-code"
+                                        autoFocus
+                                        required
+                                    />
+                                </div>
 
-                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                <div className="flex gap-2">
                                     <Button
-                                        variant="outlined"
+                                        variant="outline"
                                         onClick={onPreviousStep}
-                                        fullWidth
+                                        className="flex-1"
                                     >
                                         Back
                                     </Button>
                                     <Button
                                         type="submit"
-                                        variant="contained"
                                         disabled={processing || code.length !== OTP_MAX_LENGTH}
-                                        fullWidth
-                                        startIcon={processing ? <Loader2 style={{ width: 16, height: 16 }} /> : undefined}
+                                        className="flex-1"
                                     >
+                                        {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                         {processing ? 'Verifying...' : 'Confirm'}
                                     </Button>
-                                </Box>
-                            </Box>
+                                </div>
+                            </div>
                         )}
                     </Form>
                 </>
@@ -269,17 +213,19 @@ export default function TwoFactorSetupModal({
     };
 
     return (
-        <Dialog open={isOpen} onClose={handleClose} maxWidth="sm" fullWidth>
-            <DialogTitle>
-                {currentStep === 'setup' ? 'Set up Two-Factor Authentication' : 'Confirm Setup'}
-            </DialogTitle>
-            <DialogContent>
-                <DialogContentText sx={{ mb: 3 }}>
-                    {currentStep === 'setup' 
-                        ? 'Follow these steps to set up two-factor authentication for your account.'
-                        : 'Enter the verification code from your authenticator app to complete the setup.'
-                    }
-                </DialogContentText>
+        <Dialog open={isOpen} onOpenChange={handleClose}>
+            <DialogContent className="max-w-md">
+                <DialogHeader>
+                    <DialogTitle>
+                        {currentStep === 'setup' ? 'Set up Two-Factor Authentication' : 'Confirm Setup'}
+                    </DialogTitle>
+                    <DialogDescription className="mb-6">
+                        {currentStep === 'setup' 
+                            ? 'Follow these steps to set up two-factor authentication for your account.'
+                            : 'Enter the verification code from your authenticator app to complete the setup.'
+                        }
+                    </DialogDescription>
+                </DialogHeader>
 
                 {currentStep === 'setup' ? (
                     <TwoFactorSetupStep

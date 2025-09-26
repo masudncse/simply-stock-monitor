@@ -1,20 +1,12 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    Grid,
-    Typography,
-    Divider,
-    Stack,
-} from '@mui/material';
-import {
-    Edit as EditIcon,
-    ArrowBack as BackIcon,
-    Security as SecurityIcon,
-} from '@mui/icons-material';
+    Edit,
+    ArrowLeft,
+    Shield,
+} from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
 
@@ -83,124 +75,101 @@ export default function RolesShow({ role }: RolesShowProps) {
 
     return (
         <Layout title={`Role: ${role.name}`}>
-            <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+            <div>
+                <div className="flex items-center gap-4 mb-6">
                     <Button
-                        component={Link}
-                        href="/roles"
-                        startIcon={<BackIcon />}
-                        variant="outlined"
+                        asChild
+                        variant="outline"
                     >
-                        Back to Roles
+                        <Link href="/roles">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back to Roles
+                        </Link>
                     </Button>
-                    <Typography variant="h4" component="h1">
+                    <h1 className="text-3xl font-bold">
                         Role Details
-                    </Typography>
-                </Box>
+                    </h1>
+                </div>
 
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={4}>
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                                    <SecurityIcon color="primary" />
-                                    <Box>
-                                        <Typography variant="h5" component="h2">
-                                            {role.name}
-                                        </Typography>
-                                        <Chip
-                                            label={role.name}
-                                            color={getRoleColor(role.name)}
-                                            variant="outlined"
-                                            size="small"
-                                        />
-                                    </Box>
-                                </Box>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <Card>
+                        <CardContent>
+                            <div className="flex items-center gap-3 mb-6">
+                                <Shield className="h-6 w-6 text-primary" />
+                                <div>
+                                    <h2 className="text-xl font-semibold">{role.name}</h2>
+                                    <Badge variant="outline" className="text-xs">
+                                        {role.name}
+                                    </Badge>
+                                </div>
+                            </div>
 
-                                <Divider sx={{ my: 2 }} />
+                            <div className="border-t pt-6 space-y-4">
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Created</p>
+                                    <p className="font-medium">{new Date(role.created_at).toLocaleDateString()}</p>
+                                </div>
 
-                                <Box sx={{ mb: 2 }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Created
-                                    </Typography>
-                                    <Typography variant="body1">
-                                        {new Date(role.created_at).toLocaleDateString()}
-                                    </Typography>
-                                </Box>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Last Updated</p>
+                                    <p className="font-medium">{new Date(role.updated_at).toLocaleDateString()}</p>
+                                </div>
 
-                                <Box sx={{ mb: 2 }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Last Updated
-                                    </Typography>
-                                    <Typography variant="body1">
-                                        {new Date(role.updated_at).toLocaleDateString()}
-                                    </Typography>
-                                </Box>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Total Permissions</p>
+                                    <p className="text-2xl font-bold text-primary">{role.permissions.length}</p>
+                                </div>
+                            </div>
 
-                                <Box sx={{ mb: 2 }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Total Permissions
-                                    </Typography>
-                                    <Typography variant="h6" color="primary">
-                                        {role.permissions.length}
-                                    </Typography>
-                                </Box>
-
-                                <Button
-                                    component={Link}
-                                    href={`/roles/${role.id}/edit`}
-                                    variant="contained"
-                                    fullWidth
-                                    startIcon={<EditIcon />}
-                                >
+                            <Button
+                                asChild
+                                className="w-full mt-6"
+                            >
+                                <Link href={`/roles/${role.id}/edit`}>
+                                    <Edit className="mr-2 h-4 w-4" />
                                     Edit Role
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
 
-                    <Grid item xs={12} md={8}>
+                    <div className="lg:col-span-2">
                         <Card>
+                            <CardHeader>
+                                <CardTitle>Permissions ({role.permissions.length})</CardTitle>
+                            </CardHeader>
                             <CardContent>
-                                <Typography variant="h6" gutterBottom>
-                                    Permissions ({role.permissions.length})
-                                </Typography>
-
                                 {Object.entries(groupedPermissions).map(([category, categoryPermissions]) => (
-                                    <Box key={category} sx={{ mb: 3 }}>
-                                        <Typography variant="subtitle1" sx={{ mb: 1, textTransform: 'capitalize' }}>
+                                    <div key={category} className="mb-6">
+                                        <h4 className="text-lg font-medium mb-3 capitalize">
                                             {category} ({categoryPermissions.length})
-                                        </Typography>
-                                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                                        </h4>
+                                        <div className="flex flex-wrap gap-2 mb-4">
                                             {categoryPermissions.map((permission) => (
-                                                <Chip
-                                                    key={permission.id}
-                                                    label={permission.name.replace(`${category}-`, '').replace('-', ' ')}
-                                                    color={getPermissionColor(permission.name)}
-                                                    variant="outlined"
-                                                    size="small"
-                                                />
+                                                <Badge key={permission.id} variant="outline" className="text-xs">
+                                                    {permission.name.replace(`${category}-`, '').replace('-', ' ')}
+                                                </Badge>
                                             ))}
-                                        </Stack>
-                                        <Divider sx={{ mt: 2 }} />
-                                    </Box>
+                                        </div>
+                                        <div className="border-t" />
+                                    </div>
                                 ))}
 
                                 {role.permissions.length === 0 && (
-                                    <Box sx={{ textAlign: 'center', py: 4 }}>
-                                        <Typography variant="h6" color="text.secondary">
+                                    <div className="text-center py-8">
+                                        <h3 className="text-lg font-medium text-muted-foreground mb-2">
                                             No permissions assigned
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
                                             This role doesn't have any permissions yet
-                                        </Typography>
-                                    </Box>
+                                        </p>
+                                    </div>
                                 )}
                             </CardContent>
                         </Card>
-                    </Grid>
-                </Grid>
-            </Box>
+                    </div>
+                </div>
+            </div>
         </Layout>
     );
 }

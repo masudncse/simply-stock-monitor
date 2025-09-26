@@ -1,9 +1,11 @@
-import { Button, Card, CardContent, CardHeader, Typography, Box, Grid, Chip } from '@mui/material';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 import { Form } from '@inertiajs/react';
 import { Eye, EyeOff, LockKeyhole, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import AlertError from './alert-error';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface TwoFactorRecoveryCodesProps {
     recoveryCodesList: string[];
@@ -48,33 +50,25 @@ export default function TwoFactorRecoveryCodes({
     return (
         <Card>
             <CardHeader>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <LockKeyhole style={{ width: 16, height: 16 }} />
-                    <Typography variant="h6" component="h3">
-                        2FA Recovery Codes
-                    </Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
+                <div className="flex items-center gap-2">
+                    <LockKeyhole className="h-4 w-4" />
+                    <CardTitle className="text-lg">2FA Recovery Codes</CardTitle>
+                </div>
+                <p className="text-sm text-muted-foreground">
                     Recovery codes let you regain access if you lose your 2FA
                     device. Store them in a secure password manager.
-                </Typography>
+                </p>
             </CardHeader>
             <CardContent>
-                <Box sx={{ 
-                    display: 'flex', 
-                    flexDirection: { xs: 'column', sm: 'row' }, 
-                    gap: 2, 
-                    alignItems: { sm: 'center' },
-                    justifyContent: { sm: 'space-between' },
-                    userSelect: 'none'
-                }}>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between select-none">
                     <Button
                         onClick={toggleCodesVisibility}
-                        variant="outlined"
-                        startIcon={<RecoveryCodeIconComponent style={{ width: 16, height: 16 }} />}
+                        variant="outline"
+                        className="flex items-center gap-2"
                         aria-expanded={codesAreVisible}
                         aria-controls="recovery-codes-section"
                     >
+                        <RecoveryCodeIconComponent className="h-4 w-4" />
                         {codesAreVisible ? 'Hide' : 'View'} Recovery Codes
                     </Button>
 
@@ -83,49 +77,45 @@ export default function TwoFactorRecoveryCodes({
                             {({ processing }) => (
                                 <Button
                                     type="submit"
-                                    variant="outlined"
-                                    color="warning"
+                                    variant="outline"
                                     disabled={processing}
-                                    startIcon={<RefreshCw style={{ width: 16, height: 16 }} />}
+                                    className="flex items-center gap-2"
                                 >
+                                    <RefreshCw className="h-4 w-4" />
                                     Regenerate Codes
                                 </Button>
                             )}
                         </Form>
                     )}
-                </Box>
+                </div>
 
                 {errors.length > 0 && (
-                    <Box sx={{ mt: 2 }}>
+                    <div className="mt-4">
                         <AlertError errors={errors} />
-                    </Box>
+                    </div>
                 )}
 
                 {codesAreVisible && (
-                    <Box
+                    <div
                         ref={codesSectionRef}
                         id="recovery-codes-section"
-                        sx={{ mt: 3 }}
+                        className="mt-6"
                     >
-                        <Typography variant="subtitle2" sx={{ mb: 2 }}>
+                        <h4 className="text-sm font-medium mb-4">
                             Recovery Codes:
-                        </Typography>
-                        <Grid container spacing={1}>
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
                             {recoveryCodesList.map((code, index) => (
-                                <Grid item xs={6} sm={4} md={3} key={index}>
-                                    <Chip
-                                        label={code}
-                                        variant="outlined"
-                                        sx={{ 
-                                            fontFamily: 'monospace',
-                                            width: '100%',
-                                            justifyContent: 'flex-start'
-                                        }}
-                                    />
-                                </Grid>
+                                <Badge
+                                    key={index}
+                                    variant="outline"
+                                    className="font-mono text-xs justify-start p-2"
+                                >
+                                    {code}
+                                </Badge>
                             ))}
-                        </Grid>
-                    </Box>
+                        </div>
+                    </div>
                 )}
             </CardContent>
         </Card>

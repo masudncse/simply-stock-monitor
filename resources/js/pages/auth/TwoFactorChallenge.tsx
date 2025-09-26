@@ -3,20 +3,16 @@ import AuthLayout from '@/layouts/auth-layout';
 import { store } from '@/routes/two-factor/login';
 import { Form, Head } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
-import {
-    Box,
-    Button,
-    TextField,
-    Typography,
-    Stack,
-} from '@mui/material';
-// Custom OTP Input component using MUI
-const OTPInput = ({ value, onChange, length, disabled, sx }: {
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+// Custom OTP Input component using shadcn/ui
+const OTPInput = ({ value, onChange, length, disabled, className }: {
     value: string;
     onChange: (value: string) => void;
     length: number;
     disabled?: boolean;
-    sx?: object;
+    className?: string;
 }) => {
     const handleChange = (index: number, newValue: string) => {
         if (newValue.length > 1) return; // Only allow single digit
@@ -41,24 +37,20 @@ const OTPInput = ({ value, onChange, length, disabled, sx }: {
     };
 
     return (
-        <Box sx={{ display: 'flex', gap: 1, ...sx }}>
+        <div className={`flex gap-2 ${className || ''}`}>
             {Array.from({ length }, (_, index) => (
-                <TextField
+                <Input
                     key={index}
                     id={`otp-${index}`}
                     value={value[index] || ''}
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     disabled={disabled}
-                    inputProps={{
-                        maxLength: 1,
-                        style: { textAlign: 'center' }
-                    }}
-                    sx={{ width: 48 }}
-                    variant="outlined"
+                    maxLength={1}
+                    className="w-12 text-center"
                 />
             ))}
-        </Box>
+        </div>
     );
 };
 
@@ -101,69 +93,68 @@ export default function TwoFactorChallenge() {
         >
             <Head title="Two-Factor Authentication" />
 
-            <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div className="flex flex-col gap-4">
                 <Form
                     {...store.form()}
                     resetOnError
                     resetOnSuccess={!showRecoveryInput}
                 >
                     {({ errors, processing, clearErrors }) => (
-                        <Stack spacing={3}>
+                        <div className="space-y-4">
                             {showRecoveryInput ? (
-                                <>
-                                        <TextField
-                                            name="recovery_code"
-                                            type="text"
-                                            label="Recovery Code"
-                                            placeholder="Enter recovery code"
-                                            autoFocus={showRecoveryInput}
-                                            error={!!errors.recovery_code}
-                                            helperText={errors.recovery_code}
-                                            fullWidth
-                                            variant="outlined"
-                                        />
-                                </>
+                                <div className="space-y-2">
+                                    <Label htmlFor="recovery_code">Recovery Code</Label>
+                                    <Input
+                                        id="recovery_code"
+                                        name="recovery_code"
+                                        type="text"
+                                        placeholder="Enter recovery code"
+                                        autoFocus={showRecoveryInput}
+                                        required
+                                    />
+                                    {errors.recovery_code && (
+                                        <p className="text-sm text-destructive">{errors.recovery_code}</p>
+                                    )}
+                                </div>
                             ) : (
-                                <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                                <div className="flex flex-col items-center gap-4">
                                     <input type="hidden" name="code" value={code} />
                                     <OTPInput
                                         value={code}
                                         onChange={(value) => setCode(value)}
                                         length={OTP_MAX_LENGTH}
                                         disabled={processing}
-                                        sx={{ gap: 1 }}
                                     />
                                     {errors.code && (
-                                        <Typography variant="body2" color="error" textAlign="center">
+                                        <p className="text-sm text-destructive text-center">
                                             {errors.code}
-                                        </Typography>
+                                        </p>
                                     )}
-                                </Box>
+                                </div>
                             )}
 
                             <Button
                                 type="submit"
-                                variant="contained"
-                                fullWidth
                                 disabled={processing}
+                                className="w-full"
                             >
                                 Continue
                             </Button>
 
-                            <Typography variant="body2" color="text.secondary" textAlign="center">
+                            <p className="text-sm text-muted-foreground text-center">
                                 or you can{' '}
                                 <Button
-                                    variant="text"
+                                    variant="link"
                                     onClick={() => toggleRecoveryMode(clearErrors)}
-                                    sx={{ textDecoration: 'underline', p: 0, minWidth: 'auto' }}
+                                    className="p-0 h-auto text-sm underline"
                                 >
                                     {authConfigContent.toggleText}
                                 </Button>
-                            </Typography>
-                        </Stack>
+                            </p>
+                        </div>
                     )}
                 </Form>
-            </Box>
+            </div>
         </AuthLayout>
     );
 }

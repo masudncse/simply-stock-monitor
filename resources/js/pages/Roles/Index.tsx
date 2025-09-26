@@ -1,27 +1,14 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-    Paper,
-    Stack,
-} from '@mui/material';
-import {
-    Add as AddIcon,
-    Edit as EditIcon,
-    Visibility as ViewIcon,
-    Delete as DeleteIcon,
-} from '@mui/icons-material';
+    Plus,
+    Edit,
+    Eye,
+    Trash2,
+} from 'lucide-react';
 import { Link, router } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
 
@@ -79,122 +66,113 @@ export default function RolesIndex({ roles }: RolesIndexProps) {
 
     return (
         <Layout title="Roles Management">
-            <Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    <Typography variant="h4" component="h1">
+            <div>
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-bold">
                         Roles Management
-                    </Typography>
+                    </h1>
                     <Button
-                        component={Link}
-                        href="/roles/create"
-                        variant="contained"
-                        startIcon={<AddIcon />}
+                        asChild
                     >
-                        Create Role
+                        <Link href="/roles/create">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Create Role
+                        </Link>
                     </Button>
-                </Box>
+                </div>
 
                 <Card>
+                    <CardHeader>
+                        <CardTitle>All Roles</CardTitle>
+                    </CardHeader>
                     <CardContent>
-                        <TableContainer component={Paper} variant="outlined">
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Permissions</TableCell>
-                                        <TableCell>Created</TableCell>
-                                        <TableCell align="center">Actions</TableCell>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Permissions</TableHead>
+                                    <TableHead>Created</TableHead>
+                                    <TableHead className="text-center">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {roles.data.map((role) => (
+                                    <TableRow key={role.id}>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-medium">{role.name}</span>
+                                                <Badge variant="outline" className="text-xs">
+                                                    {role.name}
+                                                </Badge>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-wrap gap-1">
+                                                {role.permissions.slice(0, 3).map((permission) => (
+                                                    <Badge key={permission.id} variant="outline" className="text-xs">
+                                                        {permission.name}
+                                                    </Badge>
+                                                ))}
+                                                {role.permissions.length > 3 && (
+                                                    <Badge variant="outline" className="text-xs">
+                                                        +{role.permissions.length - 3} more
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-sm text-muted-foreground">
+                                                {new Date(role.created_at).toLocaleDateString()}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <div className="flex justify-center gap-2">
+                                                <Button
+                                                    asChild
+                                                    variant="ghost"
+                                                    size="sm"
+                                                >
+                                                    <Link href={`/roles/${role.id}`}>
+                                                        <Eye className="h-4 w-4" />
+                                                    </Link>
+                                                </Button>
+                                                <Button
+                                                    asChild
+                                                    variant="ghost"
+                                                    size="sm"
+                                                >
+                                                    <Link href={`/roles/${role.id}/edit`}>
+                                                        <Edit className="h-4 w-4" />
+                                                    </Link>
+                                                </Button>
+                                                <Button
+                                                    onClick={() => handleDelete(role)}
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    disabled={role.name === 'Admin'}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
                                     </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {roles.data.map((role) => (
-                                        <TableRow key={role.id} hover>
-                                            <TableCell>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                    <Typography variant="subtitle2" fontWeight="medium">
-                                                        {role.name}
-                                                    </Typography>
-                                                    <Chip
-                                                        label={role.name}
-                                                        size="small"
-                                                        color={getRoleColor(role.name)}
-                                                        variant="outlined"
-                                                    />
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
-                                                    {role.permissions.slice(0, 3).map((permission) => (
-                                                        <Chip
-                                                            key={permission.id}
-                                                            label={permission.name}
-                                                            size="small"
-                                                            variant="outlined"
-                                                            sx={{ fontSize: '0.75rem', height: 20 }}
-                                                        />
-                                                    ))}
-                                                    {role.permissions.length > 3 && (
-                                                        <Chip
-                                                            label={`+${role.permissions.length - 3} more`}
-                                                            size="small"
-                                                            variant="outlined"
-                                                            sx={{ fontSize: '0.75rem', height: 20 }}
-                                                        />
-                                                    )}
-                                                </Stack>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    {new Date(role.created_at).toLocaleDateString()}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Stack direction="row" spacing={1} justifyContent="center">
-                                                    <IconButton
-                                                        component={Link}
-                                                        href={`/roles/${role.id}`}
-                                                        size="small"
-                                                        color="info"
-                                                    >
-                                                        <ViewIcon />
-                                                    </IconButton>
-                                                    <IconButton
-                                                        component={Link}
-                                                        href={`/roles/${role.id}/edit`}
-                                                        size="small"
-                                                        color="primary"
-                                                    >
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                    <IconButton
-                                                        onClick={() => handleDelete(role)}
-                                                        size="small"
-                                                        color="error"
-                                                        disabled={role.name === 'Admin'}
-                                                    >
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                </Stack>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                ))}
+                            </TableBody>
+                        </Table>
 
                         {roles.data.length === 0 && (
-                            <Box sx={{ textAlign: 'center', py: 4 }}>
-                                <Typography variant="h6" color="text.secondary">
+                            <div className="text-center py-8">
+                                <h3 className="text-lg font-medium text-muted-foreground mb-2">
                                     No roles found
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
                                     Create your first role to get started
-                                </Typography>
-                            </Box>
+                                </p>
+                            </div>
                         )}
                     </CardContent>
                 </Card>
-            </Box>
+            </div>
         </Layout>
     );
 }

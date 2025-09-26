@@ -3,12 +3,6 @@ import { home } from '@/routes';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
-import {
-    Box,
-    Container,
-    Typography,
-    Link as MuiLink,
-} from '@mui/material';
 
 interface AuthLayoutProps {
     title?: string;
@@ -23,130 +17,55 @@ export default function AuthSplitLayout({
     const { name, quote } = usePage<SharedData>().props;
 
     return (
-        <Box
-            component="div"
-            sx={{
-                minHeight: '100vh',
-                display: 'flex',
-            }}
-        >
+        <div className="min-h-screen flex">
             {/* Left side - Branding */}
-            <Box
-                component="div"
-                sx={{
-                    display: { xs: 'none', lg: 'flex' },
-                    flexDirection: 'column',
-                    flex: 1,
-                    backgroundColor: 'grey.900',
-                    color: 'white',
-                    p: 5,
-                    position: 'relative',
-                }}
-            >
-                <Box
-                    component="div"
-                    sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'grey.900',
-                    }}
-                />
-                <MuiLink
-                    component={Link}
+            <div className="hidden lg:flex flex-col flex-1 bg-gray-900 text-white p-8 relative">
+                <div className="absolute inset-0 bg-gray-900" />
+                <Link
                     href={home()}
-                    sx={{
-                        position: 'relative',
-                        zIndex: 20,
-                        display: 'flex',
-                        alignItems: 'center',
-                        fontSize: '1.125rem',
-                        fontWeight: 500,
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        mb: 2,
-                    }}
+                    className="relative z-20 flex items-center text-lg font-medium text-inherit no-underline mb-4"
                 >
-                    <AppLogoIcon sx={{ mr: 1, width: 32, height: 32, fill: 'currentColor' }} />
+                    <AppLogoIcon className="mr-2 w-8 h-8 fill-current" />
                     {name}
-                </MuiLink>
+                </Link>
                 {quote && (
-                    <Box
-                        component="div"
-                        sx={{
-                            position: 'relative',
-                            zIndex: 20,
-                            mt: 'auto',
-                        }}
-                    >
-                        <Typography variant="h6" component="blockquote" sx={{ mb: 1 }}>
+                    <div className="relative z-20 mt-auto">
+                        <blockquote className="text-lg mb-2">
                             &ldquo;{quote.message}&rdquo;
-                        </Typography>
-                        <Typography variant="body2" color="grey.300">
+                        </blockquote>
+                        <p className="text-sm text-gray-300">
                             {quote.author}
-                        </Typography>
-                    </Box>
+                        </p>
+                    </div>
                 )}
-            </Box>
+            </div>
 
             {/* Right side - Auth form */}
-            <Box
-                component="div"
-                sx={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: { xs: 2, lg: 4 },
-                }}
-            >
-                <Container maxWidth="sm">
-                    <Box
-                        component="div"
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: 3,
-                        }}
-                    >
-                        <MuiLink
-                            component={Link}
+            <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
+                <div className="w-full max-w-sm">
+                    <div className="flex flex-col items-center gap-6">
+                        <Link
                             href={home()}
-                            sx={{
-                                display: { xs: 'flex', lg: 'none' },
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                textDecoration: 'none',
-                                color: 'inherit',
-                            }}
+                            className="flex lg:hidden items-center justify-center text-inherit no-underline"
                         >
-                            <AppLogoIcon sx={{ width: 40, height: 40, fill: 'currentColor' }} />
-                        </MuiLink>
+                            <AppLogoIcon className="w-10 h-10 fill-current" />
+                        </Link>
                         
-                        <Box
-                            component="div"
-                            sx={{
-                                textAlign: { xs: 'left', sm: 'center' },
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 1,
-                            }}
-                        >
-                            <Typography variant="h4" component="h1" fontWeight="medium">
+                        <div className="text-left sm:text-center flex flex-col gap-2">
+                            <h1 className="text-2xl font-medium">
                                 {title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {description}
-                            </Typography>
-                        </Box>
+                            </h1>
+                            {description && (
+                                <p className="text-sm text-muted-foreground">
+                                    {description}
+                                </p>
+                            )}
+                        </div>
                         
                         {children}
-                    </Box>
-                </Container>
-            </Box>
-        </Box>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
