@@ -2,17 +2,11 @@ import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileCo
 import { send } from '@/routes/verification';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Fade,
-    Grid,
-    TextField,
-    Typography,
-    Alert,
-} from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
@@ -41,13 +35,16 @@ export default function Profile({
             <Head title="Profile settings" />
 
             <SettingsLayout>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <div className="flex flex-col gap-6">
                     <HeadingSmall
                         title="Profile information"
                         description="Update your name and email address"
                     />
 
                     <Card>
+                        <CardHeader>
+                            <CardTitle>Profile Information</CardTitle>
+                        </CardHeader>
                         <CardContent>
                             <Form
                                 {...ProfileController.update.form()}
@@ -56,90 +53,81 @@ export default function Profile({
                                 }}
                             >
                                 {({ processing, recentlySuccessful, errors }) => (
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={12}>
-                                                <TextField
+                                    <div className="flex flex-col gap-6">
+                                        <div className="space-y-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="name">Name</Label>
+                                                <Input
                                                     id="name"
                                                     name="name"
-                                                    label="Name"
                                                     defaultValue={auth.user.name}
                                                     required
                                                     autoComplete="name"
                                                     placeholder="Full name"
-                                                    fullWidth
-                                                    error={!!errors.name}
-                                                    helperText={errors.name}
                                                 />
-                                            </Grid>
+                                                {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                                            </div>
 
-                                            <Grid item xs={12}>
-                                                <TextField
+                                            <div className="space-y-2">
+                                                <Label htmlFor="email">Email address</Label>
+                                                <Input
                                                     id="email"
                                                     name="email"
                                                     type="email"
-                                                    label="Email address"
                                                     defaultValue={auth.user.email}
                                                     required
                                                     autoComplete="username"
                                                     placeholder="Email address"
-                                                    fullWidth
-                                                    error={!!errors.email}
-                                                    helperText={errors.email}
                                                 />
-                                            </Grid>
-                                        </Grid>
+                                                {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+                                            </div>
+                                        </div>
 
                                         {mustVerifyEmail &&
                                             auth.user.email_verified_at === null && (
-                                                <Box>
-                                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground mb-2">
                                                         Your email address is unverified.{' '}
                                                         <Link
                                                             href={send()}
                                                             as="button"
-                                                            style={{ 
-                                                                color: 'inherit', 
-                                                                textDecoration: 'underline',
-                                                                background: 'none',
-                                                                border: 'none',
-                                                                cursor: 'pointer'
-                                                            }}
+                                                            className="text-inherit underline bg-none border-none cursor-pointer"
                                                         >
                                                             Click here to resend the verification email.
                                                         </Link>
-                                                    </Typography>
+                                                    </p>
 
                                                     {status === 'verification-link-sent' && (
-                                                        <Alert severity="success" sx={{ mt: 1 }}>
-                                                            A new verification link has been sent to your email address.
+                                                        <Alert className="mt-2">
+                                                            <AlertDescription>
+                                                                A new verification link has been sent to your email address.
+                                                            </AlertDescription>
                                                         </Alert>
                                                     )}
-                                                </Box>
+                                                </div>
                                             )}
 
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <div className="flex items-center gap-4">
                                             <Button
                                                 type="submit"
-                                                variant="contained"
                                                 disabled={processing}
                                                 data-test="update-profile-button"
                                             >
                                                 Save
                                             </Button>
 
-                                            <Fade in={recentlySuccessful}>
-                                                <Typography variant="body2" color="text.secondary">
+                                            {recentlySuccessful && (
+                                                <p className="text-sm text-muted-foreground">
                                                     Saved
-                                                </Typography>
-                                            </Fade>
-                                        </Box>
-                                    </Box>
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
                                 )}
                             </Form>
                         </CardContent>
                     </Card>
-                </Box>
+                </div>
 
                 <DeleteUser />
             </SettingsLayout>

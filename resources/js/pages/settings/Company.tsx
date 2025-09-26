@@ -51,6 +51,7 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
     { code: 'JPY', name: 'Japanese Yen' },
     { code: 'CAD', name: 'Canadian Dollar' },
     { code: 'AUD', name: 'Australian Dollar' },
+    { code: 'BDT', name: 'Bangladeshi Taka' },
   ];
 
   const timezones = [

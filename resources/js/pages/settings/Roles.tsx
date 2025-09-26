@@ -1,194 +1,141 @@
 import React from 'react';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Grid,
-    Typography,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Divider,
-} from '@mui/material';
-import {
-    Security as SecurityIcon,
-    Add as AddIcon,
-    Shield as ShieldIcon,
-} from '@mui/icons-material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Shield, Plus, Shield as ShieldIcon } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
 
 export default function SettingsRoles() {
     return (
         <Layout title="Roles & Permissions">
-            <Box>
-                <Typography variant="h4" component="h1" gutterBottom>
+            <div>
+                <h1 className="text-3xl font-bold mb-2">
                     Roles & Permissions
-                </Typography>
+                </h1>
                 
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+                <p className="text-muted-foreground mb-8">
                     Define roles and assign permissions to control user access throughout the system.
-                </Typography>
+                </p>
 
                 <Card>
+                    <CardHeader>
+                        <div className="flex items-center gap-2">
+                            <Shield className="h-5 w-5 text-primary" />
+                            <CardTitle>Role Management</CardTitle>
+                        </div>
+                    </CardHeader>
                     <CardContent>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                            <SecurityIcon color="primary" />
-                            <Typography variant="h6">
-                                Role Management
-                            </Typography>
-                        </Box>
-                        
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                        <p className="text-muted-foreground mb-6">
                             Create and manage roles with specific permissions. Roles help organize users and control what they can access in the system.
-                        </Typography>
+                        </p>
 
-                        <List>
-                            <ListItem component={Link} href="/roles" sx={{ cursor: 'pointer' }}>
-                                <ListItemIcon>
-                                    <SecurityIcon />
-                                </ListItemIcon>
-                                <ListItemText 
-                                    primary="View All Roles" 
-                                    secondary="Browse and manage all system roles"
-                                />
-                            </ListItem>
+                        <div className="space-y-2 mb-6">
+                            <Link href="/roles" className="flex items-center p-3 rounded-lg border hover:bg-accent hover:text-accent-foreground transition-colors">
+                                <Shield className="mr-3 h-4 w-4" />
+                                <div>
+                                    <div className="font-medium">View All Roles</div>
+                                    <div className="text-sm text-muted-foreground">Browse and manage all system roles</div>
+                                </div>
+                            </Link>
                             
-                            <ListItem component={Link} href="/roles/create" sx={{ cursor: 'pointer' }}>
-                                <ListItemIcon>
-                                    <AddIcon />
-                                </ListItemIcon>
-                                <ListItemText 
-                                    primary="Create New Role" 
-                                    secondary="Define a new role with specific permissions"
-                                />
-                            </ListItem>
-                        </List>
+                            <Link href="/roles/create" className="flex items-center p-3 rounded-lg border hover:bg-accent hover:text-accent-foreground transition-colors">
+                                <Plus className="mr-3 h-4 w-4" />
+                                <div>
+                                    <div className="font-medium">Create New Role</div>
+                                    <div className="text-sm text-muted-foreground">Define a new role with specific permissions</div>
+                                </div>
+                            </Link>
+                        </div>
 
-                        <Divider sx={{ my: 2 }} />
-
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Button
-                                    component={Link}
-                                    href="/roles"
-                                    variant="contained"
-                                    fullWidth
-                                    startIcon={<SecurityIcon />}
-                                >
-                                    Manage Roles
+                        <div className="border-t pt-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <Button asChild className="w-full">
+                                    <Link href="/roles">
+                                        <Shield className="mr-2 h-4 w-4" />
+                                        Manage Roles
+                                    </Link>
                                 </Button>
-                            </Grid>
-                            
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Button
-                                    component={Link}
-                                    href="/roles/create"
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<AddIcon />}
-                                >
-                                    Create Role
+                                
+                                <Button asChild variant="outline" className="w-full">
+                                    <Link href="/roles/create">
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Create Role
+                                    </Link>
                                 </Button>
-                            </Grid>
-                            
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Button
-                                    component={Link}
-                                    href="/permissions"
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<ShieldIcon />}
-                                >
-                                    Manage Permissions
+                                
+                                <Button asChild variant="outline" className="w-full">
+                                    <Link href="/permissions">
+                                        <ShieldIcon className="mr-2 h-4 w-4" />
+                                        Manage Permissions
+                                    </Link>
                                 </Button>
-                            </Grid>
-                            
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Button
-                                    component={Link}
-                                    href="/permissions/create"
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<AddIcon />}
-                                >
-                                    Create Permission
+                                
+                                <Button asChild variant="outline" className="w-full">
+                                    <Link href="/permissions/create">
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Create Permission
+                                    </Link>
                                 </Button>
-                            </Grid>
-                        </Grid>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
 
-                <Card sx={{ mt: 3 }}>
+                <Card className="mt-6">
+                    <CardHeader>
+                        <CardTitle>Available Permissions</CardTitle>
+                    </CardHeader>
                     <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                            Available Permissions
-                        </Typography>
-                        
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        <p className="text-muted-foreground mb-4">
                             The system includes the following permission categories:
-                        </Typography>
+                        </p>
 
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6} md={4}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Products
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div>
+                                <h4 className="font-medium mb-2">Products</h4>
+                                <p className="text-sm text-muted-foreground">
                                     view-products, create-products, edit-products, delete-products
-                                </Typography>
-                            </Grid>
+                                </p>
+                            </div>
                             
-                            <Grid item xs={12} sm={6} md={4}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Stock
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                            <div>
+                                <h4 className="font-medium mb-2">Stock</h4>
+                                <p className="text-sm text-muted-foreground">
                                     view-stock, adjust-stock, transfer-stock
-                                </Typography>
-                            </Grid>
+                                </p>
+                            </div>
                             
-                            <Grid item xs={12} sm={6} md={4}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Sales
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                            <div>
+                                <h4 className="font-medium mb-2">Sales</h4>
+                                <p className="text-sm text-muted-foreground">
                                     view-sales, create-sales, edit-sales, delete-sales, process-sales
-                                </Typography>
-                            </Grid>
+                                </p>
+                            </div>
                             
-                            <Grid item xs={12} sm={6} md={4}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Purchases
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                            <div>
+                                <h4 className="font-medium mb-2">Purchases</h4>
+                                <p className="text-sm text-muted-foreground">
                                     view-purchases, create-purchases, edit-purchases, delete-purchases, approve-purchases
-                                </Typography>
-                            </Grid>
+                                </p>
+                            </div>
                             
-                            <Grid item xs={12} sm={6} md={4}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Customers
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                            <div>
+                                <h4 className="font-medium mb-2">Customers</h4>
+                                <p className="text-sm text-muted-foreground">
                                     view-customers, create-customers, edit-customers, delete-customers
-                                </Typography>
-                            </Grid>
+                                </p>
+                            </div>
                             
-                            <Grid item xs={12} sm={6} md={4}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Reports
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                            <div>
+                                <h4 className="font-medium mb-2">Reports</h4>
+                                <p className="text-sm text-muted-foreground">
                                     view-reports, export-reports
-                                </Typography>
-                            </Grid>
-                        </Grid>
+                                </p>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
-            </Box>
+            </div>
         </Layout>
     );
 }

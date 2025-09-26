@@ -209,6 +209,7 @@ export default function Appearance() {
                     <SelectItem value="CAD">Canadian Dollar (C$)</SelectItem>
                     <SelectItem value="AUD">Australian Dollar (A$)</SelectItem>
                     <SelectItem value="CHF">Swiss Franc (CHF)</SelectItem>
+                    <SelectItem value="BDT">Bangladeshi Taka (৳)</SelectItem>
                     <SelectItem value="CNY">Chinese Yuan (¥)</SelectItem>
                     <SelectItem value="INR">Indian Rupee (₹)</SelectItem>
                     <SelectItem value="BRL">Brazilian Real (R$)</SelectItem>

@@ -1,199 +1,143 @@
 import React from 'react';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Grid,
-    Typography,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Divider,
-} from '@mui/material';
-import {
-    People as PeopleIcon,
-    Security as SecurityIcon,
-    Add as AddIcon,
-} from '@mui/icons-material';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, Shield, Plus } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import Layout from '@/layouts/Layout';
 
 export default function SettingsUsers() {
     return (
         <Layout title="User Management">
-            <Box>
-                <Typography variant="h4" component="h1" gutterBottom>
+            <div>
+                <h1 className="text-3xl font-bold mb-2">
                     User Management
-                </Typography>
+                </h1>
                 
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+                <p className="text-muted-foreground mb-8">
                     Manage users, roles, and permissions for your system.
-                </Typography>
+                </p>
 
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                                    <PeopleIcon color="primary" />
-                                    <Typography variant="h6">
-                                        Users
-                                    </Typography>
-                                </Box>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center gap-2">
+                                <Users className="h-5 w-5 text-primary" />
+                                <CardTitle>Users</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground mb-6">
+                                Manage system users, their accounts, and basic information.
+                            </p>
+
+                            <div className="space-y-2 mb-6">
+                                <Link href="/users" className="flex items-center p-3 rounded-lg border hover:bg-accent hover:text-accent-foreground transition-colors">
+                                    <Users className="mr-3 h-4 w-4" />
+                                    <div>
+                                        <div className="font-medium">View All Users</div>
+                                        <div className="text-sm text-muted-foreground">Browse and manage all system users</div>
+                                    </div>
+                                </Link>
                                 
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                                    Manage system users, their accounts, and basic information.
-                                </Typography>
+                                <Link href="/users/create" className="flex items-center p-3 rounded-lg border hover:bg-accent hover:text-accent-foreground transition-colors">
+                                    <Plus className="mr-3 h-4 w-4" />
+                                    <div>
+                                        <div className="font-medium">Create New User</div>
+                                        <div className="text-sm text-muted-foreground">Add a new user to the system</div>
+                                    </div>
+                                </Link>
+                            </div>
 
-                                <List>
-                                    <ListItem component={Link} href="/users" sx={{ cursor: 'pointer' }}>
-                                        <ListItemIcon>
-                                            <PeopleIcon />
-                                        </ListItemIcon>
-                                        <ListItemText 
-                                            primary="View All Users" 
-                                            secondary="Browse and manage all system users"
-                                        />
-                                    </ListItem>
-                                    
-                                    <ListItem component={Link} href="/users/create" sx={{ cursor: 'pointer' }}>
-                                        <ListItemIcon>
-                                            <AddIcon />
-                                        </ListItemIcon>
-                                        <ListItemText 
-                                            primary="Create New User" 
-                                            secondary="Add a new user to the system"
-                                        />
-                                    </ListItem>
-                                </List>
-
-                                <Divider sx={{ my: 2 }} />
-
-                                <Button
-                                    component={Link}
-                                    href="/users"
-                                    variant="contained"
-                                    fullWidth
-                                    startIcon={<PeopleIcon />}
-                                >
-                                    Manage Users
+                            <div className="border-t pt-6">
+                                <Button asChild className="w-full">
+                                    <Link href="/users">
+                                        <Users className="mr-2 h-4 w-4" />
+                                        Manage Users
+                                    </Link>
                                 </Button>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                    <Grid item xs={12} md={6}>
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                                    <SecurityIcon color="primary" />
-                                    <Typography variant="h6">
-                                        Roles & Permissions
-                                    </Typography>
-                                </Box>
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center gap-2">
+                                <Shield className="h-5 w-5 text-primary" />
+                                <CardTitle>Roles & Permissions</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground mb-6">
+                                Define roles and assign permissions to control user access.
+                            </p>
+
+                            <div className="space-y-2 mb-6">
+                                <Link href="/roles" className="flex items-center p-3 rounded-lg border hover:bg-accent hover:text-accent-foreground transition-colors">
+                                    <Shield className="mr-3 h-4 w-4" />
+                                    <div>
+                                        <div className="font-medium">View All Roles</div>
+                                        <div className="text-sm text-muted-foreground">Browse and manage system roles</div>
+                                    </div>
+                                </Link>
                                 
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                                    Define roles and assign permissions to control user access.
-                                </Typography>
+                                <Link href="/roles/create" className="flex items-center p-3 rounded-lg border hover:bg-accent hover:text-accent-foreground transition-colors">
+                                    <Plus className="mr-3 h-4 w-4" />
+                                    <div>
+                                        <div className="font-medium">Create New Role</div>
+                                        <div className="text-sm text-muted-foreground">Define a new role with specific permissions</div>
+                                    </div>
+                                </Link>
+                            </div>
 
-                                <List>
-                                    <ListItem component={Link} href="/roles" sx={{ cursor: 'pointer' }}>
-                                        <ListItemIcon>
-                                            <SecurityIcon />
-                                        </ListItemIcon>
-                                        <ListItemText 
-                                            primary="View All Roles" 
-                                            secondary="Browse and manage system roles"
-                                        />
-                                    </ListItem>
-                                    
-                                    <ListItem component={Link} href="/roles/create" sx={{ cursor: 'pointer' }}>
-                                        <ListItemIcon>
-                                            <AddIcon />
-                                        </ListItemIcon>
-                                        <ListItemText 
-                                            primary="Create New Role" 
-                                            secondary="Define a new role with specific permissions"
-                                        />
-                                    </ListItem>
-                                </List>
-
-                                <Divider sx={{ my: 2 }} />
-
-                                <Button
-                                    component={Link}
-                                    href="/roles"
-                                    variant="contained"
-                                    fullWidth
-                                    startIcon={<SecurityIcon />}
-                                >
-                                    Manage Roles
+                            <div className="border-t pt-6">
+                                <Button asChild className="w-full">
+                                    <Link href="/roles">
+                                        <Shield className="mr-2 h-4 w-4" />
+                                        Manage Roles
+                                    </Link>
                                 </Button>
                             </CardContent>
                         </Card>
                     </Grid>
                 </Grid>
 
-                <Card sx={{ mt: 3 }}>
+                <Card className="mt-6">
+                    <CardHeader>
+                        <CardTitle>Quick Actions</CardTitle>
+                    </CardHeader>
                     <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                            Quick Actions
-                        </Typography>
-                        
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Button
-                                    component={Link}
-                                    href="/users/create"
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<AddIcon />}
-                                >
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <Button asChild variant="outline" className="w-full">
+                                <Link href="/users/create">
+                                    <Plus className="mr-2 h-4 w-4" />
                                     Add User
-                                </Button>
-                            </Grid>
+                                </Link>
+                            </Button>
                             
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Button
-                                    component={Link}
-                                    href="/roles/create"
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<AddIcon />}
-                                >
+                            <Button asChild variant="outline" className="w-full">
+                                <Link href="/roles/create">
+                                    <Plus className="mr-2 h-4 w-4" />
                                     Add Role
-                                </Button>
-                            </Grid>
+                                </Link>
+                            </Button>
                             
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Button
-                                    component={Link}
-                                    href="/users"
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<PeopleIcon />}
-                                >
+                            <Button asChild variant="outline" className="w-full">
+                                <Link href="/users">
+                                    <Users className="mr-2 h-4 w-4" />
                                     View Users
-                                </Button>
-                            </Grid>
+                                </Link>
+                            </Button>
                             
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Button
-                                    component={Link}
-                                    href="/roles"
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<SecurityIcon />}
-                                >
+                            <Button asChild variant="outline" className="w-full">
+                                <Link href="/roles">
+                                    <Shield className="mr-2 h-4 w-4" />
                                     View Roles
-                                </Button>
-                            </Grid>
-                        </Grid>
+                                </Link>
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
-            </Box>
+            </div>
         </Layout>
     );
 }
