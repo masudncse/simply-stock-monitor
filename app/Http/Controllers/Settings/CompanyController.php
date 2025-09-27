@@ -7,6 +7,7 @@ use App\Http\Requests\CompanySettingsRequest;
 use App\Models\CompanySetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class CompanyController extends Controller
@@ -25,7 +26,24 @@ class CompanyController extends Controller
         try {
             Log::info('Company settings update request:', $request->all());
 
-            $settings = CompanySetting::updateSettings($request->validated());
+            $data = $request->validated();
+            
+            // Handle logo upload
+            if ($request->hasFile('logo')) {
+                $logo = $request->file('logo');
+                
+                // Delete old logo if exists
+                $settings = CompanySetting::getSettings();
+                if ($settings->logo) {
+                    Storage::disk('public')->delete($settings->logo);
+                }
+                
+                // Store new logo
+                $logoPath = $logo->store('company/logos', 'public');
+                $data['logo'] = $logoPath;
+            }
+            
+            $settings = CompanySetting::updateSettings($data);
             
             Log::info('Company settings saved:', $settings->toArray());
             

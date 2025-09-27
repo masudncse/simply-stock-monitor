@@ -64,6 +64,7 @@ interface Company {
   country: string;
   tax_id: string;
   website: string;
+  logo?: string;
 }
 
 interface SalePrintProps {
@@ -101,6 +102,15 @@ export default function SalePrint({ sale, taxRate, company }: SalePrintProps) {
           <div>
             <h3 className="font-bold text-lg mb-2 text-gray-800">From:</h3>
             <div className="text-sm">
+              {company?.logo && (
+                <div className="mb-2">
+                  <img 
+                    src={`/storage/${company.logo}`} 
+                    alt={company.name || 'Company Logo'} 
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
+              )}
               <p className="font-semibold">{company?.name || 'Your Company Name'}</p>
               {company?.address && <p>{company.address}</p>}
               {(company?.city || company?.state) && (

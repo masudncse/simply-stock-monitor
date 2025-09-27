@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link as InertiaLink, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,6 +44,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
   const { errors } = usePage<SharedData>().props;
+  
+  // Debug: Log the settings to see what we're getting
+  console.log('Company Settings:', settings);
+  
   const [formData, setFormData] = useState({
     name: settings.name || '',
     email: settings.email || '',
@@ -56,18 +60,54 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
     tax_id: settings.tax_id || '',
     website: settings.website || '',
   });
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    settings.logo ? `/storage/${settings.logo}` : null
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setLogoFile(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeLogo = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    router.post('/settings/company', formData, {
+    const data = new FormData();
+    
+    // Add form data
+    Object.entries(formData).forEach(([key, value]) => {
+      data.append(key, value);
+    });
+    
+    // Add logo file if selected
+    if (logoFile) {
+      data.append('logo', logoFile);
+    }
+
+    router.post('/settings/company', data, {
       onFinish: () => setIsSubmitting(false),
+      forceFormData: true,
     });
   };
 
@@ -169,6 +209,45 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                   {errors.tax_id && (
                     <p className="text-sm text-destructive">{errors.tax_id}</p>
                   )}
+                </div>
+              </div>
+              
+              {/* Company Logo */}
+              <div className="space-y-2">
+                <Label>Company Logo</Label>
+                <div className="flex items-center gap-4">
+                  {(logoPreview || settings.logo) && (
+                    <div className="relative">
+                      <img
+                        src={logoPreview || `/storage/${settings.logo}`}
+                        alt="Company Logo Preview"
+                        className="w-20 h-20 object-contain border rounded-lg bg-background"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                        onClick={removeLogo}
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoChange}
+                      className="cursor-pointer"
+                    />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Upload a logo image (JPG, PNG, GIF, SVG). Max size: 2MB.
+                    </p>
+                    {errors.logo && (
+                      <p className="text-sm text-destructive">{errors.logo}</p>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="space-y-2">

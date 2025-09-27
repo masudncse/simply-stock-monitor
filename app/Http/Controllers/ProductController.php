@@ -64,14 +64,14 @@ class ProductController extends Controller
         // Apply sorting
         $query->orderBy($sortBy, $sortDirection);
 
-        $products = $query->paginate(15);
+        $products = $query->paginate(2)->appends($request->query());
 
         $categories = Category::where('is_active', true)->get();
 
         return Inertia::render('Products/Index', [
             'products' => $products,
             'categories' => $categories,
-            'filters' => $request->only(['search', 'category_id', 'status', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'category_id', 'status', 'sort_by', 'sort_direction', 'page']),
         ]);
     }
 

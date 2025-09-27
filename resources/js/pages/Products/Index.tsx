@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import CustomPagination from '@/components/CustomPagination';
 import {
   Plus as AddIcon,
   Search as SearchIcon,
@@ -48,6 +49,13 @@ interface ProductsIndexProps {
     last_page: number;
     per_page: number;
     total: number;
+    from?: number;
+    to?: number;
+    links?: Array<{
+      url: string | null;
+      label: string;
+      active: boolean;
+    }>;
   };
   categories: Array<{
     id: number;
@@ -59,6 +67,7 @@ interface ProductsIndexProps {
     status?: string;
     sort_by?: string;
     sort_direction?: string;
+    page?: number;
   };
 }
 
@@ -76,17 +85,22 @@ export default function ProductsIndex({ products, categories, filters }: Product
   const [sortBy, setSortBy] = useState(filters.sort_by || 'name');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
 
-  const handleSearch = () => {
+  const handleSearch = (page: number = 1) => {
     router.get('/products', {
       search: search || undefined,
       category_id: categoryFilter || undefined,
       status: statusFilter || undefined,
       sort_by: sortBy,
       sort_direction: sortDirection,
+      page: page,
     }, {
       preserveState: true,
       replace: true,
     });
+  };
+
+  const handlePageChange = (page: number) => {
+    handleSearch(page);
   };
 
   const handleDelete = (productId: number) => {
@@ -106,13 +120,14 @@ export default function ProductsIndex({ products, categories, filters }: Product
     setSortBy(column);
     setSortDirection(newDirection);
     
-    // Trigger search with new sort parameters
+    // Trigger search with new sort parameters and reset to page 1
     router.get('/products', {
       search: search || undefined,
       category_id: categoryFilter || undefined,
       status: statusFilter || undefined,
       sort_by: column,
       sort_direction: newDirection,
+      page: 1,
     }, {
       preserveState: true,
       replace: true,
@@ -403,6 +418,17 @@ export default function ProductsIndex({ products, categories, filters }: Product
             )}
           </CardContent>
         </Card>
+
+        {/* Custom Pagination */}
+        <CustomPagination
+          className="mt-6"
+          pagination={products}
+          onPageChange={handlePageChange}
+          showPerPageOptions={false}
+          showInfo={true}
+          showFirstLast={true}
+          maxVisiblePages={5}
+        />
       </div>
     </Layout>
   );

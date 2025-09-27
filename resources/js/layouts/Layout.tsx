@@ -74,7 +74,7 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
     }
     return false;
   });
-  const { auth } = usePage<SharedData>().props;
+  const { auth, company } = usePage<SharedData>().props;
   const { appearance, updateAppearance } = useAppearance();
   const { toasts, removeToast } = useToast();
   
@@ -178,11 +178,32 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
         collapsed ? "px-2 justify-center" : "px-6"
       )}>
         {collapsed ? (
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">S</span>
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
+            {company.logo ? (
+              <img 
+                src={`/storage/${company.logo}`} 
+                alt={company.name || 'Company Logo'} 
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <span className="text-primary-foreground font-bold text-sm">
+                {company.name ? company.name.charAt(0).toUpperCase() : 'S'}
+              </span>
+            )}
           </div>
         ) : (
-          <h2 className="text-xl font-semibold text-foreground">Stock Manager</h2>
+          <div className="flex items-center gap-3">
+            {company.logo && (
+              <img 
+                src={`/storage/${company.logo}`} 
+                alt={company.name || 'Company Logo'} 
+                className="w-8 h-8 object-contain"
+              />
+            )}
+            <h2 className="text-xl font-semibold text-foreground">
+              {company.name || 'Stock Manager'}
+            </h2>
+          </div>
         )}
       </div>
       

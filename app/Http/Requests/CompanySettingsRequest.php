@@ -32,6 +32,7 @@ class CompanySettingsRequest extends FormRequest
             'country' => 'nullable|string|max:100',
             'tax_id' => 'nullable|string|max:50',
             'website' => 'nullable|url|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 
@@ -57,6 +58,9 @@ class CompanySettingsRequest extends FormRequest
             'tax_id.max' => 'Tax ID may not be greater than 50 characters.',
             'website.url' => 'Please provide a valid website URL.',
             'website.max' => 'Website URL may not be greater than 255 characters.',
+            'logo.image' => 'Logo must be an image file.',
+            'logo.mimes' => 'Logo must be a file of type: jpeg, png, jpg, gif, svg.',
+            'logo.max' => 'Logo may not be greater than 2MB.',
         ];
     }
 }

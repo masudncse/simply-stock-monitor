@@ -22,10 +22,28 @@ export interface NavItem {
     isActive?: boolean;
 }
 
+export interface Company {
+    id?: number;
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    postal_code?: string;
+    country?: string;
+    tax_id?: string;
+    website?: string;
+    logo?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
+    company: Company;
     sidebarOpen: boolean;
     [key: string]: unknown;
 }
