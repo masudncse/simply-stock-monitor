@@ -15,8 +15,31 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            // Core system seeders
             RolePermissionSeeder::class,
-            SampleDataSeeder::class,
+            UserSeeder::class,
+            CompanySettingSeeder::class,
+            SystemSettingSeeder::class,
+            
+            // Business data seeders
+            CategorySeeder::class,
+            ProductSeeder::class,
+            CustomerSeeder::class,
+            SupplierSeeder::class,
+            WarehouseSeeder::class,
+            StockSeeder::class,
+            
+            // Transaction seeders
+            SaleSeeder::class,
+            PurchaseSeeder::class,
+            QuotationSeeder::class,
+            PaymentSeeder::class,
+            ExpenseSeeder::class,
+            AccountSeeder::class,
+            TransactionSeeder::class,
+            
+            // Notification seeder
+            NotificationSeeder::class,
         ]);
     }
 }

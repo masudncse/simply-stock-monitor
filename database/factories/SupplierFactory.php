@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Generator as Faker;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Supplier>
@@ -16,17 +17,48 @@ class SupplierFactory extends Factory
      */
     public function definition(): array
     {
+        $creditLimit = rand(100000, 5000000) / 100; // 1000.00 to 50000.00
+        $outstandingAmount = rand(0, $creditLimit * 80) / 100; // Max 80% of credit limit
+        
         return [
-            'name' => $this->faker->company(),
-            'code' => strtoupper($this->faker->unique()->lexify('SUP???')),
-            'contact_person' => $this->faker->name(),
-            'phone' => $this->faker->phoneNumber(),
-            'email' => $this->faker->safeEmail(),
-            'address' => $this->faker->address(),
-            'tax_number' => $this->faker->numerify('TAX#######'),
-            'credit_limit' => $this->faker->randomFloat(2, 1000, 50000),
-            'outstanding_amount' => $this->faker->randomFloat(2, 0, 10000),
-            'is_active' => $this->faker->boolean(90),
+            'name' => 'Supplier ' . rand(1, 1000),
+            'code' => 'SUP' . strtoupper(uniqid()),
+            'contact_person' => 'Contact Person ' . rand(1, 1000),
+            'phone' => '+1-' . rand(100, 999) . '-' . rand(100, 999) . '-' . rand(1000, 9999),
+            'email' => 'supplier' . rand(1, 1000) . '@example.com',
+            'address' => 'Address ' . rand(1, 1000),
+            'tax_number' => rand(0, 10) < 7 ? 'TAX' . rand(100000000, 999999999) : null,
+            'credit_limit' => $creditLimit,
+            'outstanding_amount' => $outstandingAmount,
+            'is_active' => rand(0, 10) < 9, // 90% chance
         ];
+    }
+    
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => true,
+        ]);
+    }
+    
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => false,
+        ]);
+    }
+    
+    public function withOutstanding(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'outstanding_amount' => $this->faker->randomFloat(2, 1000, $attributes['credit_limit'] * 0.5),
+        ]);
+    }
+    
+    public function noOutstanding(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'outstanding_amount' => 0,
+        ]);
     }
 }

@@ -3,12 +3,11 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Faker\Generator as Faker;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Purchase>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Quotation>
  */
-class PurchaseFactory extends Factory
+class QuotationFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -22,26 +21,31 @@ class PurchaseFactory extends Factory
         $discountAmount = rand(0, $subtotal * 20) / 100; // Max 20% discount
         $taxAmount = ($subtotal - $discountAmount) * ($taxRate / 100);
         $totalAmount = $subtotal - $discountAmount + $taxAmount;
-        $paidAmount = rand(0, $totalAmount * 100) / 100;
         
-        $statuses = ['draft', 'pending'];
+        $statuses = ['draft', 'sent', 'approved', 'rejected', 'expired'];
+        $discountTypes = ['percentage', 'fixed'];
         
         $status = $statuses[array_rand($statuses)];
+        $discountType = $discountTypes[array_rand($discountTypes)];
         
         return [
-            'invoice_number' => 'PO-' . rand(1000, 99999),
-            'supplier_id' => \App\Models\Supplier::factory(),
+            'quotation_number' => 'QUO-' . rand(1000, 99999),
+            'customer_id' => \App\Models\Customer::factory(),
             'warehouse_id' => \App\Models\Warehouse::factory(),
-            'purchase_date' => now()->subDays(rand(0, 365)),
-            'due_date' => now()->addDays(rand(1, 30)),
+            'quotation_date' => now()->subDays(rand(0, 365)),
+            'valid_until' => now()->addDays(rand(1, 30)),
+            'notes' => rand(0, 10) < 3 ? 'Quotation notes ' . rand(1, 1000) : null,
             'subtotal' => $subtotal,
             'tax_amount' => $taxAmount,
             'discount_amount' => $discountAmount,
+            'discount_type' => $discountType,
+            'discount_value' => $discountAmount,
             'total_amount' => $totalAmount,
-            'paid_amount' => $paidAmount,
             'status' => $status,
-            'notes' => rand(0, 10) < 3 ? 'Notes for purchase ' . rand(1, 1000) : null,
             'created_by' => \App\Models\User::factory(),
+            'approved_by' => $status === 'approved' ? \App\Models\User::factory() : null,
+            'approved_at' => $status === 'approved' ? now()->subDays(rand(0, 30)) : null,
+            'converted_to_sale_id' => null,
         ];
     }
 }
