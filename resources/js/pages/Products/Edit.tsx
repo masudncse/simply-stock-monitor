@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Upload, X, Star } from 'lucide-react';
 import { Link, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { type BreadcrumbItem } from '@/types';
@@ -68,7 +68,39 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
     cost_price: product.cost_price,
     tax_rate: product.tax_rate,
     is_active: product.is_active,
+    images: [],
   });
+
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    // Validate file size (2MB max)
+    const validFiles = files.filter(file => file.size <= 2 * 1024 * 1024);
+    
+    if (validFiles.length !== files.length) {
+      alert('Some files are too large. Maximum size is 2MB per file.');
+    }
+
+    // Create previews
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreviews(prev => [...prev, e.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Update form data
+    setData('images', [...data.images, ...validFiles]);
+  };
+
+  const removeImage = (index: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    setData('images', data.images.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,6 +257,66 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
                   />
                   {errors.cost_price && (
                     <p className="text-sm text-destructive">{errors.cost_price}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Product Images */}
+              <div className="space-y-4">
+                <Label>Product Images</Label>
+                <div className="space-y-4">
+                  {/* Upload Button */}
+                  <div className="flex items-center gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload Images
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Upload up to 10 images (JPEG, PNG, JPG, GIF - Max 2MB each)
+                    </p>
+                  </div>
+
+                  {/* Image Previews */}
+                  {imagePreviews.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {imagePreviews.map((preview, index) => (
+                        <div key={index} className="relative group">
+                          <div className="aspect-square rounded-lg overflow-hidden border">
+                            <img
+                              src={preview}
+                              alt={`Preview ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => removeImage(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Error Messages */}
+                  {errors.images && (
+                    <p className="text-sm text-destructive">{errors.images}</p>
                   )}
                 </div>
               </div>

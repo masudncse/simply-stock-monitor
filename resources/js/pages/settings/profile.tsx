@@ -208,7 +208,6 @@ export default function Profile({
                             </Form>
                         </CardContent>
                     </Card>
-                </div>
 
                 <DeleteUser />
             </div>

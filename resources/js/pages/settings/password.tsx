@@ -12,7 +12,6 @@ import { CheckCircle } from 'lucide-react';
 
 import HeadingSmall from '@/components/heading-small';
 import { edit } from '@/routes/password';
-import Layout from '@/layouts/Layout';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

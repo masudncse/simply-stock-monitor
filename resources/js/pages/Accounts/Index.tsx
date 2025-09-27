@@ -238,10 +238,10 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
         {/* Accounts Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Accounts ({accounts.meta.total})</CardTitle>
+            <CardTitle>Accounts ({accounts?.meta?.total || 0})</CardTitle>
           </CardHeader>
           <CardContent>
-            {accounts.data.length === 0 ? (
+            {accounts?.data?.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <h3 className="text-lg font-semibold">No accounts found</h3>
                 <p className="text-sm">Try adjusting your search criteria</p>
@@ -328,7 +328,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {accounts.data.map((account) => (
+                    {accounts?.data?.map((account) => (
                       <TableRow key={account.id}>
                         <TableCell className="font-medium">{account.code}</TableCell>
                         <TableCell>{account.name}</TableCell>
@@ -381,10 +381,10 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
             )}
 
             {/* Pagination */}
-            {accounts.links && (
+            {accounts?.links && (
               <div className="flex justify-center mt-4">
                 <div className="flex gap-1">
-                  {accounts.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
+                  {accounts?.links?.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
                     <Button
                       key={index}
                       variant={link.active ? "default" : "outline"}

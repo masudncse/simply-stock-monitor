@@ -564,7 +564,7 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
         )}
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-secondary">
           <div className="p-6">
             {children}
           </div>
