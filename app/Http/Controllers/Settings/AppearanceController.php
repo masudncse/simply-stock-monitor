@@ -13,9 +13,11 @@ class AppearanceController extends Controller
     {
         // Get theme from cookie first, then fallback to system setting
         $theme = $request->cookie('appearance') ?? SystemSetting::get('theme', 'system');
+        $primaryColor = $request->cookie('primaryColor') ?? SystemSetting::get('primary_color', 'blue');
         
         $settings = [
             'theme' => $theme,
+            'primary_color' => $primaryColor,
             'sidebar_collapsed' => SystemSetting::get('sidebar_collapsed', false),
             'language' => SystemSetting::get('language', 'en'),
             'date_format' => SystemSetting::get('date_format', 'Y-m-d'),
@@ -34,6 +36,7 @@ class AppearanceController extends Controller
         try {
             $validated = $request->validate([
                 'theme' => 'required|string|in:light,dark,system',
+                'primary_color' => 'required|string|in:blue,green,purple,red,orange,pink,indigo,teal,cyan,emerald,lime,amber,violet,rose,slate',
                 'sidebar_collapsed' => 'boolean',
                 'language' => 'required|string|max:10',
                 'date_format' => 'required|string|max:20',
@@ -46,10 +49,13 @@ class AppearanceController extends Controller
                 SystemSetting::set($key, $value, 'string', "Appearance setting for {$key}");
             }
             
-            // Set the appearance cookie for immediate frontend sync
+            // Set the appearance and primary color cookies for immediate frontend sync
             $response = back()->with('success', 'Appearance settings updated successfully.');
             if (isset($validated['theme'])) {
                 $response->withCookie(cookie('appearance', $validated['theme'], 365 * 24 * 60));
+            }
+            if (isset($validated['primary_color'])) {
+                $response->withCookie(cookie('primaryColor', $validated['primary_color'], 365 * 24 * 60));
             }
             
             return $response;

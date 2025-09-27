@@ -12,10 +12,11 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { useAppearance, type Appearance } from '@/hooks/use-appearance';
+import { useAppearance, type Appearance, type PrimaryColor } from '@/hooks/use-appearance';
 
 interface AppearanceSettings {
   theme: string;
+  primary_color: string;
   sidebar_collapsed: boolean;
   language: string;
   date_format: string;
@@ -29,9 +30,10 @@ interface AppearanceProps {
 }
 
 export default function Appearance({ settings: initialSettings }: AppearanceProps) {
-  const { appearance, updateAppearance } = useAppearance();
+  const { appearance, updateAppearance, primaryColor, updatePrimaryColor } = useAppearance();
   const [settings, setSettings] = useState<AppearanceSettings>({
     theme: initialSettings.theme || appearance,
+    primary_color: initialSettings.primary_color || primaryColor,
     sidebar_collapsed: initialSettings.sidebar_collapsed === 'true' || initialSettings.sidebar_collapsed === true,
     language: initialSettings.language || 'en',
     date_format: initialSettings.date_format || 'Y-m-d',
@@ -41,12 +43,15 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Sync theme from backend when component mounts
+  // Sync theme and primary color from backend when component mounts
   useEffect(() => {
     if (initialSettings.theme && initialSettings.theme !== appearance) {
       updateAppearance(initialSettings.theme as Appearance);
     }
-  }, [initialSettings.theme, appearance, updateAppearance]);
+    if (initialSettings.primary_color && initialSettings.primary_color !== primaryColor) {
+      updatePrimaryColor(initialSettings.primary_color as PrimaryColor);
+    }
+  }, [initialSettings.theme, initialSettings.primary_color, appearance, primaryColor, updateAppearance, updatePrimaryColor]);
 
   const handleChange = (field: string, value: string | boolean) => {
     setSettings(prev => ({ 
@@ -57,6 +62,11 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
     // Update theme immediately when changed
     if (field === 'theme') {
       updateAppearance(value as Appearance);
+    }
+    
+    // Update primary color immediately when changed
+    if (field === 'primary_color') {
+      updatePrimaryColor(value as PrimaryColor);
     }
   };
 
@@ -110,6 +120,31 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
                     <SelectItem value="light">Light</SelectItem>
                     <SelectItem value="dark">Dark</SelectItem>
                     <SelectItem value="system">System Default</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="primary_color">Primary Color</Label>
+                <Select value={settings.primary_color} onValueChange={(value) => handleChange('primary_color', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select primary color" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="blue">Blue</SelectItem>
+                    <SelectItem value="green">Green</SelectItem>
+                    <SelectItem value="purple">Purple</SelectItem>
+                    <SelectItem value="red">Red</SelectItem>
+                    <SelectItem value="orange">Orange</SelectItem>
+                    <SelectItem value="pink">Pink</SelectItem>
+                    <SelectItem value="indigo">Indigo</SelectItem>
+                    <SelectItem value="teal">Teal</SelectItem>
+                    <SelectItem value="cyan">Cyan</SelectItem>
+                    <SelectItem value="emerald">Emerald</SelectItem>
+                    <SelectItem value="lime">Lime</SelectItem>
+                    <SelectItem value="amber">Amber</SelectItem>
+                    <SelectItem value="violet">Violet</SelectItem>
+                    <SelectItem value="rose">Rose</SelectItem>
+                    <SelectItem value="slate">Slate</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -257,6 +292,7 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
             <div className="p-4 bg-muted rounded-lg">
               <div className="text-sm space-y-1">
                 <p><strong>Theme:</strong> {settings.theme}</p>
+                <p><strong>Primary Color:</strong> {settings.primary_color}</p>
                 <p><strong>Language:</strong> {settings.language}</p>
                 <p><strong>Date Format:</strong> {settings.date_format}</p>
                 <p><strong>Time Format:</strong> {settings.time_format}</p>

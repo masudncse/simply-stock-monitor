@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { useAppearance } from '@/hooks/use-appearance';
+import { useAppearance, type PrimaryColor } from '@/hooks/use-appearance';
 import { ToastProvider, useToast } from '@/contexts/ToastContext';
 import { ToastContainer } from '@/components/ui/toast';
 import { useInertiaToast } from '@/hooks/use-inertia-toast';
@@ -75,7 +75,7 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
     return false;
   });
   const { auth, company } = usePage<SharedData>().props;
-  const { appearance, updateAppearance } = useAppearance();
+  const { appearance, updateAppearance, primaryColor, updatePrimaryColor } = useAppearance();
   const { toasts, removeToast } = useToast();
   
   // Automatically show toasts from Inertia responses
@@ -87,43 +87,89 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
     localStorage.setItem('sidebarCollapsed', newCollapsed.toString());
   };
   
-  // Mock notification data - replace with real data from your backend
-  const [notifications] = useState([
-    {
-      id: 1,
-      title: 'Low Stock Alert',
-      message: 'Product "Laptop" is running low on stock (5 items remaining)',
-      time: '2 minutes ago',
-      type: 'warning',
-      read: false,
-    },
-    {
-      id: 2,
-      title: 'New Sale',
-      message: 'A new sale of $1,250.00 has been recorded',
-      time: '15 minutes ago',
-      type: 'success',
-      read: false,
-    },
-    {
-      id: 3,
-      title: 'Payment Received',
-      message: 'Payment of $500.00 received from customer John Doe',
-      time: '1 hour ago',
-      type: 'info',
-      read: true,
-    },
-    {
-      id: 4,
-      title: 'System Update',
-      message: 'System maintenance completed successfully',
-      time: '2 hours ago',
-      type: 'info',
-      read: true,
-    },
-  ]);
-  
-  const unreadCount = notifications.filter(n => !n.read).length;
+  // Dynamic notification data
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+  // Load notifications
+  const loadNotifications = async () => {
+    setLoadingNotifications(true);
+    try {
+      const response = await fetch('/notifications');
+      const data = await response.json();
+      setNotifications(data.notifications);
+      setUnreadCount(data.unread_count);
+    } catch (error) {
+      console.error('Failed to load notifications:', error);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  // Mark notification as read
+  const markAsRead = async (notificationId: number) => {
+    try {
+      const response = await fetch(`/notifications/${notificationId}/mark-read`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUnreadCount(data.unread_count);
+        setNotifications(prev => 
+          prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+        );
+      }
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
+  };
+
+  // Mark all notifications as read
+  const markAllAsRead = async () => {
+    try {
+      const response = await fetch('/notifications/mark-all-read', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUnreadCount(0);
+        setNotifications(prev => 
+          prev.map(n => ({ ...n, read: true }))
+        );
+      }
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error);
+    }
+  };
+
+  // Delete notification
+  const deleteNotification = async (notificationId: number) => {
+    try {
+      const response = await fetch(`/notifications/${notificationId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUnreadCount(data.unread_count);
+        setNotifications(prev => prev.filter(n => n.id !== notificationId));
+      }
+    } catch (error) {
+      console.error('Failed to delete notification:', error);
+    }
+  };
 
   // Handle browser back/forward navigation
   useEffect(() => {
@@ -151,6 +197,11 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
       window.removeEventListener('popstate', handlePopState);
       document.removeEventListener('inertia:finish', handleInertiaFinish);
     };
+  }, []);
+
+  // Load notifications on component mount
+  useEffect(() => {
+    loadNotifications();
   }, []);
 
   const handleDrawerToggle = () => {
@@ -268,19 +319,6 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
             </SheetTrigger>
           </Sheet>
 
-          {/* Search */}
-          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            <div className="flex flex-1 items-center">
-              <div className="relative max-w-md w-full">
-                <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search..."
-                  className="pl-10"
-                />
-              </div>
-            </div>
-          </div>
-
           {/* Sidebar Toggle - Desktop Only */}
           <Button 
             variant="ghost" 
@@ -295,6 +333,19 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
             )}
             <span className="sr-only">Toggle sidebar</span>
           </Button>
+
+          {/* Search */}
+          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+            <div className="flex flex-1 items-center">
+              <div className="relative max-w-md w-full">
+                <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search..."
+                  className="pl-10"
+                />
+              </div>
+            </div>
+          </div>
 
           {/* Notifications */}
           <DropdownMenu>
@@ -316,13 +367,22 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
               <div className="flex items-center justify-between p-3 border-b">
                 <h3 className="font-semibold">Notifications</h3>
                 {unreadCount > 0 && (
-                  <Button variant="ghost" size="sm" className="text-xs">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-xs"
+                    onClick={markAllAsRead}
+                  >
                     Mark all read
                   </Button>
                 )}
               </div>
               <div className="max-h-96 overflow-y-auto">
-                {notifications.length === 0 ? (
+                {loadingNotifications ? (
+                  <div className="p-4 text-center text-muted-foreground">
+                    Loading notifications...
+                  </div>
+                ) : notifications.length === 0 ? (
                   <div className="p-4 text-center text-muted-foreground">
                     No notifications
                   </div>
@@ -334,6 +394,7 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
                         "p-3 border-b hover:bg-muted/50 cursor-pointer transition-colors",
                         !notification.read && "bg-muted/30"
                       )}
+                      onClick={() => !notification.read && markAsRead(notification.id)}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
@@ -349,28 +410,30 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
                             {notification.message}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {notification.time}
+                            {notification.time_ago}
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
+                          {!notification.read && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                markAsRead(notification.id);
+                              }}
+                            >
+                              <Check className="h-3 w-3" />
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="sm"
                             className="h-6 w-6 p-0"
                             onClick={(e) => {
                               e.stopPropagation();
-                              // Handle mark as read
-                            }}
-                          >
-                            <Check className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Handle dismiss
+                              deleteNotification(notification.id);
                             }}
                           >
                             <X className="h-3 w-3" />
@@ -383,8 +446,13 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
               </div>
               {notifications.length > 0 && (
                 <div className="p-2 border-t">
-                  <Button variant="ghost" size="sm" className="w-full">
-                    View all notifications
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={loadNotifications}
+                  >
+                    Refresh notifications
                   </Button>
                 </div>
               )}
@@ -404,7 +472,8 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-2 py-1.5 text-sm font-semibold">Theme</div>
               <DropdownMenuItem onClick={() => updateAppearance('light')}>
                 <Sun className="mr-2 h-4 w-4" />
                 Light
@@ -417,6 +486,24 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
                 <Monitor className="mr-2 h-4 w-4" />
                 System
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <div className="px-2 py-1.5 text-sm font-semibold">Primary Color</div>
+              <div className="grid grid-cols-4 gap-1 p-2">
+                {(['blue', 'green', 'purple', 'red', 'orange', 'pink', 'indigo', 'teal', 'cyan', 'emerald', 'lime', 'amber', 'violet', 'rose', 'slate'] as PrimaryColor[]).map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => updatePrimaryColor(color)}
+                    className={cn(
+                      "w-6 h-6 rounded-full border-2 transition-all hover:scale-110",
+                      primaryColor === color ? "border-foreground" : "border-muted-foreground/30"
+                    )}
+                    style={{
+                      backgroundColor: `hsl(var(--${color === 'blue' ? 'primary' : color}))`
+                    }}
+                    title={color.charAt(0).toUpperCase() + color.slice(1)}
+                  />
+                ))}
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
 

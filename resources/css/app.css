@@ -11,7 +11,7 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -27,10 +27,27 @@
     --radius: 0.5rem;
     --sidebar: 0 0% 98%;
     --sidebar-foreground: 0 0% 3.9%;
-    --sidebar-primary: 0 0% 9%;
+    --sidebar-primary: 221.2 83.2% 53.3%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 96.1%;
     --sidebar-border: 0 0% 89.8%;
+    
+    /* Color palette variables */
+    --blue: 221.2 83.2% 53.3%;
+    --green: 142.1 76.2% 36.3%;
+    --purple: 262.1 83.3% 57.8%;
+    --red: 0 84.2% 60.2%;
+    --orange: 24.6 95% 53.1%;
+    --pink: 330.4 81.2% 60.4%;
+    --indigo: 238.7 83.5% 66.7%;
+    --teal: 173.4 80.4% 40%;
+    --cyan: 188.7 85.7% 53.3%;
+    --emerald: 158.1 64.4% 51.6%;
+    --lime: 84.4 81% 44.5%;
+    --amber: 45.4 93.4% 47.2%;
+    --violet: 258.3 89.5% 66.3%;
+    --rose: 346.8 77.2% 49.8%;
+    --slate: 215.4 16.3% 46.9%;
   }
 
   .dark {
@@ -40,7 +57,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 0 0% 9%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
@@ -55,9 +72,26 @@
     --ring: 0 0% 83.1%;
     --sidebar: 0 0% 3.9%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
     --sidebar-primary-foreground: 0 0% 9%;
     --sidebar-accent: 0 0% 14.9%;
     --sidebar-border: 0 0% 14.9%;
+    
+    /* Color palette variables for dark mode */
+    --blue: 217.2 91.2% 59.8%;
+    --green: 142.1 70.6% 45.3%;
+    --purple: 263.4 70% 50.4%;
+    --red: 0 72.2% 50.6%;
+    --orange: 20.5 90.2% 48.2%;
+    --pink: 330.4 81.2% 60.4%;
+    --indigo: 238.7 83.5% 66.7%;
+    --teal: 173.4 80.4% 40%;
+    --cyan: 188.7 85.7% 53.3%;
+    --emerald: 158.1 64.4% 51.6%;
+    --lime: 84.4 81% 44.5%;
+    --amber: 45.4 93.4% 47.2%;
+    --violet: 258.3 89.5% 66.3%;
+    --rose: 346.8 77.2% 49.8%;
+    --slate: 215.4 16.3% 46.9%;
   }
 }

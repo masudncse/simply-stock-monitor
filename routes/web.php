@@ -19,6 +19,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\QuotationController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -111,6 +112,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('sales', [POSController::class, 'processSale'])->name('pos.process-sale');
         Route::get('pos/search-products', [POSController::class, 'searchProducts'])->name('pos.search-products');
         Route::get('pos/product-by-barcode', [POSController::class, 'getProductByBarcode'])->name('pos.product-by-barcode');
+        
+        // Notifications
+        Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+        Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+        Route::delete('notifications/{notification}', [NotificationController::class, 'delete'])->name('notifications.delete');
+        Route::get('notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
 });
 
 require __DIR__.'/settings.php';
