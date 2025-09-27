@@ -45,7 +45,7 @@ class SupplierController extends Controller
         }
         
         // Apply sorting
-        $suppliers = $suppliers->orderBy($sortBy, $sortDirection)->paginate(15);
+        $suppliers = $suppliers->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
 
         return Inertia::render('Suppliers/Index', [
             'suppliers' => $suppliers,

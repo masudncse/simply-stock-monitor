@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import CustomPagination from '@/components/CustomPagination';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,8 +50,13 @@ interface Customer {
 interface CustomersIndexProps {
   customers: {
     data: Customer[];
-    links: Array<{ url: string | null; label: string; active: boolean }>;
-    meta?: { current_page: number; last_page: number; per_page: number; total: number };
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from?: number;
+    to?: number;
+    links?: Array<{ url: string | null; label: string; active: boolean }>;
   };
   filters: {
     search?: string;
@@ -109,6 +115,19 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
       status: statusFilter === 'all' ? '' : statusFilter,
       sort_by: column,
       sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    router.get('/customers', {
+      search: searchTerm,
+      status: statusFilter === 'all' ? '' : statusFilter,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
+      page,
     }, {
       preserveState: true,
       replace: true,
@@ -359,28 +378,16 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
               </Table>
             </div>
 
-            {/* Pagination */}
-            {customers.meta && customers.meta.last_page > 1 && (
-              <div className="flex justify-center mt-4">
-                <div className="flex items-center space-x-2">
-                  {customers.links.map((link, index) => (
-                    <Button
-                      key={index}
-                      variant={link.active ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => link.url && router.visit(link.url)}
-                      disabled={!link.url}
-                      className={cn(
-                        link.active && 'pointer-events-none',
-                        !link.url && 'text-muted-foreground cursor-not-allowed'
-                      )}
-                    >
-                      {link.label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»')}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Custom Pagination */}
+            <CustomPagination
+              className="mt-6"
+              pagination={customers}
+              onPageChange={handlePageChange}
+              showPerPageOptions={false}
+              showInfo={true}
+              showFirstLast={true}
+              maxVisiblePages={5}
+            />
           </CardContent>
         </Card>
 

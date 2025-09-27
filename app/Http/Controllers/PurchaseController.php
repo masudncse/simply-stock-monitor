@@ -64,7 +64,7 @@ class PurchaseController extends Controller
         }
         
         // Apply sorting
-        $purchases = $purchases->orderBy($sortBy, $sortDirection)->paginate(15);
+        $purchases = $purchases->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
 
         $suppliers = Supplier::where('is_active', true)->get();
         

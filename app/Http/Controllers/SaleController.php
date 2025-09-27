@@ -64,7 +64,7 @@ class SaleController extends Controller
         }
         
         // Apply sorting
-        $sales = $sales->orderBy($sortBy, $sortDirection)->paginate(15);
+        $sales = $sales->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
 
         $customers = Customer::where('is_active', true)->get();
         

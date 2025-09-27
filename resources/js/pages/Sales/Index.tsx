@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import CustomPagination from '@/components/CustomPagination';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Plus as AddIcon,
@@ -66,8 +67,13 @@ interface Sale {
 interface SalesIndexProps {
   sales: {
     data: Sale[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from?: number;
+    to?: number;
     links?: Array<{ url: string | null; label: string; active: boolean }>;
-    meta?: { current_page: number; last_page: number; per_page: number; total: number };
   };
   customers: Customer[];
   filters: {
@@ -124,6 +130,20 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
       customer_id: customerFilter,
       sort_by: column,
       sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    router.get(indexRoute.url(), {
+      search: searchTerm,
+      status: statusFilter,
+      customer_id: customerFilter,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
+      page,
     }, {
       preserveState: true,
       replace: true,
@@ -403,24 +423,16 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
               </div>
             )}
 
-            {/* Pagination */}
-            {sales.links && (
-              <div className="flex justify-center mt-4">
-                <div className="flex gap-1">
-                  {sales.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
-                    <Button
-                      key={index}
-                      variant={link.active ? "default" : "outline"}
-                      onClick={() => link.url && router.visit(link.url)}
-                      disabled={!link.url}
-                      size="sm"
-                    >
-                      {link.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Custom Pagination */}
+            <CustomPagination
+              className="mt-6"
+              pagination={sales}
+              onPageChange={handlePageChange}
+              showPerPageOptions={false}
+              showInfo={true}
+              showFirstLast={true}
+              maxVisiblePages={5}
+            />
           </CardContent>
         </Card>
 

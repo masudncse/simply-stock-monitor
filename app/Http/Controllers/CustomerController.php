@@ -45,7 +45,7 @@ class CustomerController extends Controller
         }
         
         // Apply sorting
-        $customers = $customers->orderBy($sortBy, $sortDirection)->paginate(15);
+        $customers = $customers->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
 
         return Inertia::render('Customers/Index', [
             'customers' => $customers,

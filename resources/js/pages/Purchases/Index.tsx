@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import CustomPagination from '@/components/CustomPagination';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Plus as AddIcon,
@@ -67,8 +68,13 @@ interface Purchase {
 interface PurchasesIndexProps {
   purchases: {
     data: Purchase[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from?: number;
+    to?: number;
     links?: Array<{ url: string | null; label: string; active: boolean }>;
-    meta?: { current_page: number; last_page: number; per_page: number; total: number };
   };
   suppliers: Supplier[];
   filters: {
@@ -125,6 +131,20 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
       supplier_id: supplierFilter,
       sort_by: column,
       sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    router.get(indexRoute.url(), {
+      search: searchTerm,
+      status: statusFilter,
+      supplier_id: supplierFilter,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
+      page,
     }, {
       preserveState: true,
       replace: true,

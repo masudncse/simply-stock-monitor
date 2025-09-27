@@ -57,7 +57,7 @@ class QuotationController extends Controller
         }
         
         // Apply sorting
-        $quotations = $quotations->orderBy($sortBy, $sortDirection)->paginate(15);
+        $quotations = $quotations->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
 
         return Inertia::render('Quotations/Index', [
             'quotations' => $quotations,

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import CustomPagination from '@/components/CustomPagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Plus as AddIcon,
@@ -53,8 +54,13 @@ interface Quotation {
 interface QuotationsIndexProps {
   quotations: {
     data: Quotation[];
-    links: any[];
-    meta: any;
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from?: number;
+    to?: number;
+    links?: Array<{ url: string | null; label: string; active: boolean }>;
   };
   filters?: {
     search?: string;

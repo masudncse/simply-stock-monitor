@@ -57,7 +57,7 @@ class AccountController extends Controller
         }
         
         // Apply sorting
-        $accounts = $accounts->orderBy($sortBy, $sortDirection)->paginate(20);
+        $accounts = $accounts->orderBy($sortBy, $sortDirection)->paginate(20)->appends($request->query());
 
         return Inertia::render('Accounts/Index', [
             'accounts' => $accounts,

@@ -43,7 +43,7 @@ class UserController extends Controller
         }
         
         // Apply sorting
-        $users = $users->orderBy($sortBy, $sortDirection)->paginate(15);
+        $users = $users->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
 
         return Inertia::render('Users/Index', [
             'users' => $users,
