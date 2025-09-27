@@ -11,6 +11,9 @@ import {
   AlertTriangle as WarningIcon,
   Settings as TuneIcon,
   ArrowRightLeft as SwapHorizIcon,
+  ArrowUpDown as SortIcon,
+  ArrowUp as SortAscIcon,
+  ArrowDown as SortDescIcon,
 } from 'lucide-react';
 import { Link, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -51,6 +54,8 @@ interface StockIndexProps {
     warehouse_id?: number;
     product_id?: number;
     search?: string;
+    sort_by?: string;
+    sort_direction?: string;
   };
 }
 
@@ -58,16 +63,53 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
   const [search, setSearch] = useState(filters.search || '');
   const [warehouseFilter, setWarehouseFilter] = useState(filters.warehouse_id?.toString() || '');
   const [productFilter, setProductFilter] = useState(filters.product_id?.toString() || '');
+  const [sortBy, setSortBy] = useState(filters.sort_by || 'product_id');
+  const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
 
   const handleSearch = () => {
     router.get('/stock', {
       search: search || undefined,
       warehouse_id: warehouseFilter || undefined,
       product_id: productFilter || undefined,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
     }, {
       preserveState: true,
       replace: true,
     });
+  };
+
+  const handleSort = (column: string) => {
+    let newDirection = 'asc';
+    
+    if (sortBy === column) {
+      // If clicking the same column, toggle direction
+      newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    }
+    
+    setSortBy(column);
+    setSortDirection(newDirection);
+    
+    // Trigger search with new sort parameters
+    router.get('/stock', {
+      search: search || undefined,
+      warehouse_id: warehouseFilter || undefined,
+      product_id: productFilter || undefined,
+      sort_by: column,
+      sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortBy !== column) {
+      return <SortIcon className="h-4 w-4 text-muted-foreground" />;
+    }
+    return sortDirection === 'asc' 
+      ? <SortAscIcon className="h-4 w-4 text-primary" />
+      : <SortDescIcon className="h-4 w-4 text-primary" />;
   };
 
   const isLowStock = (stock: Stock) => {
@@ -189,13 +231,68 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Product</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('product_id')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Product
+                            {getSortIcon('product_id')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead>SKU</TableHead>
-                      <TableHead>Warehouse</TableHead>
-                      <TableHead className="text-right">Quantity</TableHead>
-                      <TableHead>Batch</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('warehouse_id')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Warehouse
+                            {getSortIcon('warehouse_id')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('quantity')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Quantity
+                            {getSortIcon('quantity')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('batch')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Batch
+                            {getSortIcon('batch')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead className="text-right">Cost Price</TableHead>
-                      <TableHead>Expiry Date</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('expiry_date')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Expiry Date
+                            {getSortIcon('expiry_date')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>

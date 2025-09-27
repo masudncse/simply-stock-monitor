@@ -28,14 +28,40 @@ class QuotationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $quotations = Quotation::with(['customer', 'warehouse', 'creator'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->when($request->search, function ($query, $search) {
+                $query->where('quotation_number', 'like', "%{$search}%")
+                      ->orWhereHas('customer', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
+                      });
+            })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            });
+
+        // Sorting functionality
+        $sortBy = $request->get('sort_by', 'created_at'); // Default sort by created_at
+        $sortDirection = $request->get('sort_direction', 'desc'); // Default descending
+        
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['quotation_number', 'quotation_date', 'valid_until', 'total_amount', 'status', 'created_at'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'created_at';
+        }
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+        
+        // Apply sorting
+        $quotations = $quotations->orderBy($sortBy, $sortDirection)->paginate(15);
 
         return Inertia::render('Quotations/Index', [
             'quotations' => $quotations,
+            'filters' => $request->only(['search', 'status', 'sort_by', 'sort_direction']),
         ]);
     }
 

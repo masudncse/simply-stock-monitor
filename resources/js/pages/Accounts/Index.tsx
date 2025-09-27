@@ -14,6 +14,9 @@ import {
   Edit as EditIcon,
   Trash2 as DeleteIcon,
   BarChart3 as TrialBalanceIcon,
+  ArrowUpDown as SortIcon,
+  ArrowUp as SortAscIcon,
+  ArrowDown as SortDescIcon,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -44,6 +47,8 @@ interface AccountsIndexProps {
     search?: string;
     type?: string;
     sub_type?: string;
+    sort_by?: string;
+    sort_direction?: string;
   };
 }
 
@@ -58,6 +63,8 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [typeFilter, setTypeFilter] = useState(filters.type || '');
   const [subTypeFilter, setSubTypeFilter] = useState(filters.sub_type || '');
+  const [sortBy, setSortBy] = useState(filters.sort_by || 'code');
+  const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
 
@@ -66,6 +73,8 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
       search: searchTerm,
       type: typeFilter,
       sub_type: subTypeFilter,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
     }, {
       preserveState: true,
       replace: true,
@@ -75,6 +84,39 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
   const handleDelete = (account: Account) => {
     setAccountToDelete(account);
     setDeleteDialogOpen(true);
+  };
+
+  const handleSort = (column: string) => {
+    let newDirection = 'asc';
+    
+    if (sortBy === column) {
+      // If clicking the same column, toggle direction
+      newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    }
+    
+    setSortBy(column);
+    setSortDirection(newDirection);
+    
+    // Trigger search with new sort parameters
+    router.get(indexRoute.url(), {
+      search: searchTerm,
+      type: typeFilter,
+      sub_type: subTypeFilter,
+      sort_by: column,
+      sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortBy !== column) {
+      return <SortIcon className="h-4 w-4 text-muted-foreground" />;
+    }
+    return sortDirection === 'asc' 
+      ? <SortAscIcon className="h-4 w-4 text-primary" />
+      : <SortDescIcon className="h-4 w-4 text-primary" />;
   };
 
   const confirmDelete = () => {
@@ -208,13 +250,79 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Code</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Sub Type</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('code')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Code
+                            {getSortIcon('code')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('name')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Name
+                            {getSortIcon('name')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('type')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Type
+                            {getSortIcon('type')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('sub_type')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Sub Type
+                            {getSortIcon('sub_type')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead>Parent Account</TableHead>
-                      <TableHead className="text-right">Opening Balance</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('opening_balance')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Opening Balance
+                            {getSortIcon('opening_balance')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('is_active')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Status
+                            {getSortIcon('is_active')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>

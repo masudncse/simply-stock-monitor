@@ -13,6 +13,9 @@ import {
   Eye as ViewIcon,
   Edit as EditIcon,
   Trash2 as DeleteIcon,
+  ArrowUpDown as SortIcon,
+  ArrowUp as SortAscIcon,
+  ArrowDown as SortDescIcon,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -43,6 +46,8 @@ interface SuppliersIndexProps {
   filters: {
     search?: string;
     status?: string;
+    sort_by?: string;
+    sort_direction?: string;
   };
 }
 
@@ -56,6 +61,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
+  const [sortBy, setSortBy] = useState(filters.sort_by || 'name');
+  const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null);
 
@@ -63,6 +70,8 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
     router.get(indexRoute.url(), {
       search: searchTerm,
       status: statusFilter,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
     }, {
       preserveState: true,
       replace: true,
@@ -72,6 +81,38 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
   const handleDelete = (supplier: Supplier) => {
     setSupplierToDelete(supplier);
     setDeleteDialogOpen(true);
+  };
+
+  const handleSort = (column: string) => {
+    let newDirection = 'asc';
+    
+    if (sortBy === column) {
+      // If clicking the same column, toggle direction
+      newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    }
+    
+    setSortBy(column);
+    setSortDirection(newDirection);
+    
+    // Trigger search with new sort parameters
+    router.get(indexRoute.url(), {
+      search: searchTerm,
+      status: statusFilter,
+      sort_by: column,
+      sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortBy !== column) {
+      return <SortIcon className="h-4 w-4 text-muted-foreground" />;
+    }
+    return sortDirection === 'asc' 
+      ? <SortAscIcon className="h-4 w-4 text-primary" />
+      : <SortDescIcon className="h-4 w-4 text-primary" />;
   };
 
   const confirmDelete = () => {
@@ -153,14 +194,91 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Code</TableHead>
-                      <TableHead>Contact Person</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Credit Limit</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('name')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Name
+                            {getSortIcon('name')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('code')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Code
+                            {getSortIcon('code')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('contact_person')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Contact Person
+                            {getSortIcon('contact_person')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('phone')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Phone
+                            {getSortIcon('phone')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('email')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Email
+                            {getSortIcon('email')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('payment_terms')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Credit Limit
+                            {getSortIcon('payment_terms')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead>Outstanding</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('is_active')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Status
+                            {getSortIcon('is_active')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>

@@ -52,7 +52,23 @@ class StockController extends Controller
             });
         }
 
-        $stocks = $query->paginate(15);
+        // Sorting functionality
+        $sortBy = $request->get('sort_by', 'product_id'); // Default sort by product
+        $sortDirection = $request->get('sort_direction', 'asc'); // Default ascending
+        
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['product_id', 'warehouse_id', 'quantity', 'batch', 'expiry_date', 'created_at'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'product_id';
+        }
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Apply sorting
+        $stocks = $query->orderBy($sortBy, $sortDirection)->paginate(15);
 
         $warehouses = Warehouse::where('is_active', true)->get();
         $products = Product::where('is_active', true)->get(['id', 'name', 'sku']);
@@ -61,7 +77,7 @@ class StockController extends Controller
             'stocks' => $stocks,
             'warehouses' => $warehouses,
             'products' => $products,
-            'filters' => $request->only(['warehouse_id', 'product_id', 'search']),
+            'filters' => $request->only(['warehouse_id', 'product_id', 'search', 'sort_by', 'sort_direction']),
         ]);
     }
 

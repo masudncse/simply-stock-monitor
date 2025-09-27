@@ -15,6 +15,9 @@ import {
   X as RejectIcon,
   ArrowRight as ConvertIcon,
   Printer as PrintIcon,
+  ArrowUpDown as SortIcon,
+  ArrowUp as SortAscIcon,
+  ArrowDown as SortDescIcon,
 } from 'lucide-react';
 import { router, Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -53,11 +56,19 @@ interface QuotationsIndexProps {
     links: any[];
     meta: any;
   };
+  filters?: {
+    search?: string;
+    status?: string;
+    sort_by?: string;
+    sort_direction?: string;
+  };
 }
 
-export default function QuotationsIndex({ quotations }: QuotationsIndexProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+export default function QuotationsIndex({ quotations, filters = {} }: QuotationsIndexProps) {
+  const [searchTerm, setSearchTerm] = useState(filters.search || '');
+  const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
+  const [sortBy, setSortBy] = useState(filters.sort_by || 'created_at');
+  const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'desc');
 
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -74,16 +85,49 @@ export default function QuotationsIndex({ quotations }: QuotationsIndexProps) {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
-  const filteredQuotations = quotations.data.filter(quotation => {
-    const matchesSearch = 
-      quotation.quotation_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      quotation.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      quotation.customer.code.toLowerCase().includes(searchTerm.toLowerCase());
+  const handleSearch = () => {
+    router.get('/quotations', {
+      search: searchTerm || undefined,
+      status: statusFilter === 'all' ? undefined : statusFilter,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const handleSort = (column: string) => {
+    let newDirection = 'asc';
     
-    const matchesStatus = statusFilter === 'all' || quotation.status === statusFilter;
+    if (sortBy === column) {
+      // If clicking the same column, toggle direction
+      newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    }
     
-    return matchesSearch && matchesStatus;
-  });
+    setSortBy(column);
+    setSortDirection(newDirection);
+    
+    // Trigger search with new sort parameters
+    router.get('/quotations', {
+      search: searchTerm || undefined,
+      status: statusFilter === 'all' ? undefined : statusFilter,
+      sort_by: column,
+      sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortBy !== column) {
+      return <SortIcon className="h-4 w-4 text-muted-foreground" />;
+    }
+    return sortDirection === 'asc' 
+      ? <SortAscIcon className="h-4 w-4 text-primary" />
+      : <SortDescIcon className="h-4 w-4 text-primary" />;
+  };
 
   const handleApprove = (quotation: Quotation) => {
     router.post(`/quotations/${quotation.id}/approve`);
@@ -130,6 +174,7 @@ export default function QuotationsIndex({ quotations }: QuotationsIndexProps) {
                     placeholder="Search quotations..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     className="pl-9"
                   />
                 </div>
@@ -149,6 +194,12 @@ export default function QuotationsIndex({ quotations }: QuotationsIndexProps) {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="flex gap-2">
+                <Button onClick={handleSearch}>
+                  <SearchIcon className="mr-2 h-4 w-4" />
+                  Search
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -156,10 +207,10 @@ export default function QuotationsIndex({ quotations }: QuotationsIndexProps) {
         {/* Quotations Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Quotations ({filteredQuotations.length})</CardTitle>
+            <CardTitle>Quotations ({quotations.data.length})</CardTitle>
           </CardHeader>
           <CardContent>
-            {filteredQuotations.length === 0 ? (
+            {quotations.data.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">No quotations found.</p>
               </div>
@@ -167,18 +218,73 @@ export default function QuotationsIndex({ quotations }: QuotationsIndexProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Quotation #</TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                        onClick={() => handleSort('quotation_number')}
+                      >
+                        <div className="flex items-center gap-2">
+                          Quotation #
+                          {getSortIcon('quotation_number')}
+                        </div>
+                      </Button>
+                    </TableHead>
                     <TableHead>Customer</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Valid Until</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                        onClick={() => handleSort('quotation_date')}
+                      >
+                        <div className="flex items-center gap-2">
+                          Date
+                          {getSortIcon('quotation_date')}
+                        </div>
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                        onClick={() => handleSort('valid_until')}
+                      >
+                        <div className="flex items-center gap-2">
+                          Valid Until
+                          {getSortIcon('valid_until')}
+                        </div>
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                        onClick={() => handleSort('total_amount')}
+                      >
+                        <div className="flex items-center gap-2">
+                          Total
+                          {getSortIcon('total_amount')}
+                        </div>
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-semibold hover:bg-transparent"
+                        onClick={() => handleSort('status')}
+                      >
+                        <div className="flex items-center gap-2">
+                          Status
+                          {getSortIcon('status')}
+                        </div>
+                      </Button>
+                    </TableHead>
                     <TableHead>Created By</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredQuotations.map((quotation) => (
+                  {quotations.data.map((quotation) => (
                     <TableRow key={quotation.id}>
                       <TableCell className="font-medium">
                         <Link 

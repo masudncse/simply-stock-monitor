@@ -27,13 +27,29 @@ class CustomerController extends Controller
             })
             ->when($request->status, function ($query, $status) {
                 $query->where('is_active', $status === 'active');
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            });
+
+        // Sorting functionality
+        $sortBy = $request->get('sort_by', 'name'); // Default sort by name
+        $sortDirection = $request->get('sort_direction', 'asc'); // Default ascending
+        
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['name', 'code', 'contact_person', 'phone', 'email', 'credit_limit', 'outstanding_amount', 'is_active', 'created_at'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'name';
+        }
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Apply sorting
+        $customers = $customers->orderBy($sortBy, $sortDirection)->paginate(15);
 
         return Inertia::render('Customers/Index', [
             'customers' => $customers,
-            'filters' => $request->only(['search', 'status']),
+            'filters' => $request->only(['search', 'status', 'sort_by', 'sort_direction']),
         ]);
     }
 

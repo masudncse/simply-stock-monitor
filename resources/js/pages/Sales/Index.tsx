@@ -15,6 +15,9 @@ import {
   Trash2 as DeleteIcon,
   CheckCircle as ProcessIcon,
   Printer as PrintIcon,
+  ArrowUpDown as SortIcon,
+  ArrowUp as SortAscIcon,
+  ArrowDown as SortDescIcon,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -71,6 +74,8 @@ interface SalesIndexProps {
     search?: string;
     status?: string;
     customer_id?: number;
+    sort_by?: string;
+    sort_direction?: string;
   };
 }
 
@@ -78,6 +83,8 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
   const [customerFilter, setCustomerFilter] = useState(filters.customer_id?.toString() || '');
+  const [sortBy, setSortBy] = useState(filters.sort_by || 'created_at');
+  const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'desc');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState<Sale | null>(null);
 
@@ -86,6 +93,8 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
       search: searchTerm,
       status: statusFilter,
       customer_id: customerFilter,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
     }, {
       preserveState: true,
       replace: true,
@@ -95,6 +104,39 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
   const handleDelete = (sale: Sale) => {
     setSaleToDelete(sale);
     setDeleteDialogOpen(true);
+  };
+
+  const handleSort = (column: string) => {
+    let newDirection = 'asc';
+    
+    if (sortBy === column) {
+      // If clicking the same column, toggle direction
+      newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    }
+    
+    setSortBy(column);
+    setSortDirection(newDirection);
+    
+    // Trigger search with new sort parameters
+    router.get(indexRoute.url(), {
+      search: searchTerm,
+      status: statusFilter,
+      customer_id: customerFilter,
+      sort_by: column,
+      sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortBy !== column) {
+      return <SortIcon className="h-4 w-4 text-muted-foreground" />;
+    }
+    return sortDirection === 'asc' 
+      ? <SortAscIcon className="h-4 w-4 text-primary" />
+      : <SortDescIcon className="h-4 w-4 text-primary" />;
   };
 
   const confirmDelete = () => {
@@ -234,12 +276,56 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Invoice #</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('invoice_number')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Invoice #
+                            {getSortIcon('invoice_number')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead>Customer</TableHead>
                       <TableHead>Warehouse</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead className="text-right">Total Amount</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('sale_date')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Date
+                            {getSortIcon('sale_date')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('total_amount')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Total Amount
+                            {getSortIcon('total_amount')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('status')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Status
+                            {getSortIcon('status')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead>Payment</TableHead>
                       <TableHead className="text-center">Actions</TableHead>
                     </TableRow>

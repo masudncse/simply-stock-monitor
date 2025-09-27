@@ -46,16 +46,32 @@ class PurchaseController extends Controller
             })
             ->when($request->supplier_id, function ($query, $supplierId) {
                 $query->where('supplier_id', $supplierId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            });
+
+        // Sorting functionality
+        $sortBy = $request->get('sort_by', 'created_at'); // Default sort by created_at
+        $sortDirection = $request->get('sort_direction', 'desc'); // Default descending
+        
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['invoice_number', 'purchase_date', 'total_amount', 'status', 'created_at'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'created_at';
+        }
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+        
+        // Apply sorting
+        $purchases = $purchases->orderBy($sortBy, $sortDirection)->paginate(15);
 
         $suppliers = Supplier::where('is_active', true)->get();
         
         return Inertia::render('Purchases/Index', [
             'purchases' => $purchases,
             'suppliers' => $suppliers,
-            'filters' => $request->only(['search', 'status', 'supplier_id']),
+            'filters' => $request->only(['search', 'status', 'supplier_id', 'sort_by', 'sort_direction']),
         ]);
     }
 

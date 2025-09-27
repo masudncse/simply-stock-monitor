@@ -39,13 +39,29 @@ class AccountController extends Controller
             })
             ->when($request->sub_type, function ($query, $subType) {
                 $query->where('sub_type', $subType);
-            })
-            ->orderBy('code')
-            ->paginate(20);
+            });
+
+        // Sorting functionality
+        $sortBy = $request->get('sort_by', 'code'); // Default sort by code
+        $sortDirection = $request->get('sort_direction', 'asc'); // Default ascending
+        
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['code', 'name', 'type', 'sub_type', 'opening_balance', 'is_active', 'created_at'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'code';
+        }
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Apply sorting
+        $accounts = $accounts->orderBy($sortBy, $sortDirection)->paginate(20);
 
         return Inertia::render('Accounts/Index', [
             'accounts' => $accounts,
-            'filters' => $request->only(['search', 'type', 'sub_type']),
+            'filters' => $request->only(['search', 'type', 'sub_type', 'sort_by', 'sort_direction']),
         ]);
     }
 

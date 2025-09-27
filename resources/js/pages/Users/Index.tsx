@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link as InertiaLink, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,9 @@ import {
   Edit as EditIcon,
   Eye as ViewIcon,
   Trash as DeleteIcon,
+  ArrowUpDown as SortIcon,
+  ArrowUp as SortAscIcon,
+  ArrowDown as SortDescIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
@@ -43,9 +46,60 @@ interface UsersIndexProps {
             total: number;
         };
     };
+    filters: {
+        search?: string;
+        sort_by?: string;
+        sort_direction?: string;
+    };
 }
 
-export default function UsersIndex({ users }: UsersIndexProps) {
+export default function UsersIndex({ users, filters }: UsersIndexProps) {
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [sortBy, setSortBy] = useState(filters.sort_by || 'name');
+    const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
+
+    const handleSearch = () => {
+        router.get('/users', {
+            search: searchTerm,
+            sort_by: sortBy,
+            sort_direction: sortDirection,
+        }, {
+            preserveState: true,
+            replace: true,
+        });
+    };
+
+    const handleSort = (column: string) => {
+        let newDirection = 'asc';
+        
+        if (sortBy === column) {
+            // If clicking the same column, toggle direction
+            newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        }
+        
+        setSortBy(column);
+        setSortDirection(newDirection);
+        
+        // Trigger search with new sort parameters
+        router.get('/users', {
+            search: searchTerm,
+            sort_by: column,
+            sort_direction: newDirection,
+        }, {
+            preserveState: true,
+            replace: true,
+        });
+    };
+
+    const getSortIcon = (column: string) => {
+        if (sortBy !== column) {
+            return <SortIcon className="h-4 w-4 text-muted-foreground" />;
+        }
+        return sortDirection === 'asc' 
+            ? <SortAscIcon className="h-4 w-4 text-primary" />
+            : <SortDescIcon className="h-4 w-4 text-primary" />;
+    };
+
     const handleDelete = (user: User) => {
         if (window.confirm(`Are you sure you want to delete the user "${user.name}"?`)) {
             router.delete(`/users/${user.id}`);
@@ -101,11 +155,44 @@ export default function UsersIndex({ users }: UsersIndexProps) {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>User</TableHead>
-                                        <TableHead>Email</TableHead>
+                                        <TableHead>
+                                            <Button
+                                                variant="ghost"
+                                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                                onClick={() => handleSort('name')}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    User
+                                                    {getSortIcon('name')}
+                                                </div>
+                                            </Button>
+                                        </TableHead>
+                                        <TableHead>
+                                            <Button
+                                                variant="ghost"
+                                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                                onClick={() => handleSort('email')}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    Email
+                                                    {getSortIcon('email')}
+                                                </div>
+                                            </Button>
+                                        </TableHead>
                                         <TableHead>Roles</TableHead>
                                         <TableHead>Status</TableHead>
-                                        <TableHead>Created</TableHead>
+                                        <TableHead>
+                                            <Button
+                                                variant="ghost"
+                                                className="h-auto p-0 font-semibold hover:bg-transparent"
+                                                onClick={() => handleSort('created_at')}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    Created
+                                                    {getSortIcon('created_at')}
+                                                </div>
+                                            </Button>
+                                        </TableHead>
                                         <TableHead className="text-center">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>

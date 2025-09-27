@@ -17,15 +17,37 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('view-users');
 
         $users = User::with('roles')
-            ->paginate(15);
+            ->when($request->search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+            });
+
+        // Sorting functionality
+        $sortBy = $request->get('sort_by', 'name'); // Default sort by name
+        $sortDirection = $request->get('sort_direction', 'asc'); // Default ascending
+        
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['name', 'email', 'created_at'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'name';
+        }
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Apply sorting
+        $users = $users->orderBy($sortBy, $sortDirection)->paginate(15);
 
         return Inertia::render('Users/Index', [
             'users' => $users,
+            'filters' => $request->only(['search', 'sort_by', 'sort_direction']),
         ]);
     }
 

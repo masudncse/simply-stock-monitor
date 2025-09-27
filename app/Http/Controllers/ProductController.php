@@ -46,6 +46,24 @@ class ProductController extends Controller
             $query->where('is_active', $request->status === 'active');
         }
 
+        // Sorting functionality
+        $sortBy = $request->get('sort_by', 'name'); // Default sort by name
+        $sortDirection = $request->get('sort_direction', 'asc'); // Default ascending
+        
+        // Validate sort column to prevent SQL injection
+        $allowedSortColumns = ['name', 'sku', 'price', 'cost_price', 'unit', 'is_active', 'created_at'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'name';
+        }
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Apply sorting
+        $query->orderBy($sortBy, $sortDirection);
+
         $products = $query->paginate(15);
 
         $categories = Category::where('is_active', true)->get();
@@ -53,7 +71,7 @@ class ProductController extends Controller
         return Inertia::render('Products/Index', [
             'products' => $products,
             'categories' => $categories,
-            'filters' => $request->only(['search', 'category_id', 'status']),
+            'filters' => $request->only(['search', 'category_id', 'status', 'sort_by', 'sort_direction']),
         ]);
     }
 

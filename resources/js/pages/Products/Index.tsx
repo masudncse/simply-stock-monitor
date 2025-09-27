@@ -12,6 +12,9 @@ import {
   Edit as EditIcon,
   Trash2 as DeleteIcon,
   Eye as ViewIcon,
+  ArrowUpDown as SortIcon,
+  ArrowUp as SortAscIcon,
+  ArrowDown as SortDescIcon,
 } from 'lucide-react';
 import { Link, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -54,6 +57,8 @@ interface ProductsIndexProps {
     search?: string;
     category_id?: number;
     status?: string;
+    sort_by?: string;
+    sort_direction?: string;
   };
 }
 
@@ -68,12 +73,16 @@ export default function ProductsIndex({ products, categories, filters }: Product
   const [search, setSearch] = useState(filters.search || '');
   const [categoryFilter, setCategoryFilter] = useState(filters.category_id?.toString() || '');
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
+  const [sortBy, setSortBy] = useState(filters.sort_by || 'name');
+  const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
 
   const handleSearch = () => {
     router.get('/products', {
       search: search || undefined,
       category_id: categoryFilter || undefined,
       status: statusFilter || undefined,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
     }, {
       preserveState: true,
       replace: true,
@@ -84,6 +93,39 @@ export default function ProductsIndex({ products, categories, filters }: Product
     if (confirm('Are you sure you want to delete this product?')) {
       router.delete(destroyRoute.url({ product: productId }));
     }
+  };
+
+  const handleSort = (column: string) => {
+    let newDirection = 'asc';
+    
+    if (sortBy === column) {
+      // If clicking the same column, toggle direction
+      newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    }
+    
+    setSortBy(column);
+    setSortDirection(newDirection);
+    
+    // Trigger search with new sort parameters
+    router.get('/products', {
+      search: search || undefined,
+      category_id: categoryFilter || undefined,
+      status: statusFilter || undefined,
+      sort_by: column,
+      sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortBy !== column) {
+      return <SortIcon className="h-4 w-4 text-muted-foreground" />;
+    }
+    return sortDirection === 'asc' 
+      ? <SortAscIcon className="h-4 w-4 text-primary" />
+      : <SortDescIcon className="h-4 w-4 text-primary" />;
   };
 
   return (
@@ -110,7 +152,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
             <CardTitle>Filters</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-6">
               <div className="space-y-2">
                 <Label htmlFor="search">Search</Label>
                 <div className="relative">
@@ -158,6 +200,37 @@ export default function ProductsIndex({ products, categories, filters }: Product
               </div>
               
               <div className="space-y-2">
+                <Label htmlFor="sortBy">Sort By</Label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="sku">SKU</SelectItem>
+                    <SelectItem value="price">Price</SelectItem>
+                    <SelectItem value="cost_price">Cost Price</SelectItem>
+                    <SelectItem value="unit">Unit</SelectItem>
+                    <SelectItem value="is_active">Status</SelectItem>
+                    <SelectItem value="created_at">Created Date</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="sortDirection">Order</Label>
+                <Select value={sortDirection} onValueChange={setSortDirection}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">Ascending</SelectItem>
+                    <SelectItem value="desc">Descending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
                 <Label>&nbsp;</Label>
                 <Button variant="outline" onClick={handleSearch} className="w-full">
                   <SearchIcon className="mr-2 h-4 w-4" />
@@ -185,13 +258,79 @@ export default function ProductsIndex({ products, categories, filters }: Product
                   <TableHeader>
                     <TableRow>
                       <TableHead>Image</TableHead>
-                      <TableHead>SKU</TableHead>
-                      <TableHead>Name</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('sku')}
+                        >
+                          <div className="flex items-center gap-2">
+                            SKU
+                            {getSortIcon('sku')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('name')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Name
+                            {getSortIcon('name')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead>Category</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Cost Price</TableHead>
-                      <TableHead>Unit</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('price')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Price
+                            {getSortIcon('price')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('cost_price')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Cost Price
+                            {getSortIcon('cost_price')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('unit')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Unit
+                            {getSortIcon('unit')}
+                          </div>
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          className="h-auto p-0 font-semibold hover:bg-transparent"
+                          onClick={() => handleSort('is_active')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Status
+                            {getSortIcon('is_active')}
+                          </div>
+                        </Button>
+                      </TableHead>
                       <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
