@@ -53,4 +53,14 @@ class Product extends Model
     {
         return $this->hasMany(SaleItem::class);
     }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order');
+    }
+
+    public function primaryImage(): HasMany
+    {
+        return $this->hasMany(ProductImage::class)->where('is_primary', true);
+    }
 }

@@ -62,6 +62,9 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
     sale_date: new Date().toISOString().split('T')[0],
     notes: '',
   });
+  
+  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
+  const [discountValue, setDiscountValue] = useState(0);
 
   const [items, setItems] = useState<SaleItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -112,9 +115,18 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
     const subtotal = items.reduce((sum, item) => sum + item.total_price, 0);
     const taxRate = 0.1; // 10% tax
     const taxAmount = subtotal * taxRate;
-    const totalAmount = subtotal + taxAmount;
+    
+    // Calculate discount
+    let discountAmount = 0;
+    if (discountType === 'percentage') {
+      discountAmount = (subtotal * discountValue) / 100;
+    } else {
+      discountAmount = Math.min(discountValue, subtotal); // Can't discount more than subtotal
+    }
+    
+    const totalAmount = subtotal + taxAmount - discountAmount;
 
-    return { subtotal, taxAmount, totalAmount };
+    return { subtotal, taxAmount, discountAmount, totalAmount };
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -125,14 +137,16 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
       return;
     }
 
-    const { subtotal, taxAmount, totalAmount } = calculateTotals();
+    const { subtotal, taxAmount, discountAmount, totalAmount } = calculateTotals();
 
     router.post('/sales', {
       ...formData,
       items,
       subtotal,
       tax_amount: taxAmount,
-      discount_amount: 0,
+      discount_amount: discountAmount,
+      discount_type: discountType,
+      discount_value: discountValue,
       total_amount: totalAmount,
       paid_amount: 0,
       status: 'pending',
@@ -383,6 +397,51 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
             </CardContent>
           </Card>
 
+          {/* Discount Controls */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Discount</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4 items-end">
+                <div className="flex-1">
+                  <Label htmlFor="discount-type">Discount Type</Label>
+                  <Select value={discountType} onValueChange={(value: 'percentage' | 'fixed') => setDiscountType(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percentage">Percentage (%)</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount ($)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="discount-value">Discount Value</Label>
+                  <Input
+                    id="discount-value"
+                    type="number"
+                    step={discountType === 'percentage' ? '1' : '0.01'}
+                    min="0"
+                    max={discountType === 'percentage' ? '100' : undefined}
+                    value={discountValue || ''}
+                    onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
+                    placeholder={discountType === 'percentage' ? '0' : '0.00'}
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setDiscountType('percentage');
+                    setDiscountValue(0);
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Totals */}
           <Card>
             <CardContent>
@@ -396,6 +455,12 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
                     <span>Tax (10%):</span>
                     <span>${totals.taxAmount.toFixed(2)}</span>
                   </div>
+                  {totals.discountAmount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount ({discountType === 'percentage' ? `${discountValue}%` : `$${discountValue.toFixed(2)}`}):</span>
+                      <span>-${totals.discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="border-t pt-2">
                     <div className="flex justify-between font-semibold text-lg">
                       <span>Total:</span>

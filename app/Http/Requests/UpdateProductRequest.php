@@ -36,6 +36,7 @@ class UpdateProductRequest extends FormRequest
             'cost_price' => 'required|numeric|min:0',
             'tax_rate' => 'required|numeric|min:0|max:100',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
         ];
     }
@@ -53,6 +54,9 @@ class UpdateProductRequest extends FormRequest
             'price.min' => 'Price must be greater than or equal to 0',
             'cost_price.required' => 'Cost price is required',
             'cost_price.min' => 'Cost price must be greater than or equal to 0',
+            'images.*.image' => 'Each image must be a valid image file',
+            'images.*.mimes' => 'Images must be in JPEG, PNG, JPG, or GIF format',
+            'images.*.max' => 'Each image must not exceed 2MB',
         ];
     }
 }

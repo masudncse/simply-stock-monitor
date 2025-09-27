@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Plus as AddIcon,
   Minus as RemoveIcon,
@@ -24,6 +25,12 @@ interface Product {
   sku: string;
   price: number;
   unit: string;
+  images: Array<{
+    id: number;
+    image_path: string;
+    is_primary: boolean;
+    image_url: string;
+  }>;
 }
 
 interface CartItem {
@@ -45,6 +52,10 @@ export default function POS({ products }: POSProps) {
   const [quantity, setQuantity] = useState(1);
   const [customerName, setCustomerName] = useState('');
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [receivedAmount, setReceivedAmount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'both'>('cash');
+  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
+  const [discountValue, setDiscountValue] = useState(0);
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,8 +106,28 @@ export default function POS({ products }: POSProps) {
     return getSubtotal() * 0.1; // 10% tax
   };
 
+  const getDiscountAmount = () => {
+    const subtotal = getSubtotal();
+    if (discountType === 'percentage') {
+      return (subtotal * discountValue) / 100;
+    } else {
+      return Math.min(discountValue, subtotal); // Can't discount more than subtotal
+    }
+  };
+
   const getTotal = () => {
-    return getSubtotal() + getTax();
+    const subtotal = getSubtotal();
+    const tax = getTax();
+    const discount = getDiscountAmount();
+    return subtotal + tax - discount;
+  };
+
+  const getChange = () => {
+    return Math.max(0, receivedAmount - getTotal());
+  };
+
+  const getRemainingAmount = () => {
+    return Math.max(0, getTotal() - receivedAmount);
   };
 
   const processSale = () => {
@@ -112,13 +143,23 @@ export default function POS({ products }: POSProps) {
       })),
       subtotal: getSubtotal(),
       tax_amount: getTax(),
+      discount_amount: getDiscountAmount(),
+      discount_type: discountType,
+      discount_value: discountValue,
       total_amount: getTotal(),
+      received_amount: receivedAmount,
+      change_amount: getChange(),
+      payment_method: paymentMethod,
     };
 
     router.post('/sales', saleData, {
       onSuccess: () => {
         setCart([]);
         setCustomerName('');
+        setReceivedAmount(0);
+        setPaymentMethod('cash');
+        setDiscountType('percentage');
+        setDiscountValue(0);
         setPaymentDialogOpen(false);
       },
     });
@@ -163,20 +204,37 @@ export default function POS({ products }: POSProps) {
                       onClick={() => setSelectedProduct(product)}
                     >
                       <CardContent className="p-4">
-                        <div className="space-y-2">
-                          <h3 className="font-medium truncate">
-                            {product.name}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            SKU: {product.sku}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-lg font-semibold text-primary">
-                              ${product.price.toFixed(2)}
-                            </span>
-                            <Badge variant="secondary" className="text-xs">
-                              {product.unit}
-                            </Badge>
+                        <div className="space-y-3">
+                          {/* Product Image */}
+                          <div className="w-full h-32 rounded-lg overflow-hidden border">
+                            {product.images && product.images.length > 0 ? (
+                              <img
+                                src={product.images[0].image_url}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-muted flex items-center justify-center">
+                                <span className="text-sm text-muted-foreground">No image</span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <h3 className="font-medium truncate">
+                              {product.name}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              SKU: {product.sku}
+                            </p>
+                            <div className="flex items-center justify-between">
+                              <span className="text-lg font-semibold text-primary">
+                                ${product.price.toFixed(2)}
+                              </span>
+                              <Badge variant="secondary" className="text-xs">
+                                {product.unit}
+                              </Badge>
+                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -217,13 +275,30 @@ export default function POS({ products }: POSProps) {
                           {cart.map((item) => (
                             <TableRow key={item.id}>
                               <TableCell>
-                                <div className="space-y-1">
-                                  <p className="font-medium text-sm truncate">
-                                    {item.product.name}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    ${item.unitPrice.toFixed(2)}
-                                  </p>
+                                <div className="flex items-center gap-3">
+                                  {/* Product Image */}
+                                  <div className="w-10 h-10 rounded-lg overflow-hidden border flex-shrink-0">
+                                    {item.product.images && item.product.images.length > 0 ? (
+                                      <img
+                                        src={item.product.images[0].image_url}
+                                        alt={item.product.name}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                                        <span className="text-xs text-muted-foreground">No img</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                  
+                                  <div className="space-y-1 min-w-0">
+                                    <p className="font-medium text-sm truncate">
+                                      {item.product.name}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      ${item.unitPrice.toFixed(2)}
+                                    </p>
+                                  </div>
                                 </div>
                               </TableCell>
                               <TableCell className="text-center">
@@ -352,7 +427,7 @@ export default function POS({ products }: POSProps) {
                 Complete the sale transaction
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="customer-name">Customer Name (Optional)</Label>
                 <Input
@@ -376,17 +451,194 @@ export default function POS({ products }: POSProps) {
                   ))}
                 </div>
                 <Separator />
-                <div className="flex justify-between font-semibold">
-                  <span>Total:</span>
-                  <span>${getTotal().toFixed(2)}</span>
+                <div className="space-y-1">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>${getSubtotal().toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tax (10%):</span>
+                    <span>${getTax().toFixed(2)}</span>
+                  </div>
+                  {getDiscountAmount() > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount ({discountType === 'percentage' ? `${discountValue}%` : `$${discountValue.toFixed(2)}`}):</span>
+                      <span>-${getDiscountAmount().toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-semibold text-lg">
+                    <span>Total:</span>
+                    <span>${getTotal().toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
+
+              {/* Discount Controls */}
+              <div className="space-y-2">
+                <Label>Discount</Label>
+                <div className="flex gap-2">
+                  <Select value={discountType} onValueChange={(value: 'percentage' | 'fixed') => setDiscountType(value)}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percentage">%</SelectItem>
+                      <SelectItem value="fixed">$</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    type="number"
+                    step={discountType === 'percentage' ? '1' : '0.01'}
+                    min="0"
+                    max={discountType === 'percentage' ? '100' : undefined}
+                    value={discountValue || ''}
+                    onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
+                    placeholder={discountType === 'percentage' ? '0' : '0.00'}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setDiscountType('percentage');
+                      setDiscountValue(0);
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              </div>
+
+              {/* Payment Method Selection */}
+              <div className="space-y-2">
+                <Label>Payment Method</Label>
+                <div className="flex gap-2">
+                  <Button
+                    variant={paymentMethod === 'cash' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setPaymentMethod('cash')}
+                    className="flex-1"
+                  >
+                    Cash
+                  </Button>
+                  <Button
+                    variant={paymentMethod === 'card' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setPaymentMethod('card')}
+                    className="flex-1"
+                  >
+                    Card
+                  </Button>
+                  <Button
+                    variant={paymentMethod === 'both' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setPaymentMethod('both')}
+                    className="flex-1"
+                  >
+                    Both
+                  </Button>
+                </div>
+              </div>
+
+              {/* Payment Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="received-amount">
+                  Amount Received {paymentMethod === 'card' ? '(if partial cash)' : ''}
+                </Label>
+                <Input
+                  id="received-amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={receivedAmount || ''}
+                  onChange={(e) => setReceivedAmount(parseFloat(e.target.value) || 0)}
+                  placeholder="0.00"
+                  className="text-lg"
+                />
+                
+                {/* Quick Amount Buttons */}
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setReceivedAmount(getTotal())}
+                    className="text-xs"
+                  >
+                    Exact
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setReceivedAmount(Math.ceil(getTotal()))}
+                    className="text-xs"
+                  >
+                    Round Up
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setReceivedAmount(Math.ceil(getTotal() / 10) * 10)}
+                    className="text-xs"
+                  >
+                    Round $10
+                  </Button>
+                </div>
+              </div>
+
+              {/* Payment Calculation Display */}
+              {receivedAmount > 0 && (
+                <div className="bg-muted p-4 rounded-lg space-y-2">
+                  <div className="flex justify-between text-lg">
+                    <span className="font-semibold">Total Due:</span>
+                    <span className="font-semibold">${getTotal().toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Amount Received:</span>
+                    <span>${receivedAmount.toFixed(2)}</span>
+                  </div>
+                  
+                  {receivedAmount >= getTotal() ? (
+                    <div className="flex justify-between text-green-600 font-semibold text-lg">
+                      <span>Change Due:</span>
+                      <span>${getChange().toFixed(2)}</span>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between text-red-600 font-semibold text-lg">
+                      <span>Amount Short:</span>
+                      <span>${getRemainingAmount().toFixed(2)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setPaymentDialogOpen(false)}>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setPaymentDialogOpen(false);
+                  setReceivedAmount(0);
+                  setPaymentMethod('cash');
+                  setDiscountType('percentage');
+                  setDiscountValue(0);
+                }}
+                className="w-full sm:w-auto"
+              >
                 Cancel
               </Button>
-              <Button onClick={processSale} className="bg-green-600 hover:bg-green-700">
+              <Button 
+                onClick={() => {
+                  setReceivedAmount(getTotal());
+                }}
+                variant="outline"
+                className="w-full sm:w-auto"
+              >
+                Exact Amount
+              </Button>
+              <Button 
+                onClick={processSale} 
+                className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
+                disabled={receivedAmount < getTotal()}
+              >
                 Complete Sale
               </Button>
             </DialogFooter>

@@ -30,6 +30,12 @@ interface Product {
   category: {
     name: string;
   };
+  images: Array<{
+    id: number;
+    image_path: string;
+    is_primary: boolean;
+    image_url: string;
+  }>;
 }
 
 interface ProductsIndexProps {
@@ -178,6 +184,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>Image</TableHead>
                       <TableHead>SKU</TableHead>
                       <TableHead>Name</TableHead>
                       <TableHead>Category</TableHead>
@@ -191,6 +198,21 @@ export default function ProductsIndex({ products, categories, filters }: Product
                   <TableBody>
                     {products.data.map((product) => (
                       <TableRow key={product.id}>
+                        <TableCell>
+                          {product.images && product.images.length > 0 ? (
+                            <div className="w-12 h-12 rounded-lg overflow-hidden border">
+                              <img
+                                src={product.images[0].image_url}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
+                              <span className="text-xs text-muted-foreground">No image</span>
+                            </div>
+                          )}
+                        </TableCell>
                         <TableCell className="font-medium">{product.sku}</TableCell>
                         <TableCell>{product.name}</TableCell>
                         <TableCell>{product.category.name}</TableCell>

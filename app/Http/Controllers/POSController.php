@@ -34,6 +34,9 @@ class POSController extends Controller
         $this->authorize('create-sales');
 
         $products = Product::where('is_active', true)
+            ->with(['images' => function($query) {
+                $query->where('is_primary', true)->limit(1);
+            }])
             ->select('id', 'name', 'sku', 'price', 'unit')
             ->get();
 
@@ -117,7 +120,10 @@ class POSController extends Controller
             });
         }
 
-        return $query->select('id', 'name', 'sku', 'price', 'unit')->limit(20)->get();
+        return $query->with(['images' => function($query) {
+                $query->where('is_primary', true)->limit(1);
+            }])
+            ->select('id', 'name', 'sku', 'price', 'unit')->limit(20)->get();
     }
 
     /**
@@ -127,6 +133,9 @@ class POSController extends Controller
     {
         $product = Product::where('barcode', $request->barcode)
             ->where('is_active', true)
+            ->with(['images' => function($query) {
+                $query->where('is_primary', true)->limit(1);
+            }])
             ->select('id', 'name', 'sku', 'price', 'unit')
             ->first();
 

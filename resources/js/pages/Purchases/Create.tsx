@@ -82,6 +82,8 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productOpen, setProductOpen] = useState(false);
+  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
+  const [discountValue, setDiscountValue] = useState(0);
   const [newItem, setNewItem] = useState({
     quantity: 1,
     unit_price: 0,
@@ -134,9 +136,18 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
     const subtotal = items.reduce((sum, item) => sum + item.total_price, 0);
     const taxRate = 0.1; // 10% tax
     const taxAmount = subtotal * taxRate;
-    const totalAmount = subtotal + taxAmount;
+    
+    // Calculate discount
+    let discountAmount = 0;
+    if (discountType === 'percentage') {
+      discountAmount = (subtotal * discountValue) / 100;
+    } else {
+      discountAmount = Math.min(discountValue, subtotal); // Can't discount more than subtotal
+    }
+    
+    const totalAmount = subtotal + taxAmount - discountAmount;
 
-    return { subtotal, taxAmount, totalAmount };
+    return { subtotal, taxAmount, discountAmount, totalAmount };
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -147,11 +158,11 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
       return;
     }
 
-    const { subtotal, taxAmount, totalAmount } = calculateTotals();
+    const { subtotal, taxAmount, discountAmount, totalAmount } = calculateTotals();
 
     setFormData('subtotal', subtotal);
     setFormData('tax_amount', taxAmount);
-    setFormData('discount_amount', 0);
+    setFormData('discount_amount', discountAmount);
     setFormData('total_amount', totalAmount);
     setFormData('paid_amount', 0);
     setFormData('status', 'pending');
@@ -461,6 +472,51 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
             </CardContent>
           </Card>
 
+          {/* Discount Controls */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Supplier Discount</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4 items-end">
+                <div className="flex-1">
+                  <Label htmlFor="discount-type">Discount Type</Label>
+                  <Select value={discountType} onValueChange={(value: 'percentage' | 'fixed') => setDiscountType(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percentage">Percentage (%)</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount ($)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="discount-value">Discount Value</Label>
+                  <Input
+                    id="discount-value"
+                    type="number"
+                    step={discountType === 'percentage' ? '1' : '0.01'}
+                    min="0"
+                    max={discountType === 'percentage' ? '100' : undefined}
+                    value={discountValue || ''}
+                    onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
+                    placeholder={discountType === 'percentage' ? '0' : '0.00'}
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setDiscountType('percentage');
+                    setDiscountValue(0);
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Totals */}
           <Card>
             <CardContent>
@@ -474,6 +530,12 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
                     <span>Tax (10%):</span>
                     <span>${totals.taxAmount.toFixed(2)}</span>
                   </div>
+                  {totals.discountAmount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Supplier Discount ({discountType === 'percentage' ? `${discountValue}%` : `$${discountValue.toFixed(2)}`}):</span>
+                      <span>-${totals.discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <Separator />
                   <div className="flex justify-between font-semibold text-lg">
                     <span>Total:</span>

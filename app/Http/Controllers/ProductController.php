@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\ProductImage;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -20,7 +22,9 @@ class ProductController extends Controller
     {
         $this->authorize('view-products');
 
-        $query = Product::with('category');
+        $query = Product::with(['category', 'images' => function($query) {
+            $query->where('is_primary', true)->limit(1);
+        }]);
 
         // Search functionality
         if ($request->filled('search')) {
@@ -74,7 +78,18 @@ class ProductController extends Controller
     {
         $this->authorize('create-products');
 
-        $product = Product::create($request->validated());
+        $validated = $request->validated();
+        
+        // Remove images from validated data as we'll handle them separately
+        $images = $validated['images'] ?? [];
+        unset($validated['images']);
+
+        $product = Product::create($validated);
+
+        // Handle image uploads
+        if (!empty($images)) {
+            $this->uploadProductImages($product, $images);
+        }
 
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully.');
@@ -102,6 +117,9 @@ class ProductController extends Controller
         $this->authorize('edit-products');
 
         $categories = Category::where('is_active', true)->get();
+        
+        // Load product with images
+        $product->load('images');
 
         return Inertia::render('Products/Edit', [
             'product' => $product,
@@ -116,7 +134,18 @@ class ProductController extends Controller
     {
         $this->authorize('edit-products');
 
-        $product->update($request->validated());
+        $validated = $request->validated();
+        
+        // Remove images from validated data as we'll handle them separately
+        $images = $validated['images'] ?? [];
+        unset($validated['images']);
+
+        $product->update($validated);
+
+        // Handle new image uploads
+        if (!empty($images)) {
+            $this->uploadProductImages($product, $images);
+        }
 
         return redirect()->route('products.index')
             ->with('success', 'Product updated successfully.');
@@ -156,5 +185,58 @@ class ProductController extends Controller
         }
 
         return $query->limit(20)->get(['id', 'name', 'sku', 'price', 'unit']);
+    }
+
+    /**
+     * Delete a specific product image.
+     */
+    public function deleteImage(ProductImage $productImage)
+    {
+        $this->authorize('edit-products');
+
+        $productImage->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Set a product image as primary.
+     */
+    public function setPrimaryImage(ProductImage $productImage)
+    {
+        $this->authorize('edit-products');
+
+        // Remove primary status from all other images of this product
+        ProductImage::where('product_id', $productImage->product_id)
+            ->update(['is_primary' => false]);
+
+        // Set this image as primary
+        $productImage->update(['is_primary' => true]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Upload product images.
+     */
+    private function uploadProductImages(Product $product, array $images)
+    {
+        $sortOrder = $product->images()->max('sort_order') ?? 0;
+        $hasPrimary = $product->images()->where('is_primary', true)->exists();
+
+        foreach ($images as $image) {
+            $sortOrder++;
+            
+            // Store the image
+            $path = $image->store('products', 'public');
+            
+            // Create the database record
+            ProductImage::create([
+                'product_id' => $product->id,
+                'image_path' => $path,
+                'sort_order' => $sortOrder,
+                'is_primary' => !$hasPrimary && $sortOrder === 1, // First image is primary if none exists
+            ]);
+        }
     }
 }

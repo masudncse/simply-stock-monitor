@@ -31,6 +31,12 @@ interface Product {
   cost_price: number;
   tax_rate: number;
   is_active: boolean;
+  images: Array<{
+    id: number;
+    image_path: string;
+    is_primary: boolean;
+    image_url: string;
+  }>;
 }
 
 interface ProductEditProps {
