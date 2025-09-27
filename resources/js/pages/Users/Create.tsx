@@ -92,7 +92,6 @@ export default function UsersCreate({ roles }: UsersCreateProps) {
                                         id="name"
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
-                                        required
                                     />
                                     {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                                 </div>
@@ -104,7 +103,6 @@ export default function UsersCreate({ roles }: UsersCreateProps) {
                                         type="email"
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
-                                        required
                                     />
                                     {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                                 </div>
@@ -116,7 +114,6 @@ export default function UsersCreate({ roles }: UsersCreateProps) {
                                         type="password"
                                         value={data.password}
                                         onChange={(e) => setData('password', e.target.value)}
-                                        required
                                     />
                                     {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
                                 </div>
@@ -128,7 +125,6 @@ export default function UsersCreate({ roles }: UsersCreateProps) {
                                         type="password"
                                         value={data.password_confirmation}
                                         onChange={(e) => setData('password_confirmation', e.target.value)}
-                                        required
                                     />
                                     {errors.password_confirmation && <p className="text-sm text-destructive">{errors.password_confirmation}</p>}
                                 </div>

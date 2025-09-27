@@ -78,7 +78,6 @@ export default function DeleteUser() {
                                                 ref={passwordInput}
                                                 placeholder="Password"
                                                 autoComplete="current-password"
-                                                required
                                             />
                                             {errors.password && (
                                                 <p className="text-sm text-destructive">{errors.password}</p>

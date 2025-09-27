@@ -129,7 +129,6 @@ export default function RolesEdit({ role, permissions }: RolesEditProps) {
                                         id="name"
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
-                                        required
                                         isInvalid={!!errors.name}
                                     />
                                     {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}

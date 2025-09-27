@@ -246,7 +246,6 @@ export default function PurchasesCreate({ suppliers, warehouses, products }: Pur
                       type="date"
                       value={formData.purchase_date}
                       onChange={(e) => setFormData('purchase_date', e.target.value)}
-                      required
                     />
                   </div>
                   <div className="space-y-2">

@@ -95,7 +95,6 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
                     value={data.sku}
                     onChange={(e) => setData('sku', e.target.value)}
                     className={errors.sku ? 'border-destructive' : ''}
-                    required
                   />
                   {errors.sku && (
                     <p className="text-sm text-destructive">{errors.sku}</p>
@@ -123,7 +122,6 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
                   value={data.name}
                   onChange={(e) => setData('name', e.target.value)}
                   className={errors.name ? 'border-destructive' : ''}
-                  required
                 />
                 {errors.name && (
                   <p className="text-sm text-destructive">{errors.name}</p>

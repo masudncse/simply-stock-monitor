@@ -115,7 +115,6 @@ export default function PermissionsEdit({ permission, roles }: PermissionsEditPr
                                         id="name"
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
-                                        required
                                     />
                                     {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                                 </div>
@@ -126,7 +125,6 @@ export default function PermissionsEdit({ permission, roles }: PermissionsEditPr
                                         id="guard_name"
                                         value={data.guard_name}
                                         onChange={(e) => setData('guard_name', e.target.value)}
-                                        required
                                     />
                                     {errors.guard_name && <p className="text-sm text-destructive">{errors.guard_name}</p>}
                                 </div>

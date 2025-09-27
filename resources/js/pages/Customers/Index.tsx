@@ -64,14 +64,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function CustomersIndex({ customers, filters }: CustomersIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
-  const [statusFilter, setStatusFilter] = useState(filters.status || '');
+  const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [customerToDelete, setCustomerToDelete] = useState<Customer | null>(null);
 
   const handleSearch = () => {
     router.get('/customers', {
       search: searchTerm,
-      status: statusFilter,
+      status: statusFilter === 'all' ? '' : statusFilter,
     }, {
       preserveState: true,
       replace: true,
@@ -131,7 +131,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>

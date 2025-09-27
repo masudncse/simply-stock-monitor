@@ -92,7 +92,6 @@ const EditUser: React.FC<EditUserProps> = ({ user, roles }) => {
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    required
                     placeholder="Enter full name"
                   />
                 </div>
@@ -103,7 +102,6 @@ const EditUser: React.FC<EditUserProps> = ({ user, roles }) => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
-                    required
                     placeholder="Enter email address"
                   />
                 </div>

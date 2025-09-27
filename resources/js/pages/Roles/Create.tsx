@@ -121,7 +121,6 @@ export default function RolesCreate({ permissions }: RolesCreateProps) {
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder="e.g., Manager, Editor, Viewer"
-                                        required
                                         isInvalid={!!errors.name}
                                     />
                                     {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}

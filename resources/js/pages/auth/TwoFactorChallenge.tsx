@@ -110,7 +110,6 @@ export default function TwoFactorChallenge() {
                                         type="text"
                                         placeholder="Enter recovery code"
                                         autoFocus={showRecoveryInput}
-                                        required
                                     />
                                     {errors.recovery_code && (
                                         <p className="text-sm text-destructive">{errors.recovery_code}</p>

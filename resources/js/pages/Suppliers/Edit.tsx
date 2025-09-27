@@ -118,7 +118,6 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     className={errors.name ? 'border-destructive' : ''}
-                    required
                   />
                   {errors.name && (
                     <p className="text-sm text-destructive">{errors.name}</p>
@@ -131,7 +130,6 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
                     value={formData.code}
                     onChange={(e) => handleChange('code', e.target.value)}
                     className={errors.code ? 'border-destructive' : ''}
-                    required
                   />
                   {errors.code && (
                     <p className="text-sm text-destructive">{errors.code}</p>

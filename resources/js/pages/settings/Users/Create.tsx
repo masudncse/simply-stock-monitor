@@ -77,7 +77,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ roles }) => {
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    required
                     placeholder="Enter full name"
                   />
                 </div>
@@ -88,7 +87,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ roles }) => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
-                    required
                     placeholder="Enter email address"
                   />
                 </div>
@@ -110,7 +108,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ roles }) => {
                     type="password"
                     value={formData.password}
                     onChange={(e) => handleChange('password', e.target.value)}
-                    required
                     placeholder="Enter password"
                     minLength={8}
                   />
@@ -125,7 +122,6 @@ const CreateUser: React.FC<CreateUserProps> = ({ roles }) => {
                     type="password"
                     value={formData.password_confirmation}
                     onChange={(e) => handleChange('password_confirmation', e.target.value)}
-                    required
                     placeholder="Confirm password"
                   />
                 </div>

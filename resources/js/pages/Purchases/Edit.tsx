@@ -228,7 +228,6 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
                       type="date"
                       value={formData.purchase_date}
                       onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
-                      required
                     />
                   </div>
                   <div className="space-y-2">

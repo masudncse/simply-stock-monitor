@@ -220,7 +220,6 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
                     type="date"
                     value={formData.sale_date}
                     onChange={(e) => setFormData({ ...formData, sale_date: e.target.value })}
-                    required
                   />
                 </div>
 

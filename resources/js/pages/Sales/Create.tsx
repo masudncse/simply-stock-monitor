@@ -218,7 +218,6 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
                     type="date"
                     value={formData.sale_date}
                     onChange={(e) => setFormData({ ...formData, sale_date: e.target.value })}
-                    required
                   />
                 </div>
 

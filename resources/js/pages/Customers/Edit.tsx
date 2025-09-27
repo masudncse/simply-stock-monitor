@@ -103,8 +103,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    required
-                    isInvalid={!!errors.name}
+                    className={errors.name ? 'border-destructive' : ''}
                   />
                   {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                 </div>
@@ -114,8 +113,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
                     id="code"
                     value={formData.code}
                     onChange={(e) => handleChange('code', e.target.value)}
-                    required
-                    isInvalid={!!errors.code}
+                    className={errors.code ? 'border-destructive' : ''}
                   />
                   {errors.code && <p className="text-sm text-destructive">{errors.code}</p>}
                 </div>

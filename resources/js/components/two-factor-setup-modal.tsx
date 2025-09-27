@@ -150,7 +150,6 @@ function TwoFactorConfirmationStep({
                                         inputMode="numeric"
                                         autoComplete="one-time-code"
                                         autoFocus
-                                        required
                                     />
                                 </div>
 

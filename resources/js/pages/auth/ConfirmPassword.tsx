@@ -26,7 +26,6 @@ export default function ConfirmPassword() {
                                 placeholder="Password"
                                 autoComplete="current-password"
                                 autoFocus
-                                required
                             />
                             {errors.password && (
                                 <p className="text-sm text-destructive">{errors.password}</p>

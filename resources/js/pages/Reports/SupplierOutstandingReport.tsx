@@ -160,14 +160,14 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
               <div className="space-y-2">
                 <Label htmlFor="supplier_id">Supplier</Label>
                 <Select
-                  value={localFilters.supplier_id?.toString() || ''}
-                  onValueChange={(value) => handleFilterChange('supplier_id', value === '' ? undefined : parseInt(value))}
+                  value={localFilters.supplier_id?.toString() || 'all'}
+                  onValueChange={(value) => handleFilterChange('supplier_id', value === 'all' ? undefined : parseInt(value))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="All Suppliers" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Suppliers</SelectItem>
+                    <SelectItem value="all">All Suppliers</SelectItem>
                     {suppliers.map((item) => (
                       <SelectItem key={item.supplier.id} value={item.supplier.id.toString()}>
                         {item.supplier.name}

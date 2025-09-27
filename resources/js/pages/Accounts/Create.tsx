@@ -58,7 +58,13 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    router.post(storeRoute.url(), formData, {
+    // Convert "none" back to empty string for parent_id
+    const submitData = {
+      ...formData,
+      parent_id: formData.parent_id === 'none' ? '' : formData.parent_id
+    };
+    
+    router.post(storeRoute.url(), submitData, {
       onError: (errors) => {
         setErrors(errors);
       },
@@ -115,7 +121,6 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
                     value={formData.code}
                     onChange={(e) => handleChange('code', e.target.value)}
                     className={errors.code ? 'border-destructive' : ''}
-                    required
                   />
                   {errors.code && (
                     <p className="text-sm text-destructive">{errors.code}</p>
@@ -128,7 +133,6 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     className={errors.name ? 'border-destructive' : ''}
-                    required
                   />
                   {errors.name && (
                     <p className="text-sm text-destructive">{errors.name}</p>
@@ -193,7 +197,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
                       <SelectValue placeholder="No Parent Account" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No Parent Account</SelectItem>
+                      <SelectItem value="none">No Parent Account</SelectItem>
                       {parentAccounts.map((account) => (
                         <SelectItem key={account.id} value={account.id.toString()}>
                           {account.code} - {account.name}

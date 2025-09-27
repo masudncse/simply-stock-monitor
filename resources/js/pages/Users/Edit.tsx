@@ -123,7 +123,6 @@ export default function UsersEdit({ user, roles }: UsersEditProps) {
                                                 id="name"
                                                 value={data.name}
                                                 onChange={(e) => setData('name', e.target.value)}
-                                                required
                                             />
                                             {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                                         </div>
@@ -135,7 +134,6 @@ export default function UsersEdit({ user, roles }: UsersEditProps) {
                                                 type="email"
                                                 value={data.email}
                                                 onChange={(e) => setData('email', e.target.value)}
-                                                required
                                             />
                                             {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                                         </div>

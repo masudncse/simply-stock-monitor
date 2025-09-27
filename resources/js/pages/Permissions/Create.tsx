@@ -106,7 +106,6 @@ export default function PermissionsCreate({ roles }: PermissionsCreateProps) {
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder="view-products"
-                                        required
                                     />
                                     {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                                     <p className="text-xs text-muted-foreground">
@@ -120,7 +119,6 @@ export default function PermissionsCreate({ roles }: PermissionsCreateProps) {
                                         id="guard_name"
                                         value={data.guard_name}
                                         onChange={(e) => setData('guard_name', e.target.value)}
-                                        required
                                     />
                                     {errors.guard_name && <p className="text-sm text-destructive">{errors.guard_name}</p>}
                                     <p className="text-xs text-muted-foreground">
