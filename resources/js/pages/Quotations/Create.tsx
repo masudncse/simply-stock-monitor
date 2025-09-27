@@ -16,6 +16,7 @@ import {
   ArrowLeft as BackIcon,
   Check,
   ChevronsUpDown,
+  UserPlus,
 } from 'lucide-react';
 import { router, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -64,6 +65,7 @@ interface QuotationsCreateProps {
 }
 
 export default function QuotationsCreate({ customers, warehouses, products, taxRate }: QuotationsCreateProps) {
+  
   const { data: formData, setData: setFormData, post, processing, errors } = useForm({
     customer_id: '',
     warehouse_id: '',
@@ -74,6 +76,7 @@ export default function QuotationsCreate({ customers, warehouses, products, taxR
     discount_type: 'percentage' as 'percentage' | 'fixed',
     discount_value: 0,
   });
+
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productOpen, setProductOpen] = useState(false);
@@ -198,21 +201,33 @@ export default function QuotationsCreate({ customers, warehouses, products, taxR
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="customer">Customer</Label>
-                  <Select
-                    value={formData.customer_id}
-                    onValueChange={(value) => setFormData('customer_id', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select customer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {customers.map((customer) => (
-                        <SelectItem key={customer.id} value={customer.id.toString()}>
-                          {customer.name} ({customer.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select
+                      value={formData.customer_id}
+                      onValueChange={(value) => setFormData('customer_id', value)}
+                    >
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Select customer" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {customers.map((customer) => (
+                          <SelectItem key={customer.id} value={customer.id.toString()}>
+                            {customer.name} ({customer.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open('/customers/create', '_blank')}
+                      className="shrink-0"
+                    >
+                      <UserPlus className="h-4 w-4 mr-1" />
+                      Add
+                    </Button>
+                  </div>
                   {errors.customer_id && (
                     <p className="text-sm text-destructive">{errors.customer_id}</p>
                   )}

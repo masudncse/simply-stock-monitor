@@ -17,6 +17,7 @@ import {
   ArrowLeft as BackIcon,
   Check,
   ChevronsUpDown,
+  UserPlus,
 } from 'lucide-react';
 import { router, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -213,18 +214,30 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="supplier">Supplier *</Label>
-                  <Select value={formData.supplier_id} onValueChange={(value) => setFormData('supplier_id', value)}>
-                    <SelectTrigger className={errors.supplier_id ? 'border-destructive' : ''}>
-                      <SelectValue placeholder="Select a supplier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {suppliers.map((supplier) => (
-                        <SelectItem key={supplier.id} value={supplier.id.toString()}>
-                          {supplier.name} ({supplier.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select value={formData.supplier_id} onValueChange={(value) => setFormData('supplier_id', value)}>
+                      <SelectTrigger className={`flex-1 ${errors.supplier_id ? 'border-destructive' : ''}`}>
+                        <SelectValue placeholder="Select a supplier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {suppliers.map((supplier) => (
+                          <SelectItem key={supplier.id} value={supplier.id.toString()}>
+                            {supplier.name} ({supplier.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open('/suppliers/create', '_blank')}
+                      className="shrink-0"
+                    >
+                      <UserPlus className="h-4 w-4 mr-1" />
+                      Add
+                    </Button>
+                  </div>
                   {errors.supplier_id && (
                     <p className="text-sm text-destructive">{errors.supplier_id}</p>
                   )}

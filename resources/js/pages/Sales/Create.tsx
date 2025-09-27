@@ -10,11 +10,11 @@ import {
   Plus,
   Trash2,
   Save,
+  UserPlus,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { useToast } from '@/hooks/use-toast';
-import { index as indexRoute } from '@/routes/sales';
 
 interface Customer {
   id: number;
@@ -48,6 +48,7 @@ interface SaleItem {
   unit_price: number;
   total_price: number;
   batch: string;
+  [key: string]: any;
 }
 
 interface SalesCreateProps {
@@ -58,6 +59,7 @@ interface SalesCreateProps {
 }
 
 export default function SalesCreate({ customers, warehouses, products, taxRate }: SalesCreateProps) {
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     customer_id: '',
     warehouse_id: '',
@@ -75,6 +77,7 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
     unit_price: 0,
     batch: '',
   });
+
 
   const addItem = () => {
     if (!selectedProduct) return;
@@ -174,7 +177,7 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
           </h1>
           <Button
             variant="outline"
-            onClick={() => router.visit(indexRoute.url())}
+            onClick={() => router.visit('/sales')}
           >
             Back to Sales
           </Button>
@@ -190,21 +193,33 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="customer">Customer</Label>
-                  <Select
-                    value={formData.customer_id}
-                    onValueChange={(value) => setFormData({ ...formData, customer_id: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select customer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {customers.map((customer) => (
-                        <SelectItem key={customer.id} value={customer.id.toString()}>
-                          {customer.name} ({customer.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select
+                      value={formData.customer_id}
+                      onValueChange={(value) => setFormData({ ...formData, customer_id: value })}
+                    >
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Select customer" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {customers.map((customer) => (
+                          <SelectItem key={customer.id} value={customer.id.toString()}>
+                            {customer.name} ({customer.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open('/customers/create', '_blank')}
+                      className="shrink-0"
+                    >
+                      <UserPlus className="h-4 w-4 mr-1" />
+                      Add
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -477,7 +492,7 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
           <div className="flex justify-end gap-2">
             <Button
               variant="outline"
-              onClick={() => router.visit(indexRoute.url())}
+              onClick={() => router.visit('/sales')}
             >
               Cancel
             </Button>
