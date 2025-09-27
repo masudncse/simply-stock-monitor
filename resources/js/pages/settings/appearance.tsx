@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,10 +12,11 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { useAppearance, type Appearance } from '@/hooks/use-appearance';
 
 interface AppearanceSettings {
   theme: string;
-  sidebar_collapsed: string;
+  sidebar_collapsed: boolean;
   language: string;
   date_format: string;
   time_format: string;
@@ -28,9 +29,10 @@ interface AppearanceProps {
 }
 
 export default function Appearance({ settings: initialSettings }: AppearanceProps) {
+  const { appearance, updateAppearance } = useAppearance();
   const [settings, setSettings] = useState<AppearanceSettings>({
-    theme: initialSettings.theme || 'system',
-    sidebar_collapsed: initialSettings.sidebar_collapsed || 'false',
+    theme: initialSettings.theme || appearance,
+    sidebar_collapsed: initialSettings.sidebar_collapsed === 'true' || initialSettings.sidebar_collapsed === true,
     language: initialSettings.language || 'en',
     date_format: initialSettings.date_format || 'Y-m-d',
     time_format: initialSettings.time_format || 'H:i:s',
@@ -39,8 +41,23 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Sync theme from backend when component mounts
+  useEffect(() => {
+    if (initialSettings.theme && initialSettings.theme !== appearance) {
+      updateAppearance(initialSettings.theme as Appearance);
+    }
+  }, [initialSettings.theme, appearance, updateAppearance]);
+
   const handleChange = (field: string, value: string | boolean) => {
-    setSettings(prev => ({ ...prev, [field]: value }));
+    setSettings(prev => ({ 
+      ...prev, 
+      [field]: field === 'sidebar_collapsed' ? (value === 'true' || value === true) : value 
+    }));
+    
+    // Update theme immediately when changed
+    if (field === 'theme') {
+      updateAppearance(value as Appearance);
+    }
   };
 
   const handleSave = () => {
@@ -99,8 +116,8 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
               <div className="flex items-center space-x-2">
                 <Switch
                   id="sidebar_collapsed"
-                  checked={settings.sidebar_collapsed === 'true'}
-                  onCheckedChange={(checked) => handleChange('sidebar_collapsed', checked.toString())}
+                  checked={settings.sidebar_collapsed}
+                  onCheckedChange={(checked) => handleChange('sidebar_collapsed', checked)}
                 />
                 <Label htmlFor="sidebar_collapsed">Collapse Sidebar by Default</Label>
               </div>
@@ -245,7 +262,7 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
                 <p><strong>Time Format:</strong> {settings.time_format}</p>
                 <p><strong>Currency:</strong> {settings.currency}</p>
                 <p><strong>Timezone:</strong> {settings.timezone}</p>
-                <p><strong>Sidebar Collapsed:</strong> {settings.sidebar_collapsed === 'true' ? 'Yes' : 'No'}</p>
+                <p><strong>Sidebar Collapsed:</strong> {settings.sidebar_collapsed ? 'Yes' : 'No'}</p>
               </div>
             </div>
           </CardContent>

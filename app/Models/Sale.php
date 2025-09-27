@@ -28,6 +28,8 @@ class Sale extends Model
     ];
 
     protected $casts = [
+        'customer_id' => 'integer',
+        'warehouse_id' => 'integer',
         'sale_date' => 'date',
         'subtotal' => 'float',
         'tax_amount' => 'float',

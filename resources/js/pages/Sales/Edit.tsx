@@ -69,13 +69,13 @@ interface SalesEditProps {
 
 export default function SalesEdit({ sale, customers, warehouses, products }: SalesEditProps) {
   const [formData, setFormData] = useState({
-    customer_id: sale.customer_id.toString(),
-    warehouse_id: sale.warehouse_id.toString(),
+    customer_id: sale.customer_id?.toString() || '',
+    warehouse_id: sale.warehouse_id?.toString() || '',
     sale_date: sale.sale_date,
     notes: sale.notes || '',
   });
 
-  const [items, setItems] = useState<SaleItem[]>(sale.sale_items);
+  const [items, setItems] = useState<SaleItem[]>(sale.sale_items || []);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [newItem, setNewItem] = useState({
     quantity: 1,
@@ -121,7 +121,8 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
   };
 
   const calculateTotals = () => {
-    const subtotal = items.reduce((sum, item) => sum + item.total_price, 0);
+    const safeItems = items || [];
+    const subtotal = safeItems.reduce((sum, item) => sum + (item.total_price || 0), 0);
     const taxRate = 0.1; // 10% tax
     const taxAmount = subtotal * taxRate;
     const totalAmount = subtotal + taxAmount;

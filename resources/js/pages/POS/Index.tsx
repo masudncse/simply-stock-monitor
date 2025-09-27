@@ -43,9 +43,10 @@ interface CartItem {
 
 interface POSProps {
   products: Product[];
+  taxRate: number;
 }
 
-export default function POS({ products }: POSProps) {
+export default function POS({ products, taxRate }: POSProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -103,7 +104,7 @@ export default function POS({ products }: POSProps) {
   };
 
   const getTax = () => {
-    return getSubtotal() * 0.1; // 10% tax
+    return (getSubtotal() * taxRate) / 100;
   };
 
   const getDiscountAmount = () => {
@@ -457,7 +458,7 @@ export default function POS({ products }: POSProps) {
                     <span>${getSubtotal().toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Tax (10%):</span>
+                    <span>Tax ({taxRate}%):</span>
                     <span>${getTax().toFixed(2)}</span>
                   </div>
                   {getDiscountAmount() > 0 && (

@@ -28,6 +28,8 @@ class Purchase extends Model
     ];
 
     protected $casts = [
+        'supplier_id' => 'integer',
+        'warehouse_id' => 'integer',
         'purchase_date' => 'date',
         'due_date' => 'date',
         'subtotal' => 'float',

@@ -13,6 +13,10 @@ import { Separator } from '@/components/ui/separator';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { useAppearance } from '@/hooks/use-appearance';
+import { ToastProvider, useToast } from '@/contexts/ToastContext';
+import { ToastContainer } from '@/components/ui/toast';
+import { useInertiaToast } from '@/hooks/use-inertia-toast';
 import {
   Menu as MenuIcon,
   LayoutDashboard as DashboardIcon,
@@ -23,6 +27,7 @@ import {
   CreditCard as AccountBalanceIcon,
   BarChart3 as AssessmentIcon,
   Settings as SettingsIcon,
+  FileText as FileTextIcon,
   Plus as AddIcon,
   LogOut,
   User,
@@ -31,6 +36,11 @@ import {
   Bell,
   Check,
   X,
+  Sun,
+  Moon,
+  Monitor,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 
 const drawerWidth = 240;
@@ -48,6 +58,7 @@ const menuItems = [
   { text: 'Stock', icon: <StoreIcon className="h-5 w-5" />, href: '/stock' },
   { text: 'Purchases', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/purchases' },
   { text: 'Sales', icon: <AddIcon className="h-5 w-5" />, href: '/sales' },
+  { text: 'Quotations', icon: <FileTextIcon className="h-5 w-5" />, href: '/quotations' },
   { text: 'Customers', icon: <PeopleIcon className="h-5 w-5" />, href: '/customers' },
   { text: 'Suppliers', icon: <PeopleIcon className="h-5 w-5" />, href: '/suppliers' },
   { text: 'Accounts', icon: <AccountBalanceIcon className="h-5 w-5" />, href: '/accounts' },
@@ -55,9 +66,26 @@ const menuItems = [
   { text: 'Settings', icon: <SettingsIcon className="h-5 w-5" />, href: '/settings' },
 ];
 
-export default function Layout({ children, title = 'Stock Management', breadcrumbs = [] }: LayoutProps) {
+function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] }: LayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebarCollapsed') === 'true';
+    }
+    return false;
+  });
   const { auth } = usePage<SharedData>().props;
+  const { appearance, updateAppearance } = useAppearance();
+  const { toasts, removeToast } = useToast();
+  
+  // Automatically show toasts from Inertia responses
+  useInertiaToast();
+  
+  const toggleSidebar = () => {
+    const newCollapsed = !sidebarCollapsed;
+    setSidebarCollapsed(newCollapsed);
+    localStorage.setItem('sidebarCollapsed', newCollapsed.toString());
+  };
   
   // Mock notification data - replace with real data from your backend
   const [notifications] = useState([
@@ -142,27 +170,41 @@ export default function Layout({ children, title = 'Stock Management', breadcrum
       .slice(0, 2);
   };
 
-  const SidebarContent = () => (
+  const SidebarContent = ({ collapsed = false }: { collapsed?: boolean }) => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center px-6 py-4 border-b">
-        <h2 className="text-xl font-semibold text-foreground">Stock Manager</h2>
+      <div className={cn(
+        "flex items-center py-4 border-b",
+        collapsed ? "px-2 justify-center" : "px-6"
+      )}>
+        {collapsed ? (
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-sm">S</span>
+          </div>
+        ) : (
+          <h2 className="text-xl font-semibold text-foreground">Stock Manager</h2>
+        )}
       </div>
       
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-4 space-y-2">
+      <nav className={cn(
+        "flex-1 py-4 space-y-2",
+        collapsed ? "px-2" : "px-4"
+      )}>
         {menuItems.map((item) => (
           <Link
             key={item.text}
             href={item.href}
             className={cn(
-              "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+              "flex items-center rounded-lg text-sm font-medium transition-colors",
               "hover:bg-accent hover:text-accent-foreground",
-              "focus:bg-accent focus:text-accent-foreground focus:outline-none"
+              "focus:bg-accent focus:text-accent-foreground focus:outline-none",
+              collapsed ? "px-2 py-2 justify-center" : "px-3 py-2 space-x-3"
             )}
+            title={collapsed ? item.text : undefined}
           >
             {item.icon}
-            <span>{item.text}</span>
+            {!collapsed && <span>{item.text}</span>}
           </Link>
         ))}
       </nav>
@@ -172,9 +214,12 @@ export default function Layout({ children, title = 'Stock Management', breadcrum
   return (
     <div className="flex h-screen bg-background">
       {/* Desktop Sidebar */}
-      <div className="md:flex md:w-60 md:flex-col md:fixed md:inset-y-0">
+      <div className={cn(
+        "md:flex md:flex-col md:fixed md:inset-y-0 transition-all duration-300",
+        sidebarCollapsed ? "md:w-16" : "md:w-60"
+      )}>
         <div className="flex flex-col flex-grow border-r bg-card">
-          <SidebarContent />
+          <SidebarContent collapsed={sidebarCollapsed} />
         </div>
       </div>
 
@@ -186,7 +231,10 @@ export default function Layout({ children, title = 'Stock Management', breadcrum
       </Sheet>
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1 md:pl-60">
+      <div className={cn(
+        "flex flex-col flex-1 transition-all duration-300",
+        sidebarCollapsed ? "md:pl-16" : "md:pl-60"
+      )}>
         {/* Header */}
         <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b bg-background px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           {/* Mobile menu button */}
@@ -211,6 +259,21 @@ export default function Layout({ children, title = 'Stock Management', breadcrum
               </div>
             </div>
           </div>
+
+          {/* Sidebar Toggle - Desktop Only */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleSidebar}
+            className="hidden md:flex"
+          >
+            {sidebarCollapsed ? (
+              <PanelLeftOpen className="h-5 w-5" />
+            ) : (
+              <PanelLeftClose className="h-5 w-5" />
+            )}
+            <span className="sr-only">Toggle sidebar</span>
+          </Button>
 
           {/* Notifications */}
           <DropdownMenu>
@@ -307,6 +370,35 @@ export default function Layout({ children, title = 'Stock Management', breadcrum
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Theme Toggle */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                {appearance === 'light' ? (
+                  <Sun className="h-4 w-4" />
+                ) : appearance === 'dark' ? (
+                  <Moon className="h-4 w-4" />
+                ) : (
+                  <Monitor className="h-4 w-4" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => updateAppearance('light')}>
+                <Sun className="mr-2 h-4 w-4" />
+                Light
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => updateAppearance('dark')}>
+                <Moon className="mr-2 h-4 w-4" />
+                Dark
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => updateAppearance('system')}>
+                <Monitor className="mr-2 h-4 w-4" />
+                System
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -370,6 +462,15 @@ export default function Layout({ children, title = 'Stock Management', breadcrum
           </div>
         </main>
       </div>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
+  );
+}
+
+export default function Layout(props: LayoutProps) {
+  return (
+    <ToastProvider>
+      <LayoutContent {...props} />
+    </ToastProvider>
   );
 }

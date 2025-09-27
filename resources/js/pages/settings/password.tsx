@@ -1,6 +1,5 @@
 import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
-import AppLayout from '@/layouts/app-layout';
-import SettingsLayout from '@/layouts/settings/layout';
+import Layout from '@/layouts/Layout';
 import { type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 import { useRef } from 'react';
@@ -27,11 +26,10 @@ export default function Password() {
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
     return (
-        <Layout breadcrumbs={breadcrumbs}>
+        <Layout title="Password Settings" breadcrumbs={breadcrumbs}>
             <Head title="Password settings" />
 
-            <SettingsLayout>
-                <div className="space-y-6">
+            <div className="space-y-6">
                     <HeadingSmall
                         title="Update password"
                         description="Ensure your account is using a long, random password to stay secure"
@@ -134,7 +132,6 @@ export default function Password() {
                         )}
                     </Form>
                 </div>
-            </SettingsLayout>
         </Layout>
     );
 }

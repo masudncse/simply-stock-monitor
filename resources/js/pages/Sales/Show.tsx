@@ -7,6 +7,7 @@ import {
   Edit,
   CheckCircle,
   ArrowLeft,
+  Printer,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -140,6 +141,13 @@ export default function SalesShow({ sale }: SalesShowProps) {
                 </Button>
               </>
             )}
+            <Button
+              variant="outline"
+              onClick={() => window.open(`/sales/${sale.id}/print`, '_blank')}
+            >
+              <Printer className="mr-2 h-4 w-4" />
+              Print
+            </Button>
           </div>
         </div>
 

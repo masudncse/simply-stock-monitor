@@ -14,6 +14,7 @@ import {
   Edit as EditIcon,
   Trash2 as DeleteIcon,
   CheckCircle as ApproveIcon,
+  Printer as PrintIcon,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -260,6 +261,14 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
                               onClick={() => router.visit(editRoute.url({ purchase: purchase.id }))}
                             >
                               <EditIcon className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => window.open(`/purchases/${purchase.id}/print`, '_blank')}
+                            >
+                              <PrintIcon className="h-4 w-4" />
                             </Button>
                             {purchase.status === 'pending' && (
                               <Button

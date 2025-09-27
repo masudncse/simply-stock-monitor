@@ -77,14 +77,14 @@ interface PurchasesEditProps {
 
 export default function PurchasesEdit({ purchase, suppliers, warehouses, products }: PurchasesEditProps) {
   const [formData, setFormData] = useState({
-    supplier_id: purchase.supplier_id.toString(),
-    warehouse_id: purchase.warehouse_id.toString(),
+    supplier_id: purchase.supplier_id?.toString() || '',
+    warehouse_id: purchase.warehouse_id?.toString() || '',
     purchase_date: purchase.purchase_date,
     due_date: purchase.due_date || '',
     notes: purchase.notes || '',
   });
 
-  const [items, setItems] = useState<PurchaseItem[]>(purchase.items);
+  const [items, setItems] = useState<PurchaseItem[]>(purchase.items || []);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productOpen, setProductOpen] = useState(false);
   const [newItem, setNewItem] = useState({
@@ -134,7 +134,8 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
   };
 
   const calculateTotals = () => {
-    const subtotal = items.reduce((sum, item) => sum + item.total_price, 0);
+    const safeItems = items || [];
+    const subtotal = safeItems.reduce((sum, item) => sum + (item.total_price || 0), 0);
     const taxRate = 0.1; // 10% tax
     const taxAmount = subtotal * taxRate;
     const totalAmount = subtotal + taxAmount;

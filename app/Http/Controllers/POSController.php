@@ -8,6 +8,7 @@ use App\Models\SaleItem;
 use App\Models\Customer;
 use App\Models\Warehouse;
 use App\Services\SaleService;
+use App\Services\TaxService;
 use App\Http\Requests\ProcessPOSRequest;
 use App\Http\Requests\GetProductByBarcodeRequest;
 use App\Exceptions\InsufficientStockException;
@@ -42,6 +43,7 @@ class POSController extends Controller
 
         return Inertia::render('POS/Index', [
             'products' => $products,
+            'taxRate' => TaxService::getTaxRate(),
         ]);
     }
 

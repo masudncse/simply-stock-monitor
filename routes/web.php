@@ -18,6 +18,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\QuotationController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -54,6 +55,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('sales/{sale}', [SaleController::class, 'update'])->name('sales.update');
     Route::delete('sales/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');
     Route::post('sales/{sale}/process', [SaleController::class, 'process'])->name('sales.process');
+    
+    // Quotations
+    Route::resource('quotations', QuotationController::class);
+    Route::post('quotations/{quotation}/approve', [QuotationController::class, 'approve'])->name('quotations.approve');
+    Route::post('quotations/{quotation}/reject', [QuotationController::class, 'reject'])->name('quotations.reject');
+    Route::post('quotations/{quotation}/send', [QuotationController::class, 'send'])->name('quotations.send');
+    Route::post('quotations/{quotation}/convert-to-sale', [QuotationController::class, 'convertToSale'])->name('quotations.convert-to-sale');
+    
+    // Print Routes
+    Route::get('sales/{sale}/print', [SaleController::class, 'print'])->name('sales.print');
+    Route::get('purchases/{purchase}/print', [PurchaseController::class, 'print'])->name('purchases.print');
+    Route::get('quotations/{quotation}/print', [QuotationController::class, 'print'])->name('quotations.print');
     
     // Customers
     Route::resource('customers', CustomerController::class);

@@ -8,7 +8,9 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Services\SaleService;
+use App\Services\TaxService;
 use App\Http\Requests\StoreSaleRequest;
+use App\Models\CompanySetting;
 use App\Http\Requests\UpdateSaleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -72,6 +74,7 @@ class SaleController extends Controller
             'customers' => $customers,
             'warehouses' => $warehouses,
             'products' => $products,
+            'taxRate' => TaxService::getTaxRate(),
         ]);
     }
 
@@ -155,5 +158,24 @@ class SaleController extends Controller
 
         return redirect()->back()
             ->with('success', 'Sale processed successfully.');
+    }
+
+    /**
+     * Print a sale invoice
+     */
+    public function print(Sale $sale)
+    {
+        $sale->load([
+            'customer',
+            'warehouse', 
+            'items.product',
+            'createdBy'
+        ]);
+
+        return Inertia::render('Print/Sale', [
+            'sale' => $sale,
+            'taxRate' => TaxService::getTaxRate(),
+            'company' => CompanySetting::getSettings(),
+        ]);
     }
 }

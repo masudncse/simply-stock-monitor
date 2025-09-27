@@ -9,11 +9,14 @@ use Inertia\Inertia;
 
 class AppearanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Get theme from cookie first, then fallback to system setting
+        $theme = $request->cookie('appearance') ?? SystemSetting::get('theme', 'system');
+        
         $settings = [
-            'theme' => SystemSetting::get('theme', 'system'),
-            'sidebar_collapsed' => SystemSetting::get('sidebar_collapsed', 'false'),
+            'theme' => $theme,
+            'sidebar_collapsed' => SystemSetting::get('sidebar_collapsed', false),
             'language' => SystemSetting::get('language', 'en'),
             'date_format' => SystemSetting::get('date_format', 'Y-m-d'),
             'time_format' => SystemSetting::get('time_format', 'H:i:s'),
@@ -28,22 +31,28 @@ class AppearanceController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            'theme' => 'required|string|in:light,dark,system',
-            'sidebar_collapsed' => 'boolean',
-            'language' => 'required|string|max:10',
-            'date_format' => 'required|string|max:20',
-            'time_format' => 'required|string|max:20',
-            'currency' => 'required|string|max:3',
-            'timezone' => 'required|string|max:50',
-        ]);
-
         try {
-            foreach ($request->validated() as $key => $value) {
+            $validated = $request->validate([
+                'theme' => 'required|string|in:light,dark,system',
+                'sidebar_collapsed' => 'boolean',
+                'language' => 'required|string|max:10',
+                'date_format' => 'required|string|max:20',
+                'time_format' => 'required|string|max:20',
+                'currency' => 'required|string|max:3',
+                'timezone' => 'required|string|max:50',
+            ]);
+
+            foreach ($validated as $key => $value) {
                 SystemSetting::set($key, $value, 'string', "Appearance setting for {$key}");
             }
             
-            return back()->with('success', 'Appearance settings updated successfully.');
+            // Set the appearance cookie for immediate frontend sync
+            $response = back()->with('success', 'Appearance settings updated successfully.');
+            if (isset($validated['theme'])) {
+                $response->withCookie(cookie('appearance', $validated['theme'], 365 * 24 * 60));
+            }
+            
+            return $response;
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to update appearance settings: ' . $e->getMessage());
         }

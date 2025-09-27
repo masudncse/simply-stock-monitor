@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { useToast } from '@/hooks/use-toast';
 import { index as indexRoute } from '@/routes/sales';
 
 interface Customer {
@@ -53,9 +54,10 @@ interface SalesCreateProps {
   customers: Customer[];
   warehouses: Warehouse[];
   products: Product[];
+  taxRate: number;
 }
 
-export default function SalesCreate({ customers, warehouses, products }: SalesCreateProps) {
+export default function SalesCreate({ customers, warehouses, products, taxRate }: SalesCreateProps) {
   const [formData, setFormData] = useState({
     customer_id: '',
     warehouse_id: '',
@@ -113,8 +115,7 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
 
   const calculateTotals = () => {
     const subtotal = items.reduce((sum, item) => sum + item.total_price, 0);
-    const taxRate = 0.1; // 10% tax
-    const taxAmount = subtotal * taxRate;
+    const taxAmount = (subtotal * taxRate) / 100;
     
     // Calculate discount
     let discountAmount = 0;
@@ -452,7 +453,7 @@ export default function SalesCreate({ customers, warehouses, products }: SalesCr
                     <span>${totals.subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Tax (10%):</span>
+                    <span>Tax ({taxRate}%):</span>
                     <span>${totals.taxAmount.toFixed(2)}</span>
                   </div>
                   {totals.discountAmount > 0 && (

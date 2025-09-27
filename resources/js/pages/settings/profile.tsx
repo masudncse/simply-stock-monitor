@@ -14,7 +14,6 @@ import { useState, useRef } from 'react';
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
 import Layout from '@/layouts/Layout';
-import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -66,8 +65,7 @@ export default function Profile({
         <Layout title="Profile Settings" breadcrumbs={breadcrumbs}>
             <Head title="Profile settings" />
 
-            <SettingsLayout>
-                <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6">
                     <HeadingSmall
                         title="Profile information"
                         description="Update your name, email address, and profile picture"
@@ -213,7 +211,7 @@ export default function Profile({
                 </div>
 
                 <DeleteUser />
-            </SettingsLayout>
+            </div>
         </Layout>
     );
 }

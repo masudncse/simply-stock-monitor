@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -20,10 +19,9 @@ import {
 } from 'lucide-react';
 import { router, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { store as storeRoute, index as indexRoute } from '@/routes/purchases';
 import { cn } from '@/lib/utils';
 
-interface Supplier {
+interface Customer {
   id: number;
   name: string;
   code: string;
@@ -47,7 +45,7 @@ interface Product {
   };
 }
 
-interface PurchaseItem {
+interface QuotationItem {
   id?: number;
   product_id: number;
   product?: Product;
@@ -58,33 +56,27 @@ interface PurchaseItem {
   expiry_date: string;
 }
 
-interface PurchasesCreateProps {
-  suppliers: Supplier[];
+interface QuotationsCreateProps {
+  customers: Customer[];
   warehouses: Warehouse[];
   products: Product[];
   taxRate: number;
 }
 
-export default function PurchasesCreate({ suppliers, warehouses, products, taxRate }: PurchasesCreateProps) {
+export default function QuotationsCreate({ customers, warehouses, products, taxRate }: QuotationsCreateProps) {
   const { data: formData, setData: setFormData, post, processing, errors } = useForm({
-    supplier_id: '',
+    customer_id: '',
     warehouse_id: '',
-    purchase_date: new Date().toISOString().split('T')[0],
-    due_date: '',
+    quotation_date: new Date().toISOString().split('T')[0],
+    valid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
     notes: '',
-    items: [] as PurchaseItem[],
-    subtotal: 0,
-    tax_amount: 0,
-    discount_amount: 0,
-    total_amount: 0,
-    paid_amount: 0,
-    status: 'pending',
+    items: [] as QuotationItem[],
+    discount_type: 'percentage' as 'percentage' | 'fixed',
+    discount_value: 0,
   });
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productOpen, setProductOpen] = useState(false);
-  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
-  const [discountValue, setDiscountValue] = useState(0);
   const [newItem, setNewItem] = useState({
     quantity: 1,
     unit_price: 0,
@@ -98,7 +90,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
     if (!selectedProduct) return;
 
     const totalPrice = newItem.quantity * newItem.unit_price;
-    const item: PurchaseItem = {
+    const item: QuotationItem = {
       product_id: selectedProduct.id,
       product: selectedProduct,
       quantity: newItem.quantity,
@@ -122,7 +114,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
     setFormData('items', items.filter((_, i) => i !== index));
   };
 
-  const updateItem = (index: number, field: keyof PurchaseItem, value: string | number) => {
+  const updateItem = (index: number, field: keyof QuotationItem, value: string | number) => {
     const updatedItems = [...items];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
     
@@ -139,10 +131,12 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
     
     // Calculate discount
     let discountAmount = 0;
-    if (discountType === 'percentage') {
-      discountAmount = (subtotal * discountValue) / 100;
-    } else {
-      discountAmount = Math.min(discountValue, subtotal); // Can't discount more than subtotal
+    if (formData.discount_type && formData.discount_value) {
+      if (formData.discount_type === 'percentage') {
+        discountAmount = (subtotal * formData.discount_value) / 100;
+      } else {
+        discountAmount = Math.min(formData.discount_value, subtotal);
+      }
     }
     
     const totalAmount = subtotal + taxAmount - discountAmount;
@@ -158,33 +152,24 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
       return;
     }
 
-    const { subtotal, taxAmount, discountAmount, totalAmount } = calculateTotals();
-
-    setFormData('subtotal', subtotal);
-    setFormData('tax_amount', taxAmount);
-    setFormData('discount_amount', discountAmount);
-    setFormData('total_amount', totalAmount);
-    setFormData('paid_amount', 0);
-    setFormData('status', 'pending');
-
-    post(storeRoute.url());
+    post('/quotations');
   };
 
   const totals = calculateTotals();
 
   return (
-    <Layout title="Create Purchase">
+    <Layout title="Create Quotation">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Create Purchase</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Create Quotation</h1>
             <p className="text-muted-foreground">
-              Add a new purchase order to your system
+              Create a new quotation for your customer
             </p>
           </div>
-          <Button variant="outline" onClick={() => router.visit(indexRoute.url())}>
+          <Button variant="outline" onClick={() => router.visit('/quotations')}>
             <BackIcon className="mr-2 h-4 w-4" />
-            Back to Purchases
+            Back to Quotations
           </Button>
         </div>
 
@@ -205,36 +190,42 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
           )}
 
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Purchase Details */}
+            {/* Quotation Details */}
             <Card>
               <CardHeader>
-                <CardTitle>Purchase Details</CardTitle>
+                <CardTitle>Quotation Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="supplier">Supplier *</Label>
-                  <Select value={formData.supplier_id} onValueChange={(value) => setFormData('supplier_id', value)}>
-                    <SelectTrigger className={errors.supplier_id ? 'border-destructive' : ''}>
-                      <SelectValue placeholder="Select a supplier" />
+                  <Label htmlFor="customer">Customer</Label>
+                  <Select
+                    value={formData.customer_id}
+                    onValueChange={(value) => setFormData('customer_id', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select customer" />
                     </SelectTrigger>
                     <SelectContent>
-                      {suppliers.map((supplier) => (
-                        <SelectItem key={supplier.id} value={supplier.id.toString()}>
-                          {supplier.name} ({supplier.code})
+                      {customers.map((customer) => (
+                        <SelectItem key={customer.id} value={customer.id.toString()}>
+                          {customer.name} ({customer.code})
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.supplier_id && (
-                    <p className="text-sm text-destructive">{errors.supplier_id}</p>
+                  {errors.customer_id && (
+                    <p className="text-sm text-destructive">{errors.customer_id}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="warehouse">Warehouse *</Label>
-                  <Select value={formData.warehouse_id} onValueChange={(value) => setFormData('warehouse_id', value)}>
-                    <SelectTrigger className={errors.warehouse_id ? 'border-destructive' : ''}>
-                      <SelectValue placeholder="Select a warehouse" />
+                  <Label htmlFor="warehouse">Warehouse</Label>
+                  <Select
+                    value={formData.warehouse_id}
+                    onValueChange={(value) => setFormData('warehouse_id', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select warehouse" />
                     </SelectTrigger>
                     <SelectContent>
                       {warehouses.map((warehouse) => (
@@ -249,36 +240,46 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                   )}
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="purchase_date">Purchase Date *</Label>
+                    <Label htmlFor="quotation_date">Quotation Date</Label>
                     <Input
-                      id="purchase_date"
+                      id="quotation_date"
                       type="date"
-                      value={formData.purchase_date}
-                      onChange={(e) => setFormData('purchase_date', e.target.value)}
+                      value={formData.quotation_date}
+                      onChange={(e) => setFormData('quotation_date', e.target.value)}
                     />
+                    {errors.quotation_date && (
+                      <p className="text-sm text-destructive">{errors.quotation_date}</p>
+                    )}
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="due_date">Due Date</Label>
+                    <Label htmlFor="valid_until">Valid Until</Label>
                     <Input
-                      id="due_date"
+                      id="valid_until"
                       type="date"
-                      value={formData.due_date}
-                      onChange={(e) => setFormData('due_date', e.target.value)}
+                      value={formData.valid_until}
+                      onChange={(e) => setFormData('valid_until', e.target.value)}
                     />
+                    {errors.valid_until && (
+                      <p className="text-sm text-destructive">{errors.valid_until}</p>
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="notes">Notes</Label>
+                  <Label htmlFor="notes">Notes (Optional)</Label>
                   <Textarea
                     id="notes"
-                    placeholder="Additional notes..."
                     value={formData.notes}
                     onChange={(e) => setFormData('notes', e.target.value)}
+                    placeholder="Add any additional notes..."
                     rows={3}
                   />
+                  {errors.notes && (
+                    <p className="text-sm text-destructive">{errors.notes}</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -290,7 +291,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Select Product</Label>
+                  <Label>Product</Label>
                   <Popover open={productOpen} onOpenChange={setProductOpen}>
                     <PopoverTrigger asChild>
                       <Button
@@ -299,20 +300,20 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                         aria-expanded={productOpen}
                         className="w-full justify-between"
                       >
-                        {selectedProduct ? `${selectedProduct.name} (${selectedProduct.sku})` : "Select product..."}
+                        {selectedProduct ? selectedProduct.name : "Select product..."}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0">
                       <Command>
                         <CommandInput placeholder="Search products..." />
+                        <CommandEmpty>No products found.</CommandEmpty>
                         <CommandList>
-                          <CommandEmpty>No product found.</CommandEmpty>
                           <CommandGroup>
                             {products.map((product) => (
                               <CommandItem
                                 key={product.id}
-                                value={`${product.name} ${product.sku}`}
+                                value={`${product.name} ${product.sku} ${product.category.name}`}
                                 onSelect={() => {
                                   setSelectedProduct(product);
                                   setNewItem({ ...newItem, unit_price: product.price });
@@ -325,7 +326,12 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                                     selectedProduct?.id === product.id ? "opacity-100" : "opacity-0"
                                   )}
                                 />
-                                {product.name} ({product.sku})
+                                <div className="flex-1">
+                                  <div className="font-medium">{product.name}</div>
+                                  <div className="text-sm text-muted-foreground">
+                                    {product.sku} • {product.category.name} • ${product.price}
+                                  </div>
+                                </div>
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -335,38 +341,49 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                   </Popover>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="quantity">Quantity</Label>
-                    <Input
-                      id="quantity"
-                      type="number"
-                      value={newItem.quantity}
-                      onChange={(e) => setNewItem({ ...newItem, quantity: parseFloat(e.target.value) || 0 })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="unit_price">Unit Price</Label>
-                    <Input
-                      id="unit_price"
-                      type="number"
-                      value={newItem.unit_price}
-                      onChange={(e) => setNewItem({ ...newItem, unit_price: parseFloat(e.target.value) || 0 })}
-                    />
-                  </div>
-                </div>
+                {selectedProduct && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="quantity">Quantity</Label>
+                      <Input
+                        id="quantity"
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        value={newItem.quantity}
+                        onChange={(e) => setNewItem({ ...newItem, quantity: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="unit_price">Unit Price</Label>
+                      <Input
+                        id="unit_price"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={newItem.unit_price}
+                        onChange={(e) => setNewItem({ ...newItem, unit_price: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {selectedProduct && (
                   <div className="space-y-2">
-                    <Label htmlFor="batch">Batch</Label>
+                    <Label htmlFor="batch">Batch (Optional)</Label>
                     <Input
                       id="batch"
                       value={newItem.batch}
                       onChange={(e) => setNewItem({ ...newItem, batch: e.target.value })}
+                      placeholder="Enter batch number"
                     />
                   </div>
+                )}
+
+                {selectedProduct && (
                   <div className="space-y-2">
-                    <Label htmlFor="expiry_date">Expiry Date</Label>
+                    <Label htmlFor="expiry_date">Expiry Date (Optional)</Label>
                     <Input
                       id="expiry_date"
                       type="date"
@@ -374,12 +391,12 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                       onChange={(e) => setNewItem({ ...newItem, expiry_date: e.target.value })}
                     />
                   </div>
-                </div>
+                )}
 
                 <Button
                   type="button"
                   onClick={addItem}
-                  disabled={!selectedProduct || newItem.quantity <= 0 || newItem.unit_price <= 0}
+                  disabled={!selectedProduct}
                   className="w-full"
                 >
                   <AddIcon className="mr-2 h-4 w-4" />
@@ -392,12 +409,12 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
           {/* Items Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Purchase Items</CardTitle>
+              <CardTitle>Quotation Items</CardTitle>
             </CardHeader>
             <CardContent>
               {items.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>No items added yet. Add items using the form above.</p>
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No items added yet. Add items using the form above.</p>
                 </div>
               ) : (
                 <div className="border rounded-lg">
@@ -408,20 +425,22 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                         <TableHead>SKU</TableHead>
                         <TableHead>Quantity</TableHead>
                         <TableHead>Unit Price</TableHead>
-                        <TableHead className="text-right">Total Price</TableHead>
+                        <TableHead>Total Price</TableHead>
                         <TableHead>Batch</TableHead>
                         <TableHead>Expiry Date</TableHead>
-                        <TableHead className="text-center">Actions</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {items.map((item, index) => (
                         <TableRow key={index}>
-                          <TableCell className="font-medium">{item.product?.name}</TableCell>
+                          <TableCell>{item.product?.name}</TableCell>
                           <TableCell>{item.product?.sku}</TableCell>
                           <TableCell>
                             <Input
                               type="number"
+                              step="0.01"
+                              min="0.01"
                               value={item.quantity}
                               onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
                               className="w-20"
@@ -430,14 +449,14 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                           <TableCell>
                             <Input
                               type="number"
+                              step="0.01"
+                              min="0"
                               value={item.unit_price}
                               onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
                               className="w-24"
                             />
                           </TableCell>
-                          <TableCell className="text-right font-medium">
-                            ${item.total_price.toFixed(2)}
-                          </TableCell>
+                          <TableCell>${item.total_price.toFixed(2)}</TableCell>
                           <TableCell>
                             <Input
                               value={item.batch}
@@ -475,13 +494,16 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
           {/* Discount Controls */}
           <Card>
             <CardHeader>
-              <CardTitle>Supplier Discount</CardTitle>
+              <CardTitle>Customer Discount</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex gap-4 items-end">
                 <div className="flex-1">
                   <Label htmlFor="discount-type">Discount Type</Label>
-                  <Select value={discountType} onValueChange={(value: 'percentage' | 'fixed') => setDiscountType(value)}>
+                  <Select 
+                    value={formData.discount_type} 
+                    onValueChange={(value: 'percentage' | 'fixed') => setFormData('discount_type', value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -496,19 +518,20 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                   <Input
                     id="discount-value"
                     type="number"
-                    step={discountType === 'percentage' ? '1' : '0.01'}
+                    step={formData.discount_type === 'percentage' ? '1' : '0.01'}
                     min="0"
-                    max={discountType === 'percentage' ? '100' : undefined}
-                    value={discountValue || ''}
-                    onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
-                    placeholder={discountType === 'percentage' ? '0' : '0.00'}
+                    max={formData.discount_type === 'percentage' ? '100' : undefined}
+                    value={formData.discount_value || ''}
+                    onChange={(e) => setFormData('discount_value', parseFloat(e.target.value) || 0)}
+                    placeholder={formData.discount_type === 'percentage' ? '0' : '0.00'}
                   />
                 </div>
                 <Button
+                  type="button"
                   variant="outline"
                   onClick={() => {
-                    setDiscountType('percentage');
-                    setDiscountValue(0);
+                    setFormData('discount_type', 'percentage');
+                    setFormData('discount_value', 0);
                   }}
                 >
                   Clear
@@ -532,14 +555,15 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                   </div>
                   {totals.discountAmount > 0 && (
                     <div className="flex justify-between text-green-600">
-                      <span>Supplier Discount ({discountType === 'percentage' ? `${discountValue}%` : `$${discountValue.toFixed(2)}`}):</span>
+                      <span>Customer Discount ({formData.discount_type === 'percentage' ? `${formData.discount_value}%` : `$${formData.discount_value.toFixed(2)}`}):</span>
                       <span>-${totals.discountAmount.toFixed(2)}</span>
                     </div>
                   )}
-                  <Separator />
-                  <div className="flex justify-between font-semibold text-lg">
-                    <span>Total:</span>
-                    <span>${totals.totalAmount.toFixed(2)}</span>
+                  <div className="border-t pt-2">
+                    <div className="flex justify-between font-semibold text-lg">
+                      <span>Total:</span>
+                      <span>${totals.totalAmount.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -551,7 +575,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.visit(indexRoute.url())}
+              onClick={() => router.visit('/quotations')}
             >
               Cancel
             </Button>
@@ -560,7 +584,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
               disabled={items.length === 0 || processing}
             >
               <SaveIcon className="mr-2 h-4 w-4" />
-              {processing ? 'Creating...' : 'Create Purchase'}
+              {processing ? 'Creating...' : 'Create Quotation'}
             </Button>
           </div>
         </form>

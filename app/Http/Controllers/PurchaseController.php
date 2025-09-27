@@ -8,7 +8,9 @@ use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Services\PurchaseService;
+use App\Services\TaxService;
 use App\Http\Requests\StorePurchaseRequest;
+use App\Models\CompanySetting;
 use App\Http\Requests\UpdatePurchaseRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -72,6 +74,7 @@ class PurchaseController extends Controller
             'suppliers' => $suppliers,
             'warehouses' => $warehouses,
             'products' => $products,
+            'taxRate' => TaxService::getTaxRate(),
         ]);
     }
 
@@ -205,5 +208,24 @@ class PurchaseController extends Controller
 
         return redirect()->back()
             ->with('success', 'Purchase approved successfully.');
+    }
+
+    /**
+     * Print a purchase invoice
+     */
+    public function print(Purchase $purchase)
+    {
+        $purchase->load([
+            'supplier',
+            'warehouse',
+            'items.product',
+            'createdBy'
+        ]);
+
+        return Inertia::render('Print/Purchase', [
+            'purchase' => $purchase,
+            'taxRate' => TaxService::getTaxRate(),
+            'company' => CompanySetting::getSettings(),
+        ]);
     }
 }
