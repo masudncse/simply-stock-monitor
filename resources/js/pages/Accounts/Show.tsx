@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { index as indexRoute, edit as editRoute } from '@/routes/accounts';
 
 interface Account {
@@ -43,6 +44,17 @@ interface AccountsShowProps {
   balance: number;
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Accounts',
+        href: '/accounts',
+    },
+    {
+        title: 'Account Details',
+        href: '#',
+    },
+];
+
 export default function AccountsShow({ account, balance }: AccountsShowProps) {
   const handleEdit = () => {
     router.visit(editRoute.url({ account: account.id }));
@@ -53,7 +65,7 @@ export default function AccountsShow({ account, balance }: AccountsShowProps) {
   };
 
   return (
-    <Layout title="Account Details">
+    <Layout title="Account Details" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -63,10 +75,6 @@ export default function AccountsShow({ account, balance }: AccountsShowProps) {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={handleBack}>
-              <BackIcon className="mr-2 h-4 w-4" />
-              Back to Accounts
-            </Button>
             <Button onClick={handleEdit}>
               <EditIcon className="mr-2 h-4 w-4" />
               Edit Account

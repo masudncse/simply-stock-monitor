@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Link, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/products';
 
 interface Product {
@@ -50,6 +51,13 @@ interface ProductsIndexProps {
   };
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Products',
+        href: '/products',
+    },
+];
+
 export default function ProductsIndex({ products, categories, filters }: ProductsIndexProps) {
   const [search, setSearch] = useState(filters.search || '');
   const [categoryFilter, setCategoryFilter] = useState(filters.category_id?.toString() || '');
@@ -73,7 +81,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
   };
 
   return (
-    <Layout title="Products">
+    <Layout title="Products" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

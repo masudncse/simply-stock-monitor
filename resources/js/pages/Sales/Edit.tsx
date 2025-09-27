@@ -275,7 +275,6 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
                       <Input
                         id="quantity"
                         type="number"
-                        min="1"
                         value={newItem.quantity}
                         onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 1 })}
                       />
@@ -285,8 +284,6 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
                       <Input
                         id="unit_price"
                         type="number"
-                        step="0.01"
-                        min="0"
                         value={newItem.unit_price}
                         onChange={(e) => setNewItem({ ...newItem, unit_price: parseFloat(e.target.value) || 0 })}
                       />
@@ -352,8 +349,6 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
                             type="number"
                             value={item.quantity}
                             onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
-                            min={0.01}
-                            step={0.01}
                             className="w-20"
                           />
                         </TableCell>
@@ -362,8 +357,6 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
                             type="number"
                             value={item.unit_price}
                             onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
-                            min={0}
-                            step={0.01}
                             className="w-24"
                           />
                         </TableCell>

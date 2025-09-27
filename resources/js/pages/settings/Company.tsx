@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { Link as InertiaLink, router } from '@inertiajs/react';
+import { Link as InertiaLink, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Building2 as BusinessIcon,
   Save as SaveIcon,
+  AlertTriangle,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 
 interface CompanySettingsProps {
   settings: {
@@ -28,7 +31,19 @@ interface CompanySettingsProps {
   };
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Settings',
+    href: '/settings',
+  },
+  {
+    title: 'Company Settings',
+    href: '/settings/company',
+  },
+];
+
 const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
+  const { errors } = usePage<SharedData>().props;
   const [formData, setFormData] = useState({
     name: settings.name || '',
     email: settings.email || '',
@@ -97,7 +112,7 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
   ];
 
   return (
-    <Layout title="Company Settings">
+    <Layout title="Company Settings" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
@@ -110,6 +125,21 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* General Error Alert */}
+          {Object.keys(errors).length > 0 && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                Please fix the following errors:
+                <ul className="mt-2 list-disc list-inside">
+                  {Object.entries(errors).map(([field, message]) => (
+                    <li key={field}>{message}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Company Information */}
           <Card>
             <CardHeader>
@@ -123,8 +153,10 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    required
                   />
+                  {errors.name && (
+                    <p className="text-sm text-destructive">{errors.name}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="tax_id">Tax ID</Label>
@@ -134,6 +166,9 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                     onChange={(e) => handleChange('tax_id', e.target.value)}
                     placeholder="VAT, GST, or Tax ID"
                   />
+                  {errors.tax_id && (
+                    <p className="text-sm text-destructive">{errors.tax_id}</p>
+                  )}
                 </div>
               </div>
               <div className="space-y-2">
@@ -144,6 +179,9 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                   onChange={(e) => handleChange('address', e.target.value)}
                   rows={3}
                 />
+                {errors.address && (
+                  <p className="text-sm text-destructive">{errors.address}</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -163,6 +201,9 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                     value={formData.phone}
                     onChange={(e) => handleChange('phone', e.target.value)}
                   />
+                  {errors.phone && (
+                    <p className="text-sm text-destructive">{errors.phone}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address *</Label>
@@ -171,8 +212,10 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
-                    required
                   />
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email}</p>
+                  )}
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
@@ -183,6 +226,9 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                     value={formData.city}
                     onChange={(e) => handleChange('city', e.target.value)}
                   />
+                  {errors.city && (
+                    <p className="text-sm text-destructive">{errors.city}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="state">State/Province</Label>
@@ -191,6 +237,9 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                     value={formData.state}
                     onChange={(e) => handleChange('state', e.target.value)}
                   />
+                  {errors.state && (
+                    <p className="text-sm text-destructive">{errors.state}</p>
+                  )}
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
@@ -201,6 +250,9 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                     value={formData.postal_code}
                     onChange={(e) => handleChange('postal_code', e.target.value)}
                   />
+                  {errors.postal_code && (
+                    <p className="text-sm text-destructive">{errors.postal_code}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="country">Country</Label>
@@ -209,6 +261,9 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                     value={formData.country}
                     onChange={(e) => handleChange('country', e.target.value)}
                   />
+                  {errors.country && (
+                    <p className="text-sm text-destructive">{errors.country}</p>
+                  )}
                 </div>
               </div>
               <div className="space-y-2">
@@ -220,6 +275,9 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
                   onChange={(e) => handleChange('website', e.target.value)}
                   placeholder="https://www.example.com"
                 />
+                {errors.website && (
+                  <p className="text-sm text-destructive">{errors.website}</p>
+                )}
               </div>
             </CardContent>
           </Card>

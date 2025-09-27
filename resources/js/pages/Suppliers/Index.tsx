@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/suppliers';
 
 interface Supplier {
@@ -44,6 +45,13 @@ interface SuppliersIndexProps {
     status?: string;
   };
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Suppliers',
+        href: '/suppliers',
+    },
+];
 
 export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
@@ -75,7 +83,7 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
   };
 
   return (
-    <Layout title="Suppliers">
+    <Layout title="Suppliers" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -140,101 +148,110 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
         {/* Suppliers Table */}
         <Card>
           <CardContent>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Code</TableCell>
-                    <TableCell>Contact Person</TableCell>
-                    <TableCell>Phone</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Credit Limit</TableCell>
-                    <TableCell>Outstanding</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {suppliers.data.map((supplier) => (
-                    <TableRow key={supplier.id}>
-                      <TableCell>{supplier.name}</TableCell>
-                      <TableCell>{supplier.code}</TableCell>
-                      <TableCell>{supplier.contact_person || 'N/A'}</TableCell>
-                      <TableCell>{supplier.phone || 'N/A'}</TableCell>
-                      <TableCell>{supplier.email || 'N/A'}</TableCell>
-                      <TableCell>${supplier.credit_limit.toFixed(2)}</TableCell>
-                      <TableCell>${supplier.outstanding_amount.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={supplier.is_active ? 'Active' : 'Inactive'}
-                          color={supplier.is_active ? 'success' : 'default'}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                          <IconButton
-                            size="small"
-                            onClick={() => router.visit(showRoute.url({ supplier: supplier.id }))}
-                          >
-                            <ViewIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => router.visit(editRoute.url({ supplier: supplier.id }))}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDelete(supplier)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
+            {suppliers.data.length > 0 ? (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Contact Person</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Credit Limit</TableHead>
+                      <TableHead>Outstanding</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHeader>
+                  <TableBody>
+                    {suppliers.data.map((supplier) => (
+                      <TableRow key={supplier.id}>
+                        <TableCell>{supplier.name}</TableCell>
+                        <TableCell>{supplier.code}</TableCell>
+                        <TableCell>{supplier.contact_person || 'N/A'}</TableCell>
+                        <TableCell>{supplier.phone || 'N/A'}</TableCell>
+                        <TableCell>{supplier.email || 'N/A'}</TableCell>
+                        <TableCell>${supplier.credit_limit.toFixed(2)}</TableCell>
+                        <TableCell>${supplier.outstanding_amount.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge variant={supplier.is_active ? 'default' : 'secondary'}>
+                            {supplier.is_active ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => router.visit(showRoute.url({ supplier: supplier.id }))}
+                            >
+                              <ViewIcon className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => router.visit(editRoute.url({ supplier: supplier.id }))}
+                            >
+                              <EditIcon className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive"
+                              onClick={() => handleDelete(supplier)}
+                            >
+                              <DeleteIcon className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No suppliers found</p>
+              </div>
+            )}
 
             {/* Pagination */}
             {suppliers.links && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <div className="flex justify-center mt-4">
                 {suppliers.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
                   <Button
                     key={index}
-                    variant={link.active ? 'contained' : 'outlined'}
+                    variant={link.active ? 'default' : 'outline'}
                     onClick={() => link.url && router.visit(link.url)}
                     disabled={!link.url}
-                    sx={{ mx: 0.5 }}
+                    className="mx-1"
                   >
                     {link.label}
                   </Button>
                 ))}
-              </Box>
+              </div>
             )}
           </CardContent>
         </Card>
 
         {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-          <DialogTitle>Confirm Delete</DialogTitle>
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <DialogContent>
-            <Typography>
-              Are you sure you want to delete supplier {supplierToDelete?.name}?
-              This action cannot be undone.
-            </Typography>
+            <DialogHeader>
+              <DialogTitle>Confirm Delete</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete supplier {supplierToDelete?.name}?
+                This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+              <Button onClick={confirmDelete} variant="destructive">
+                Delete
+              </Button>
+            </DialogFooter>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-            <Button onClick={confirmDelete} color="error" variant="contained">
-              Delete
-            </Button>
-          </DialogActions>
         </Dialog>
       </div>
     </Layout>

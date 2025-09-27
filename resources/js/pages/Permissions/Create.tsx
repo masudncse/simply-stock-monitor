@@ -14,6 +14,7 @@ import {
   Shield as SecurityIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 
 interface Role {
     id: number;
@@ -23,6 +24,17 @@ interface Role {
 interface PermissionsCreateProps {
     roles: Role[];
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Permissions',
+        href: '/permissions',
+    },
+    {
+        title: 'Create Permission',
+        href: '#',
+    },
+];
 
 export default function PermissionsCreate({ roles }: PermissionsCreateProps) {
     const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
@@ -54,26 +66,20 @@ export default function PermissionsCreate({ roles }: PermissionsCreateProps) {
             case 'admin':
                 return 'destructive';
             case 'sales':
-                return 'primary';
+                return 'default';
             case 'storekeeper':
                 return 'secondary';
             case 'accountant':
-                return 'success';
+                return 'outline';
             default:
                 return 'outline';
         }
     };
 
     return (
-        <Layout title="Create New Permission">
+        <Layout title="Create New Permission" breadcrumbs={breadcrumbs}>
             <div className="space-y-6">
                 <div className="flex items-center gap-4 mb-6">
-                    <Button variant="outline" asChild>
-                        <InertiaLink href="/permissions">
-                            <BackIcon className="mr-2 h-4 w-4" />
-                            Back to Permissions
-                        </InertiaLink>
-                    </Button>
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">Create New Permission</h1>
                         <p className="text-muted-foreground">
@@ -101,7 +107,6 @@ export default function PermissionsCreate({ roles }: PermissionsCreateProps) {
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder="view-products"
                                         required
-                                        isInvalid={!!errors.name}
                                     />
                                     {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                                     <p className="text-xs text-muted-foreground">
@@ -116,7 +121,6 @@ export default function PermissionsCreate({ roles }: PermissionsCreateProps) {
                                         value={data.guard_name}
                                         onChange={(e) => setData('guard_name', e.target.value)}
                                         required
-                                        isInvalid={!!errors.guard_name}
                                     />
                                     {errors.guard_name && <p className="text-sm text-destructive">{errors.guard_name}</p>}
                                     <p className="text-xs text-muted-foreground">

@@ -22,6 +22,7 @@ import {
   Shield as SecurityIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface Permission {
@@ -55,6 +56,13 @@ interface PermissionsIndexProps {
     };
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Permissions',
+        href: '/permissions',
+    },
+];
+
 export default function PermissionsIndex({ permissions }: PermissionsIndexProps) {
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [permissionToDelete, setPermissionToDelete] = React.useState<Permission | null>(null);
@@ -78,13 +86,13 @@ export default function PermissionsIndex({ permissions }: PermissionsIndexProps)
             case 'view':
                 return 'secondary';
             case 'create':
-                return 'success';
+                return 'outline';
             case 'edit':
                 return 'default';
             case 'delete':
                 return 'destructive';
             case 'assign':
-                return 'primary';
+                return 'default';
             default:
                 return 'outline';
         }
@@ -95,7 +103,7 @@ export default function PermissionsIndex({ permissions }: PermissionsIndexProps)
     };
 
     return (
-        <Layout title="Permissions Management">
+        <Layout title="Permissions Management" breadcrumbs={breadcrumbs}>
             <div className="space-y-6">
                 <div className="flex justify-between items-center mb-6">
                     <div>

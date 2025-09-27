@@ -11,6 +11,7 @@ import {
   ArrowLeft as BackIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 
 interface Customer {
   id: number;
@@ -29,6 +30,17 @@ interface Customer {
 interface CustomersEditProps {
   customer: Customer;
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Customers',
+        href: '/customers',
+    },
+    {
+        title: 'Edit Customer',
+        href: '#',
+    },
+];
 
 export default function CustomersEdit({ customer }: CustomersEditProps) {
   const [formData, setFormData] = useState({
@@ -66,7 +78,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
   };
 
   return (
-    <Layout title={`Edit Customer - ${customer.name}`}>
+    <Layout title={`Edit Customer - ${customer.name}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -75,10 +87,6 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
               Update customer information and preferences
             </p>
           </div>
-          <Button variant="outline" onClick={() => router.visit(`/customers/${customer.id}`)}>
-            <BackIcon className="mr-2 h-4 w-4" />
-            Back to Customer
-          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -201,9 +209,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
                     value={formData.credit_limit}
                     onChange={(e) => handleChange('credit_limit', parseFloat(e.target.value) || 0)}
                     type="number"
-                    step="0.01"
-                    min="0"
-                    isInvalid={!!errors.credit_limit}
+                    className={errors.credit_limit ? 'border-destructive' : ''}
                   />
                   {errors.credit_limit && <p className="text-sm text-destructive">{errors.credit_limit}</p>}
                 </div>
@@ -214,9 +220,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
                     value={formData.outstanding_amount}
                     onChange={(e) => handleChange('outstanding_amount', parseFloat(e.target.value) || 0)}
                     type="number"
-                    step="0.01"
-                    min="0"
-                    isInvalid={!!errors.outstanding_amount}
+                    className={errors.outstanding_amount ? 'border-destructive' : ''}
                   />
                   {errors.outstanding_amount && <p className="text-sm text-destructive">{errors.outstanding_amount}</p>}
                 </div>

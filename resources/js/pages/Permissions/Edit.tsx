@@ -14,6 +14,7 @@ import {
   Shield as SecurityIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 
 interface Permission {
     id: number;
@@ -31,6 +32,17 @@ interface PermissionsEditProps {
     permission: Permission;
     roles: Role[];
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Permissions',
+        href: '/permissions',
+    },
+    {
+        title: 'Edit Permission',
+        href: '#',
+    },
+];
 
 export default function PermissionsEdit({ permission, roles }: PermissionsEditProps) {
     const [selectedRoles, setSelectedRoles] = useState<string[]>(
@@ -75,15 +87,9 @@ export default function PermissionsEdit({ permission, roles }: PermissionsEditPr
     };
 
     return (
-        <Layout title={`Edit Permission: ${permission.name}`}>
+        <Layout title={`Edit Permission: ${permission.name}`} breadcrumbs={breadcrumbs}>
             <div className="space-y-6">
                 <div className="flex items-center gap-4 mb-6">
-                    <Button variant="outline" asChild>
-                        <InertiaLink href="/permissions">
-                            <BackIcon className="mr-2 h-4 w-4" />
-                            Back to Permissions
-                        </InertiaLink>
-                    </Button>
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">Edit Permission: {permission.name}</h1>
                         <p className="text-muted-foreground">

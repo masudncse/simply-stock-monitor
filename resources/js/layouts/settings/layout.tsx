@@ -25,36 +25,6 @@ const sidebarNavItems: NavItem[] = [
         href: show(),
         icon: null,
     },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
-        icon: null,
-    },
-    {
-        title: 'Company',
-        href: '/settings/company',
-        icon: null,
-    },
-    {
-        title: 'System',
-        href: '/settings/system',
-        icon: null,
-    },
-    {
-        title: 'Users',
-        href: '/settings/users',
-        icon: null,
-    },
-    {
-        title: 'Roles',
-        href: '/settings/roles',
-        icon: null,
-    },
-    {
-        title: 'Backup',
-        href: '/settings/backup',
-        icon: null,
-    },
 ];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {

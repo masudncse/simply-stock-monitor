@@ -25,6 +25,7 @@ import {
   Trash as DeleteIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface Customer {
@@ -53,6 +54,13 @@ interface CustomersIndexProps {
     status?: string;
   };
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Customers',
+        href: '/customers',
+    },
+];
 
 export default function CustomersIndex({ customers, filters }: CustomersIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
@@ -84,7 +92,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
   };
 
   return (
-    <Layout title="Customers">
+    <Layout title="Customers" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

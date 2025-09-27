@@ -136,11 +136,9 @@ export default function StockAdjust({ products, warehouses }: StockAdjustProps) 
                   <Input
                     id="new_quantity"
                     type="number"
-                    step="0.01"
                     value={data.new_quantity}
                     onChange={(e) => setData('new_quantity', parseFloat(e.target.value) || 0)}
                     className={errors.new_quantity ? 'border-destructive' : ''}
-                    required
                   />
                   {errors.new_quantity && (
                     <p className="text-sm text-destructive">{errors.new_quantity}</p>

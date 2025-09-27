@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Save as SaveIcon, ArrowLeft as BackIcon } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { store as storeRoute, index as indexRoute } from '@/routes/accounts';
 
 interface ParentAccount {
@@ -20,6 +21,17 @@ interface ParentAccount {
 interface AccountsCreateProps {
   parentAccounts: ParentAccount[];
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Accounts',
+        href: '/accounts',
+    },
+    {
+        title: 'Create Account',
+        href: '#',
+    },
+];
 
 export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) {
   const [formData, setFormData] = useState({
@@ -62,7 +74,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
   ];
 
   return (
-    <Layout title="Create Account">
+    <Layout title="Create Account" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -71,10 +83,6 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
               Add a new account to your chart of accounts
             </p>
           </div>
-          <Button variant="outline" onClick={() => router.visit(indexRoute.url())}>
-            <BackIcon className="mr-2 h-4 w-4" />
-            Back to Accounts
-          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -202,7 +210,6 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
                     value={formData.opening_balance}
                     onChange={(e) => handleChange('opening_balance', parseFloat(e.target.value) || 0)}
                     className={errors.opening_balance ? 'border-destructive' : ''}
-                    step="0.01"
                   />
                   {errors.opening_balance && (
                     <p className="text-sm text-destructive">{errors.opening_balance}</p>

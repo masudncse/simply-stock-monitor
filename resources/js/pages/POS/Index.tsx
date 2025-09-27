@@ -324,7 +324,6 @@ export default function POS({ products }: POSProps) {
                   <Input
                     id="quantity"
                     type="number"
-                    min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                   />

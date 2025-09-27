@@ -147,8 +147,6 @@ function TwoFactorConfirmationStep({
                                         name="code"
                                         value={code}
                                         onChange={(e) => setCode(e.target.value)}
-                                        maxLength={OTP_MAX_LENGTH}
-                                        pattern="[0-9]*"
                                         inputMode="numeric"
                                         autoComplete="one-time-code"
                                         autoFocus

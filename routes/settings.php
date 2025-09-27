@@ -42,8 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::post('settings/company', [CompanyController::class, 'update'])->name('settings.company.update');
 
     // System settings
-    Route::get('settings/system', [SystemController::class, 'index'])->name('settings.system');
-    Route::put('settings/system', [SystemController::class, 'update'])->name('settings.system.update');
+    Route::get('settings/system', [\App\Http\Controllers\SettingsController::class, 'system'])->name('settings.system');
+    Route::post('settings/system', [\App\Http\Controllers\SettingsController::class, 'updateSystem'])->name('settings.system.update');
 
     // User management
     Route::get('settings/users', [UsersController::class, 'index'])->name('settings.users');

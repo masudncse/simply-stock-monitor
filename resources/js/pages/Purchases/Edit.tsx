@@ -313,8 +313,6 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
                     <Input
                       id="quantity"
                       type="number"
-                      min="0.01"
-                      step="0.01"
                       value={newItem.quantity}
                       onChange={(e) => setNewItem({ ...newItem, quantity: parseFloat(e.target.value) || 0 })}
                     />
@@ -324,8 +322,6 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
                     <Input
                       id="unit_price"
                       type="number"
-                      min="0"
-                      step="0.01"
                       value={newItem.unit_price}
                       onChange={(e) => setNewItem({ ...newItem, unit_price: parseFloat(e.target.value) || 0 })}
                     />
@@ -398,8 +394,6 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
                           <TableCell>
                             <Input
                               type="number"
-                              min="0.01"
-                              step="0.01"
                               value={item.quantity}
                               onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
                               className="w-20"
@@ -408,8 +402,6 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
                           <TableCell>
                             <Input
                               type="number"
-                              min="0"
-                              step="0.01"
                               value={item.unit_price}
                               onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
                               className="w-24"

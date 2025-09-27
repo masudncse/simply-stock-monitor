@@ -82,6 +82,10 @@ class RolePermissionSeeder extends Seeder
             'edit-users',
             'delete-users',
             'assign-roles',
+            
+            // Settings permissions
+            'view-settings',
+            'edit-settings',
         ];
 
         foreach ($permissions as $permission) {

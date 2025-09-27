@@ -13,6 +13,7 @@ import { CheckCircle } from 'lucide-react';
 
 import HeadingSmall from '@/components/heading-small';
 import { edit } from '@/routes/password';
+import Layout from '@/layouts/Layout';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,7 +27,7 @@ export default function Password() {
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <Layout breadcrumbs={breadcrumbs}>
             <Head title="Password settings" />
 
             <SettingsLayout>
@@ -134,6 +135,6 @@ export default function Password() {
                     </Form>
                 </div>
             </SettingsLayout>
-        </AppLayout>
+        </Layout>
     );
 }

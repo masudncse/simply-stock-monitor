@@ -11,6 +11,18 @@ import {
   ArrowLeft as BackIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Customers',
+        href: '/customers',
+    },
+    {
+        title: 'Create Customer',
+        href: '#',
+    },
+];
 
 export default function CustomersCreate() {
   const [formData, setFormData] = useState({
@@ -48,7 +60,7 @@ export default function CustomersCreate() {
   };
 
   return (
-    <Layout title="Create Customer">
+    <Layout title="Create Customer" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -57,10 +69,6 @@ export default function CustomersCreate() {
               Add a new customer to your system
             </p>
           </div>
-          <Button variant="outline" onClick={() => router.visit('/customers')}>
-            <BackIcon className="mr-2 h-4 w-4" />
-            Back to Customers
-          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -183,9 +191,7 @@ export default function CustomersCreate() {
                     value={formData.credit_limit}
                     onChange={(e) => handleChange('credit_limit', parseFloat(e.target.value) || 0)}
                     type="number"
-                    step="0.01"
-                    min="0"
-                    isInvalid={!!errors.credit_limit}
+                    className={errors.credit_limit ? 'border-destructive' : ''}
                   />
                   {errors.credit_limit && <p className="text-sm text-destructive">{errors.credit_limit}</p>}
                 </div>
@@ -196,9 +202,7 @@ export default function CustomersCreate() {
                     value={formData.outstanding_amount}
                     onChange={(e) => handleChange('outstanding_amount', parseFloat(e.target.value) || 0)}
                     type="number"
-                    step="0.01"
-                    min="0"
-                    isInvalid={!!errors.outstanding_amount}
+                    className={errors.outstanding_amount ? 'border-destructive' : ''}
                   />
                   {errors.outstanding_amount && <p className="text-sm text-destructive">{errors.outstanding_amount}</p>}
                 </div>

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute, trialBalance as trialBalanceRoute } from '@/routes/accounts';
 
 interface Account {
@@ -45,6 +46,13 @@ interface AccountsIndexProps {
     sub_type?: string;
   };
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Accounts',
+        href: '/accounts',
+    },
+];
 
 export default function AccountsIndex({ accounts, filters }: AccountsIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
@@ -103,7 +111,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
   ];
 
   return (
-    <Layout title="Chart of Accounts">
+    <Layout title="Chart of Accounts" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

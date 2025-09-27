@@ -9,7 +9,19 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Save as SaveIcon, ArrowLeft as BackIcon } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { store as storeRoute, index as indexRoute } from '@/routes/suppliers';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Suppliers',
+        href: '/suppliers',
+    },
+    {
+        title: 'Create Supplier',
+        href: '#',
+    },
+];
 
 export default function SuppliersCreate() {
   const [formData, setFormData] = useState({
@@ -47,7 +59,7 @@ export default function SuppliersCreate() {
   };
 
   return (
-    <Layout title="Create Supplier">
+    <Layout title="Create Supplier" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -56,10 +68,6 @@ export default function SuppliersCreate() {
               Add a new supplier to your system
             </p>
           </div>
-          <Button variant="outline" onClick={() => router.visit(indexRoute.url())}>
-            <BackIcon className="mr-2 h-4 w-4" />
-            Back to Suppliers
-          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -214,8 +222,6 @@ export default function SuppliersCreate() {
                     value={formData.credit_limit}
                     onChange={(e) => handleChange('credit_limit', parseFloat(e.target.value) || 0)}
                     className={errors.credit_limit ? 'border-destructive' : ''}
-                    min="0"
-                    step="0.01"
                   />
                   {errors.credit_limit && (
                     <p className="text-sm text-destructive">{errors.credit_limit}</p>
@@ -229,8 +235,6 @@ export default function SuppliersCreate() {
                     value={formData.outstanding_amount}
                     onChange={(e) => handleChange('outstanding_amount', parseFloat(e.target.value) || 0)}
                     className={errors.outstanding_amount ? 'border-destructive' : ''}
-                    min="0"
-                    step="0.01"
                   />
                   {errors.outstanding_amount && (
                     <p className="text-sm text-destructive">{errors.outstanding_amount}</p>

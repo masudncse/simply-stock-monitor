@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft } from 'lucide-react';
 import { Link, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { type BreadcrumbItem } from '@/types';
 import { update as updateRoute } from '@/routes/products';
 
 interface Category {
@@ -37,6 +38,17 @@ interface ProductEditProps {
   categories: Category[];
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Products',
+        href: '/products',
+    },
+    {
+        title: 'Edit Product',
+        href: '#',
+    },
+];
+
 export default function ProductEdit({ product, categories }: ProductEditProps) {
   const { data, setData, put, processing, errors } = useForm({
     sku: product.sku,
@@ -58,7 +70,7 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
   };
 
   return (
-    <Layout title="Edit Product">
+    <Layout title="Edit Product" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -67,12 +79,6 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
               Update product information
             </p>
           </div>
-          <Button variant="outline" asChild>
-            <Link href="/products">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Products
-            </Link>
-          </Button>
         </div>
 
         <Card>
@@ -195,11 +201,9 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
                   <Input
                     id="price"
                     type="number"
-                    step="0.01"
                     value={data.price}
                     onChange={(e) => setData('price', parseFloat(e.target.value) || 0)}
                     className={errors.price ? 'border-destructive' : ''}
-                    required
                   />
                   {errors.price && (
                     <p className="text-sm text-destructive">{errors.price}</p>
@@ -211,11 +215,9 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
                   <Input
                     id="cost_price"
                     type="number"
-                    step="0.01"
                     value={data.cost_price}
                     onChange={(e) => setData('cost_price', parseFloat(e.target.value) || 0)}
                     className={errors.cost_price ? 'border-destructive' : ''}
-                    required
                   />
                   {errors.cost_price && (
                     <p className="text-sm text-destructive">{errors.cost_price}</p>
@@ -229,7 +231,6 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
                   <Input
                     id="tax_rate"
                     type="number"
-                    step="0.01"
                     value={data.tax_rate}
                     onChange={(e) => setData('tax_rate', parseFloat(e.target.value) || 0)}
                     className={errors.tax_rate ? 'border-destructive' : ''}

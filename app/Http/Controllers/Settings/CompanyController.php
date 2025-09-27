@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CompanySettingsRequest;
 use App\Models\CompanySetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class CompanyController extends Controller
@@ -18,31 +20,18 @@ class CompanyController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(CompanySettingsRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
-            'city' => 'nullable|string|max:100',
-            'state' => 'nullable|string|max:100',
-            'postal_code' => 'nullable|string|max:20',
-            'country' => 'nullable|string|max:100',
-            'tax_id' => 'nullable|string|max:50',
-            'website' => 'nullable|url|max:255',
-        ]);
-
         try {
-            \Log::info('Company settings update request:', $request->all());
-            
+            Log::info('Company settings update request:', $request->all());
+
             $settings = CompanySetting::updateSettings($request->validated());
             
-            \Log::info('Company settings saved:', $settings->toArray());
+            Log::info('Company settings saved:', $settings->toArray());
             
             return back()->with('success', 'Company settings updated successfully.');
         } catch (\Exception $e) {
-            \Log::error('Company settings update failed:', [
+            Log::error('Company settings update failed:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);

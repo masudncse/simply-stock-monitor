@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class CompanySetting extends Model
 {
+    protected $table = 'company_settings';
+    
     protected $fillable = [
         'name',
         'email',
@@ -27,20 +30,14 @@ class CompanySetting extends Model
 
     public static function updateSettings(array $data)
     {
-        \Log::info('CompanySetting::updateSettings called with data:', $data);
-        
         $settings = static::first();
         
         if ($settings) {
-            \Log::info('Updating existing settings with ID:', $settings->id);
             $settings->update($data);
         } else {
-            \Log::info('Creating new settings record');
             $settings = static::create($data);
         }
-        
-        \Log::info('Settings after save:', $settings->toArray());
-        
+                
         return $settings;
     }
 }
