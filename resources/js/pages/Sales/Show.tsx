@@ -66,7 +66,7 @@ interface Sale {
   status: string;
   payment_status: string;
   notes?: string;
-  sale_items: SaleItem[];
+  items: SaleItem[];
   created_by: User;
   created_at: string;
   updated_at: string;
@@ -265,7 +265,7 @@ export default function SalesShow({ sale }: SalesShowProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sale.sale_items.map((item) => (
+                {(sale.items || []).map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.product.name}</TableCell>
                     <TableCell>{item.product.sku}</TableCell>
