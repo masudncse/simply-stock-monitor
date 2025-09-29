@@ -39,6 +39,12 @@ class QuotationController extends Controller
             })
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
+            })
+            ->when($request->date_from, function ($query, $dateFrom) {
+                $query->where('quotation_date', '>=', $dateFrom);
+            })
+            ->when($request->date_to, function ($query, $dateTo) {
+                $query->where('quotation_date', '<=', $dateTo);
             });
 
         // Sorting functionality
@@ -61,7 +67,7 @@ class QuotationController extends Controller
 
         return Inertia::render('Quotations/Index', [
             'quotations' => $quotations,
-            'filters' => $request->only(['search', 'status', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'status', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
         ]);
     }
 

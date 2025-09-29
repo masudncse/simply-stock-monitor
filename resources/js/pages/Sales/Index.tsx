@@ -80,6 +80,8 @@ interface SalesIndexProps {
     search?: string;
     status?: string;
     customer_id?: number;
+    date_from?: string;
+    date_to?: string;
     sort_by?: string;
     sort_direction?: string;
   };
@@ -89,6 +91,8 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
   const [customerFilter, setCustomerFilter] = useState(filters.customer_id?.toString() || '');
+  const [dateFrom, setDateFrom] = useState(filters.date_from || '');
+  const [dateTo, setDateTo] = useState(filters.date_to || '');
   const [sortBy, setSortBy] = useState(filters.sort_by || 'created_at');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'desc');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -99,6 +103,8 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
       search: searchTerm,
       status: statusFilter,
       customer_id: customerFilter,
+      date_from: dateFrom,
+      date_to: dateTo,
       sort_by: sortBy,
       sort_direction: sortDirection,
     }, {
@@ -128,6 +134,8 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
       search: searchTerm,
       status: statusFilter,
       customer_id: customerFilter,
+      date_from: dateFrom,
+      date_to: dateTo,
       sort_by: column,
       sort_direction: newDirection,
     }, {
@@ -141,6 +149,8 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
       search: searchTerm,
       status: statusFilter,
       customer_id: customerFilter,
+      date_from: dateFrom,
+      date_to: dateTo,
       sort_by: sortBy,
       sort_direction: sortDirection,
       page,
@@ -221,7 +231,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
             <CardTitle>Filters</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               <div className="space-y-2">
                 <Label htmlFor="search">Search</Label>
                 <div className="relative">
@@ -267,6 +277,26 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="date_from">Date From</Label>
+                <Input
+                  id="date_from"
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="date_to">Date To</Label>
+                <Input
+                  id="date_to"
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                />
               </div>
               
               <div className="space-y-2">

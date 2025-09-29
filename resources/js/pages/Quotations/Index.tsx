@@ -65,6 +65,8 @@ interface QuotationsIndexProps {
   filters?: {
     search?: string;
     status?: string;
+    date_from?: string;
+    date_to?: string;
     sort_by?: string;
     sort_direction?: string;
   };
@@ -73,6 +75,8 @@ interface QuotationsIndexProps {
 export default function QuotationsIndex({ quotations, filters = {} }: QuotationsIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
+  const [dateFrom, setDateFrom] = useState(filters.date_from || '');
+  const [dateTo, setDateTo] = useState(filters.date_to || '');
   const [sortBy, setSortBy] = useState(filters.sort_by || 'created_at');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'desc');
 
@@ -95,6 +99,8 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
     router.get('/quotations', {
       search: searchTerm || undefined,
       status: statusFilter === 'all' ? undefined : statusFilter,
+      date_from: dateFrom || undefined,
+      date_to: dateTo || undefined,
       sort_by: sortBy,
       sort_direction: sortDirection,
     }, {
@@ -118,6 +124,8 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
     router.get('/quotations', {
       search: searchTerm || undefined,
       status: statusFilter === 'all' ? undefined : statusFilter,
+      date_from: dateFrom || undefined,
+      date_to: dateTo || undefined,
       sort_by: column,
       sort_direction: newDirection,
     }, {
@@ -172,8 +180,9 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
         {/* Filters */}
         <Card>
           <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Search</label>
                 <div className="relative">
                   <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
@@ -185,7 +194,9 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
                   />
                 </div>
               </div>
-              <div className="sm:w-48">
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Status</label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by status" />
@@ -200,8 +211,28 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex gap-2">
-                <Button onClick={handleSearch}>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Date From</label>
+                <Input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Date To</label>
+                <Input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">&nbsp;</label>
+                <Button onClick={handleSearch} className="w-full">
                   <SearchIcon className="mr-2 h-4 w-4" />
                   Search
                 </Button>

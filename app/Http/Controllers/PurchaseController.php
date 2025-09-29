@@ -46,6 +46,12 @@ class PurchaseController extends Controller
             })
             ->when($request->supplier_id, function ($query, $supplierId) {
                 $query->where('supplier_id', $supplierId);
+            })
+            ->when($request->date_from, function ($query, $dateFrom) {
+                $query->where('purchase_date', '>=', $dateFrom);
+            })
+            ->when($request->date_to, function ($query, $dateTo) {
+                $query->where('purchase_date', '<=', $dateTo);
             });
 
         // Sorting functionality
@@ -71,7 +77,7 @@ class PurchaseController extends Controller
         return Inertia::render('Purchases/Index', [
             'purchases' => $purchases,
             'suppliers' => $suppliers,
-            'filters' => $request->only(['search', 'status', 'supplier_id', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'status', 'supplier_id', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
         ]);
     }
 

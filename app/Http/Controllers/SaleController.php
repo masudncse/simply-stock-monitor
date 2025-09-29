@@ -46,6 +46,12 @@ class SaleController extends Controller
             })
             ->when($request->customer_id, function ($query, $customerId) {
                 $query->where('customer_id', $customerId);
+            })
+            ->when($request->date_from, function ($query, $dateFrom) {
+                $query->where('sale_date', '>=', $dateFrom);
+            })
+            ->when($request->date_to, function ($query, $dateTo) {
+                $query->where('sale_date', '<=', $dateTo);
             });
 
         // Sorting functionality
@@ -71,7 +77,7 @@ class SaleController extends Controller
         return Inertia::render('Sales/Index', [
             'sales' => $sales,
             'customers' => $customers,
-            'filters' => $request->only(['search', 'status', 'customer_id', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'status', 'customer_id', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
         ]);
     }
 

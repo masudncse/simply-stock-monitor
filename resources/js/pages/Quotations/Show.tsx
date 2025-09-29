@@ -83,7 +83,7 @@ export default function QuotationsShow({ quotation }: QuotationsShowProps) {
     switch (status) {
       case 'draft': return 'secondary';
       case 'sent': return 'default';
-      case 'approved': return 'success';
+      case 'approved': return 'default';
       case 'rejected': return 'destructive';
       case 'expired': return 'outline';
       default: return 'secondary';
@@ -245,10 +245,10 @@ export default function QuotationsShow({ quotation }: QuotationsShowProps) {
                       </div>
                       <div className="text-right">
                         <div className="font-medium">
-                          {item.quantity} × ${item.unit_price.toFixed(2)}
+                          {item.quantity} × ${Number(item.unit_price).toFixed(2)}
                         </div>
                         <div className="text-lg font-semibold">
-                          ${item.total_price.toFixed(2)}
+                          ${Number(item.total_price).toFixed(2)}
                         </div>
                       </div>
                     </div>
@@ -320,26 +320,26 @@ export default function QuotationsShow({ quotation }: QuotationsShowProps) {
               <CardContent className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>${quotation.subtotal.toFixed(2)}</span>
+                  <span>${Number(quotation.subtotal).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax (10%):</span>
-                  <span>${quotation.tax_amount.toFixed(2)}</span>
+                  <span>${Number(quotation.tax_amount).toFixed(2)}</span>
                 </div>
                 {quotation.discount_amount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>
                       Discount ({quotation.discount_type === 'percentage' 
                         ? `${quotation.discount_value}%` 
-                        : `$${quotation.discount_value.toFixed(2)}`}):
+                        : `$${Number(quotation.discount_value).toFixed(2)}`}):
                     </span>
-                    <span>-${quotation.discount_amount.toFixed(2)}</span>
+                    <span>-${Number(quotation.discount_amount).toFixed(2)}</span>
                   </div>
                 )}
                 <Separator />
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total:</span>
-                  <span>${quotation.total_amount.toFixed(2)}</span>
+                  <span>${Number(quotation.total_amount).toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>

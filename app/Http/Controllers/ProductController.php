@@ -64,7 +64,7 @@ class ProductController extends Controller
         // Apply sorting
         $query->orderBy($sortBy, $sortDirection);
 
-        $products = $query->paginate(2)->appends($request->query());
+        $products = $query->paginate(15)->appends($request->query());
 
         $categories = Category::where('is_active', true)->get();
 
