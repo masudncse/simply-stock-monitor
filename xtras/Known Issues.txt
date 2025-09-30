@@ -3,3 +3,148 @@ http://127.0.0.1:8000/accounts/1
 
 Export CSV: http://127.0.0.1:8000/reports/stock
 
+Searchable Customer, Supplier, Product, etc select option
+
+Apply Filter button should primary color
+
+Search items should justify start
+
+While back browser last page not showing
+
+http://127.0.0.1:8000/accounts
+Trial Balance Not Working
+
+Add Per Page list 15, 30, 50, 100
+
+Add Clear button beside Apply Filter button
+
+http://127.0.0.1:8000/reports/purchases
+Export CSV Issue
+
+http://127.0.0.1:8000/reports/profit-loss
+http://127.0.0.1:8000/reports/customer-outstanding
+http://127.0.0.1:8000/reports/supplier-outstanding
+http://127.0.0.1:8000/reports/sales
+Export CSV Issue
+
+Show app notification
+- Low Stock Alert (warning)
+- Expired Product (warning)
+
+Ensure pagination for all of pages, edit etc.
+
+Werare create functionality missing
+
+Aproval for Purchase & Sales is missing
+
+Backup & Maintenance not Working
+
+Theme changing is not Working
+
+Collapse Sidebar by Default not Working
+
+Timezone Missing some important country
+
+Page title is not chaning
+
+
+Change sidebar collapse icon
+
+Breadcrumb Subtitle should implement
+
+Cash expense income managment missing
+
+Bank transaction missing 
+
+Pagination show special charctter
+
+Add Search by Dropdown cateogry Product, Sales, Quotation, Purchase, Customer, Supplier, Expense, Income, etc
+
+Return sales, purchase management
+
+Every business action creates accounting entries:
+Sale → Records revenue & reduces inventory
+Purchase → Increases inventory & creates payable
+Payment → Reduces cash & reduces payable/receivable
+Expense → Records cost & reduces cash
+
+Add delivery service like SA Poribahon, Redex etc...
+
+Telescope with all service log, exception, request, cron, mail etc.
+
+Email Invoicing & Automated Reminders 📧
+What: Send invoices directly to customers via email with payment reminders
+Add schedule in sales screen
+- Email invoice to customer from sales screen
+- Scheduled reminders (3 days before due, on due date, 3 days after)
+- Attach PDF invoice automatically
+
+// Add to existing notification system:
+- Real-time alerts when stock < min_stock
+- Email/SMS notifications to managers
+- Suggested reorder quantity based on sales velocity
+- Weekly low stock summary email
+
+// Add to Product module:
+- Auto-generate barcode from SKU
+- Support multiple formats (Code 128, EAN-13, QR)
+- Print individual or bulk labels
+- Integration with existing barcode scanning
+
+Generate bill for due amount by customer and daily, weekly, monthly billing system 
+
+Product variants system and customizable (Size, Color)
+
+
+Partial Payments & Payment Plans 💰
+What: Accept multiple partial payments for one invoice
+Why:
+Customers can't always pay full amount
+Installment tracking
+Better cash flow visibility
+Reduces bad debt
+Current Gap: System has paid_amount but limited partial payment UI
+Enhancement:
+
+// Add payment schedule:
+- Multiple payment records per sale
+- Payment history timeline
+- Remaining balance alerts
+- Auto-calculate next due date
+
+
+Credit Notes & Refunds 🧾
+What: Issue credit notes for returns/discounts
+Why:
+Handle returns professionally
+Track refunded amounts
+Maintain accurate accounting
+Customer satisfaction
+Accounting Impact:
+
+Credit Note issued:
+Debit:  Sales Returns (5100)
+Credit: Accounts Receivable
+
+
+Sales Commission Tracking 💵
+What: Calculate and track sales person commissions
+Why:
+Motivates sales team
+Transparent commission reports
+Auto-calculate based on sales
+Performance tracking
+Features:
+
+// Add to Sales:
+- Assign salesperson to sale
+- Commission % or fixed amount
+- Monthly commission reports
+- Outstanding vs paid commissions
+
+
+
+
+
+
+

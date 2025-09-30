@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Save as SaveIcon, ArrowLeft as BackIcon } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { store as storeRoute, index as indexRoute } from '@/routes/accounts';
+import { update as updateRoute, index as indexRoute } from '@/routes/accounts';
 
 interface ParentAccount {
   id: number;
@@ -17,19 +17,31 @@ interface ParentAccount {
   name: string;
 }
 
-interface AccountsCreateProps {
+interface Account {
+  id: number;
+  code: string;
+  name: string;
+  type: string;
+  sub_type?: string;
+  parent_id?: number;
+  opening_balance: number;
+  is_active: boolean;
+}
+
+interface AccountsEditProps {
+  account: Account;
   parentAccounts: ParentAccount[];
 }
 
-export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) {
+export default function AccountsEdit({ account, parentAccounts }: AccountsEditProps) {
   const [formData, setFormData] = useState({
-    code: '',
-    name: '',
-    type: '',
-    sub_type: '',
-    parent_id: '',
-    opening_balance: 0,
-    is_active: true,
+    code: account.code,
+    name: account.name,
+    type: account.type,
+    sub_type: account.sub_type || '',
+    parent_id: account.parent_id ? account.parent_id.toString() : 'none',
+    opening_balance: account.opening_balance,
+    is_active: account.is_active,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -52,7 +64,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
       parent_id: formData.parent_id === 'none' ? '' : formData.parent_id
     };
     
-    router.post(storeRoute.url(), submitData, {
+    router.put(updateRoute.url({ account: account.id }), submitData, {
       onError: (errors) => {
         setErrors(errors);
       },
@@ -68,13 +80,13 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
   ];
 
   return (
-    <Layout title="Create Account">
+    <Layout title="Edit Account">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Create Account</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Edit Account</h1>
             <p className="text-muted-foreground">
-              Add a new account to your chart of accounts
+              Update account information
             </p>
           </div>
           <Button
@@ -193,9 +205,9 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">No Parent Account</SelectItem>
-                      {parentAccounts.map((account) => (
-                        <SelectItem key={account.id} value={account.id.toString()}>
-                          {account.code} - {account.name}
+                      {parentAccounts.map((acc) => (
+                        <SelectItem key={acc.id} value={acc.id.toString()}>
+                          {acc.code} - {acc.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -225,7 +237,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
             </Button>
             <Button type="submit">
               <SaveIcon className="mr-2 h-4 w-4" />
-              Create Account
+              Update Account
             </Button>
           </div>
         </form>

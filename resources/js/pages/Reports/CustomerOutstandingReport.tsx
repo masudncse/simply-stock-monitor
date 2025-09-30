@@ -42,11 +42,14 @@ interface CustomerOutstandingReportProps {
 }
 
 const CustomerOutstandingReport: React.FC<CustomerOutstandingReportProps> = ({
-  customers,
-  totalOutstanding,
-  filters,
+  customers = [],
+  totalOutstanding = 0,
+  filters = {},
 }) => {
   const [localFilters, setLocalFilters] = useState(filters);
+  
+  // Ensure customers is always an array
+  const customerList = Array.isArray(customers) ? customers : [];
 
   const handleFilterChange = (field: string, value: string | number) => {
     setLocalFilters(prev => ({ ...prev, [field]: value }));
@@ -70,7 +73,7 @@ const CustomerOutstandingReport: React.FC<CustomerOutstandingReportProps> = ({
   const exportReport = () => {
     router.post('/reports/export', {
       report_type: 'customer-outstanding',
-      data: customers,
+      data: customerList as any,
     });
   };
 
@@ -89,228 +92,213 @@ const CustomerOutstandingReport: React.FC<CustomerOutstandingReportProps> = ({
   };
 
   return (
-    <Layout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            <PeopleIcon sx={{ mr: 2, verticalAlign: 'middle' }} />
-            Customer Outstanding Report
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+    <Layout title="Customer Outstanding Report">
+      <div className="space-y-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <PeopleIcon className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold tracking-tight">Customer Outstanding Report</h1>
+          </div>
+          <p className="text-muted-foreground">
             Outstanding receivables and credit limit analysis
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
         {/* Summary Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Total Customers
-                </Typography>
-                <Typography variant="h4">
-                  {customers.length}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Total Outstanding
-                </Typography>
-                <Typography variant="h4" color="error">
-                  ${totalOutstanding.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Critical Credit
-                </Typography>
-                <Typography variant="h4" color="error">
-                  {customers.filter(c => {
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Customers</p>
+                <p className="text-2xl font-bold">{customerList.length}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Outstanding</p>
+                <p className="text-2xl font-bold text-destructive">${totalOutstanding.toFixed(2)}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Critical Credit</p>
+                <p className="text-2xl font-bold text-destructive">
+                  {customerList.filter(c => {
                     const utilization = (c.outstanding_amount / c.credit_limit) * 100;
                     return utilization >= 90;
                   }).length}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="text.secondary" gutterBottom>
-                  Avg Outstanding
-                </Typography>
-                <Typography variant="h4">
-                  ${customers.length > 0 ? (totalOutstanding / customers.length).toFixed(2) : '0.00'}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Avg Outstanding</p>
+                <p className="text-2xl font-bold">
+                  ${customerList.length > 0 ? (totalOutstanding / customerList.length).toFixed(2) : '0.00'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Filters */}
-        <Paper sx={{ p: 3, mb: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            <FilterIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-            Filters
-          </Typography>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6} md={4}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Customer</InputLabel>
-                <Select
-                  value={localFilters.customer_id || ''}
-                  onChange={(e) => handleFilterChange('customer_id', e.target.value)}
-                  label="Customer"
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FilterIcon className="h-5 w-5" />
+              Filters
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="customer">Customer</Label>
+                <Select 
+                  value={localFilters.customer_id?.toString() || "all"} 
+                  onValueChange={(value) => handleFilterChange('customer_id', value === "all" ? "" : parseInt(value))}
                 >
-                  <MenuItem value="">All Customers</MenuItem>
-                  {customers.map((item) => (
-                    <MenuItem key={item.customer.id} value={item.customer.id}>
-                      {item.customer.name}
-                    </MenuItem>
-                  ))}
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Customers" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Customers</SelectItem>
+                    {customerList.map((item) => (
+                      <SelectItem key={item.customer.id} value={item.customer.id.toString()}>
+                        {item.customer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button variant="contained" onClick={applyFilters} size="small">
-                  Apply Filters
-                </Button>
-                <Button variant="outlined" onClick={clearFilters} size="small">
-                  Clear
-                </Button>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Button
-                variant="contained"
-                startIcon={<DownloadIcon />}
-                onClick={exportReport}
-                size="small"
-              >
-                Export CSV
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <Button onClick={applyFilters}>
+                Apply Filters
               </Button>
-            </Grid>
-          </Grid>
-        </Paper>
+              <Button variant="outline" onClick={clearFilters}>
+                Clear
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Actions */}
-        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">
-            Customer Outstanding Details ({customers.length} customers)
-          </Typography>
-        </Box>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">
+            Customer Outstanding Details ({customerList.length} customers)
+          </h2>
+          <Button onClick={exportReport}>
+            <DownloadIcon className="mr-2 h-4 w-4" />
+            Export CSV
+          </Button>
+        </div>
 
         {/* Customer Outstanding Table */}
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Customer</TableCell>
-                <TableCell>Code</TableCell>
-                <TableCell>Contact</TableCell>
-                <TableCell align="right">Outstanding Amount</TableCell>
-                <TableCell align="right">Credit Limit</TableCell>
-                <TableCell align="right">Available Credit</TableCell>
-                <TableCell align="right">Credit Utilization</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {customers.map((item) => {
-                const creditUtilization = (item.outstanding_amount / item.credit_limit) * 100;
-                const status = getCreditStatus(item);
-                
-                return (
-                  <TableRow key={item.customer.id}>
-                    <TableCell>{item.customer.name}</TableCell>
-                    <TableCell>{item.customer.code}</TableCell>
-                    <TableCell>
-                      <Box>
-                        {item.customer.email && (
-                          <Typography variant="body2" color="text.secondary">
-                            {item.customer.email}
-                          </Typography>
-                        )}
-                        {item.customer.phone && (
-                          <Typography variant="body2" color="text.secondary">
-                            {item.customer.phone}
-                          </Typography>
-                        )}
-                      </Box>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="body1" color="error">
-                        ${item.outstanding_amount.toFixed(2)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      ${item.credit_limit.toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography 
-                        variant="body1" 
-                        color={item.available_credit >= 0 ? 'success.main' : 'error.main'}
-                      >
-                        ${item.available_credit.toFixed(2)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography 
-                        variant="body2" 
-                        color={creditUtilization >= 90 ? 'error.main' : creditUtilization >= 75 ? 'warning.main' : 'text.secondary'}
-                      >
-                        {creditUtilization.toFixed(1)}%
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={status.label}
-                        color={status.color}
-                        size="small"
-                        icon={creditUtilization >= 90 ? <WarningIcon /> : undefined}
-                      />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {customers.length === 0 && (
-          <Alert severity="info" sx={{ mt: 2 }}>
-            No outstanding amounts found for the selected filters.
-          </Alert>
-        )}
+        <Card>
+          <CardContent>
+            {customerList.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Alert>
+                  <AlertDescription>
+                    No outstanding amounts found for the selected filters.
+                  </AlertDescription>
+                </Alert>
+              </div>
+            ) : (
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead className="text-right">Outstanding Amount</TableHead>
+                      <TableHead className="text-right">Credit Limit</TableHead>
+                      <TableHead className="text-right">Available Credit</TableHead>
+                      <TableHead className="text-right">Credit Utilization</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {customerList.map((item) => {
+                      const creditUtilization = (item.outstanding_amount / item.credit_limit) * 100;
+                      const status = getCreditStatus(item);
+                      
+                      return (
+                        <TableRow key={item.customer.id}>
+                          <TableCell>{item.customer.name}</TableCell>
+                          <TableCell>{item.customer.code}</TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              {item.customer.email && (
+                                <p className="text-sm text-muted-foreground">
+                                  {item.customer.email}
+                                </p>
+                              )}
+                              {item.customer.phone && (
+                                <p className="text-sm text-muted-foreground">
+                                  {item.customer.phone}
+                                </p>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <span className="text-destructive font-medium">
+                              ${item.outstanding_amount.toFixed(2)}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ${item.credit_limit.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <span className={item.available_credit >= 0 ? 'text-green-600 font-medium' : 'text-destructive font-medium'}>
+                              ${item.available_credit.toFixed(2)}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <span className={creditUtilization >= 90 ? 'text-destructive' : creditUtilization >= 75 ? 'text-orange-600' : 'text-muted-foreground'}>
+                              {creditUtilization.toFixed(1)}%
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={status.color === 'error' ? 'destructive' : status.color === 'warning' ? 'secondary' : 'default'}>
+                              {creditUtilization >= 90 && <WarningIcon className="mr-1 h-3 w-3" />}
+                              {status.label}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Critical Customers Alert */}
-        {customers.filter(c => {
+        {customerList.filter(c => {
           const utilization = (c.outstanding_amount / c.credit_limit) * 100;
           return utilization >= 90;
         }).length > 0 && (
-          <Alert severity="warning" sx={{ mt: 2 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Critical Credit Alert
-            </Typography>
-            <Typography variant="body2">
-              {customers.filter(c => {
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Critical Credit Alert</AlertTitle>
+            <AlertDescription>
+              {customerList.filter(c => {
                 const utilization = (c.outstanding_amount / c.credit_limit) * 100;
                 return utilization >= 90;
               }).length} customer(s) have exceeded 90% of their credit limit. Immediate attention required.
-            </Typography>
+            </AlertDescription>
           </Alert>
         )}
-      </Container>
+      </div>
     </Layout>
   );
 };

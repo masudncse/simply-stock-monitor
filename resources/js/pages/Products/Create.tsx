@@ -8,9 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Upload, X, Star } from 'lucide-react';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 import { store as storeRoute } from '@/routes/products';
 
 interface Category {
@@ -21,17 +20,6 @@ interface Category {
 interface ProductCreateProps {
   categories: Category[];
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Products',
-        href: '/products',
-    },
-    {
-        title: 'Create Product',
-        href: '#',
-    },
-];
 
 export default function ProductCreate({ categories }: ProductCreateProps) {
   const { data, setData, post, processing, errors } = useForm({
@@ -86,15 +74,22 @@ export default function ProductCreate({ categories }: ProductCreateProps) {
   };
 
   return (
-    <Layout title="Create Product" breadcrumbs={breadcrumbs}>
+    <Layout title="Create Product">
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Create Product</h1>
             <p className="text-muted-foreground">
               Add a new product to your inventory
             </p>
           </div>
+          <Button
+            variant="outline"
+            onClick={() => router.visit('/products')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Products
+          </Button>
         </div>
 
         <Card>

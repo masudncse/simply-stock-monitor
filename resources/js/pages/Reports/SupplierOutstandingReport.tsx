@@ -42,11 +42,14 @@ interface SupplierOutstandingReportProps {
 }
 
 const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
-  suppliers,
-  totalOutstanding,
-  filters,
+  suppliers = [],
+  totalOutstanding = 0,
+  filters = {},
 }) => {
   const [localFilters, setLocalFilters] = useState(filters);
+  
+  // Ensure suppliers is always an array
+  const supplierList = Array.isArray(suppliers) ? suppliers : [];
 
   const handleFilterChange = (field: string, value: string | number) => {
     setLocalFilters(prev => ({ ...prev, [field]: value }));
@@ -70,7 +73,7 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
   const exportReport = () => {
     router.post('/reports/export', {
       report_type: 'supplier-outstanding',
-      data: suppliers,
+      data: supplierList as any,
     });
   };
 
@@ -109,7 +112,7 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
               <BusinessIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{suppliers.length}</div>
+              <div className="text-2xl font-bold">{supplierList.length}</div>
             </CardContent>
           </Card>
           <Card>
@@ -124,11 +127,11 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Critical Credit</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+              <WarningIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-destructive">
-                {suppliers.filter(s => {
+                {supplierList.filter(s => {
                   const utilization = (s.outstanding_amount / s.credit_limit) * 100;
                   return utilization >= 90;
                 }).length}
@@ -142,7 +145,7 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                ${suppliers.length > 0 ? (totalOutstanding / suppliers.length).toFixed(2) : '0.00'}
+                ${supplierList.length > 0 ? (totalOutstanding / supplierList.length).toFixed(2) : '0.00'}
               </div>
             </CardContent>
           </Card>
@@ -168,7 +171,7 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Suppliers</SelectItem>
-                    {suppliers.map((item) => (
+                    {supplierList.map((item) => (
                       <SelectItem key={item.supplier.id} value={item.supplier.id.toString()}>
                         {item.supplier.name}
                       </SelectItem>
@@ -197,7 +200,7 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
         {/* Supplier Outstanding Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Supplier Outstanding Details ({suppliers.length} suppliers)</CardTitle>
+            <CardTitle>Supplier Outstanding Details ({supplierList.length} suppliers)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="rounded-md border">
@@ -215,8 +218,8 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {suppliers.length > 0 ? (
-                    suppliers.map((item) => {
+                  {supplierList.length > 0 ? (
+                    supplierList.map((item) => {
                       const creditUtilization = (item.outstanding_amount / item.credit_limit) * 100;
                       const status = getCreditStatus(item);
                       
@@ -284,15 +287,15 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
         </Card>
 
         {/* Critical Suppliers Alert */}
-        {suppliers.filter(s => {
+        {supplierList.filter(s => {
           const utilization = (s.outstanding_amount / s.credit_limit) * 100;
           return utilization >= 90;
         }).length > 0 && (
           <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
+            <WarningIcon className="h-4 w-4" />
             <AlertTitle>Critical Credit Alert</AlertTitle>
             <AlertDescription>
-              {suppliers.filter(s => {
+              {supplierList.filter(s => {
                 const utilization = (s.outstanding_amount / s.credit_limit) * 100;
                 return utilization >= 90;
               }).length} supplier(s) have exceeded 90% of their credit limit. Immediate attention required.

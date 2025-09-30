@@ -9,19 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Save as SaveIcon, ArrowLeft as BackIcon } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 import { store as storeRoute, index as indexRoute } from '@/routes/suppliers';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Suppliers',
-        href: '/suppliers',
-    },
-    {
-        title: 'Create Supplier',
-        href: '#',
-    },
-];
 
 export default function SuppliersCreate() {
   const [formData, setFormData] = useState({
@@ -59,15 +47,22 @@ export default function SuppliersCreate() {
   };
 
   return (
-    <Layout title="Create Supplier" breadcrumbs={breadcrumbs}>
+    <Layout title="Create Supplier">
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Create Supplier</h1>
             <p className="text-muted-foreground">
               Add a new supplier to your system
             </p>
           </div>
+          <Button
+            variant="outline"
+            onClick={() => router.visit(indexRoute.url())}
+          >
+            <BackIcon className="mr-2 h-4 w-4" />
+            Back to Suppliers
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

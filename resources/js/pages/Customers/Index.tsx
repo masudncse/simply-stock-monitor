@@ -29,7 +29,6 @@ import {
   ArrowDown as SortDescIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface Customer {
@@ -65,13 +64,6 @@ interface CustomersIndexProps {
     sort_direction?: string;
   };
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Customers',
-        href: '/customers',
-    },
-];
 
 export default function CustomersIndex({ customers, filters }: CustomersIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
@@ -152,7 +144,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
   };
 
   return (
-    <Layout title="Customers" breadcrumbs={breadcrumbs}>
+    <Layout title="Customers">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -335,7 +327,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
                         <TableCell className="text-right">${customer.credit_limit.toFixed(2)}</TableCell>
                         <TableCell className="text-right">${customer.outstanding_amount.toFixed(2)}</TableCell>
                         <TableCell>
-                          <Badge variant={customer.is_active ? 'success' : 'secondary'}>
+                          <Badge variant={customer.is_active ? 'default' : 'secondary'}>
                             {customer.is_active ? 'Active' : 'Inactive'}
                           </Badge>
                         </TableCell>

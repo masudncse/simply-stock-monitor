@@ -9,8 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Save as SaveIcon, ArrowLeft as BackIcon } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
-import { update as updateRoute, show as showRoute } from '@/routes/suppliers';
+import { update as updateRoute, show as showRoute, index as indexRoute } from '@/routes/suppliers';
 
 interface Supplier {
   id: number;
@@ -29,17 +28,6 @@ interface Supplier {
 interface SuppliersEditProps {
   supplier: Supplier;
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Suppliers',
-        href: '/suppliers',
-    },
-    {
-        title: 'Edit Supplier',
-        href: '#',
-    },
-];
 
 export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
   const [formData, setFormData] = useState({
@@ -77,15 +65,22 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
   };
 
   return (
-    <Layout title={`Edit Supplier - ${supplier.name}`} breadcrumbs={breadcrumbs}>
+    <Layout title={`Edit Supplier - ${supplier.name}`}>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Edit Supplier - {supplier.name}</h1>
             <p className="text-muted-foreground">
               Update supplier information and settings
             </p>
           </div>
+          <Button
+            variant="outline"
+            onClick={() => router.visit(indexRoute.url())}
+          >
+            <BackIcon className="mr-2 h-4 w-4" />
+            Back to Suppliers
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

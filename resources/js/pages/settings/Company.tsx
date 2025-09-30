@@ -11,9 +11,10 @@ import {
   Building2 as BusinessIcon,
   Save as SaveIcon,
   AlertTriangle,
+  ArrowLeft as BackIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type SharedData } from '@/types';
 
 interface CompanySettingsProps {
   settings: {
@@ -30,17 +31,6 @@ interface CompanySettingsProps {
     logo?: string;
   };
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Settings',
-    href: '/settings',
-  },
-  {
-    title: 'Company Settings',
-    href: '/settings/company',
-  },
-];
 
 const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
   const { errors } = usePage<SharedData>().props;
@@ -152,16 +142,25 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
   ];
 
   return (
-    <Layout title="Company Settings" breadcrumbs={breadcrumbs}>
+    <Layout title="Company Settings">
       <div className="space-y-6">
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <BusinessIcon className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold tracking-tight">Company Settings</h1>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <BusinessIcon className="h-8 w-8 text-primary" />
+              <h1 className="text-3xl font-bold tracking-tight">Company Settings</h1>
+            </div>
+            <p className="text-muted-foreground">
+              Configure your company information and preferences
+            </p>
           </div>
-          <p className="text-muted-foreground">
-            Configure your company information and preferences
-          </p>
+          <Button
+            variant="outline"
+            onClick={() => router.visit('/settings')}
+          >
+            <BackIcon className="mr-2 h-4 w-4" />
+            Back to Settings
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

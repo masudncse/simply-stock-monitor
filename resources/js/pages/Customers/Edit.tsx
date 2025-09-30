@@ -11,7 +11,6 @@ import {
   ArrowLeft as BackIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 
 interface Customer {
   id: number;
@@ -30,17 +29,6 @@ interface Customer {
 interface CustomersEditProps {
   customer: Customer;
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Customers',
-        href: '/customers',
-    },
-    {
-        title: 'Edit Customer',
-        href: '#',
-    },
-];
 
 export default function CustomersEdit({ customer }: CustomersEditProps) {
   const [formData, setFormData] = useState({
@@ -78,7 +66,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
   };
 
   return (
-    <Layout title={`Edit Customer - ${customer.name}`} breadcrumbs={breadcrumbs}>
+    <Layout title={`Edit Customer - ${customer.name}`}>
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -87,6 +75,13 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
               Update customer information and preferences
             </p>
           </div>
+          <Button
+            variant="outline"
+            onClick={() => router.visit('/customers')}
+          >
+            <BackIcon className="mr-2 h-4 w-4" />
+            Back to Customers
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

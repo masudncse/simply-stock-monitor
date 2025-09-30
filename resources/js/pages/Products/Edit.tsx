@@ -8,9 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Upload, X, Star } from 'lucide-react';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 import { update as updateRoute } from '@/routes/products';
 
 interface Category {
@@ -43,17 +42,6 @@ interface ProductEditProps {
   product: Product;
   categories: Category[];
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Products',
-        href: '/products',
-    },
-    {
-        title: 'Edit Product',
-        href: '#',
-    },
-];
 
 export default function ProductEdit({ product, categories }: ProductEditProps) {
   const { data, setData, put, processing, errors } = useForm({
@@ -108,15 +96,22 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
   };
 
   return (
-    <Layout title="Edit Product" breadcrumbs={breadcrumbs}>
+    <Layout title="Edit Product">
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Edit Product</h1>
             <p className="text-muted-foreground">
               Update product information
             </p>
           </div>
+          <Button
+            variant="outline"
+            onClick={() => router.visit('/products')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Products
+          </Button>
         </div>
 
         <Card>

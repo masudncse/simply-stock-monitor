@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/suppliers';
 
 interface Supplier {
@@ -56,13 +55,6 @@ interface SuppliersIndexProps {
     sort_direction?: string;
   };
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Suppliers',
-        href: '/suppliers',
-    },
-];
 
 export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
@@ -143,7 +135,7 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
   };
 
   return (
-    <Layout title="Suppliers" breadcrumbs={breadcrumbs}>
+    <Layout title="Suppliers">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
