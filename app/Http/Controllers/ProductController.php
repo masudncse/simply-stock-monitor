@@ -22,9 +22,7 @@ class ProductController extends Controller
     {
         $this->authorize('view-products');
 
-        $query = Product::with(['category', 'images' => function($query) {
-            $query->where('is_primary', true)->limit(1);
-        }]);
+        $query = Product::with(['category', 'images']);
 
         // Search functionality
         if ($request->filled('search')) {

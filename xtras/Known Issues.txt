@@ -1,0 +1,5 @@
+Edit Error:
+http://127.0.0.1:8000/accounts/1
+
+Export CSV: http://127.0.0.1:8000/reports/stock
+
