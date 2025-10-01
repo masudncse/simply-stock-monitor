@@ -41,6 +41,8 @@ import {
   Monitor,
   PanelLeftClose,
   PanelLeftOpen,
+  AlertTriangle,
+  AlertCircle,
 } from 'lucide-react';
 
 const drawerWidth = 240;
@@ -351,10 +353,36 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
+                {(() => {
+                  // Check if there are any warning/critical notifications
+                  const hasWarningNotifications = notifications.some(n => 
+                    !n.read && (n.type === 'low_stock' || n.type === 'expired_product' || n.data?.severity === 'warning')
+                  );
+                  const hasErrorNotifications = notifications.some(n => 
+                    !n.read && n.data?.severity === 'error'
+                  );
+                  
+                  if (hasErrorNotifications) {
+                    return <AlertCircle className="h-5 w-5 text-red-500" />;
+                  } else if (hasWarningNotifications) {
+                    return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+                  }
+                  return <Bell className="h-5 w-5" />;
+                })()}
                 {unreadCount > 0 && (
                   <Badge 
-                    variant="destructive" 
+                    variant={(() => {
+                      const hasWarningNotifications = notifications.some(n => 
+                        !n.read && (n.type === 'low_stock' || n.type === 'expired_product' || n.data?.severity === 'warning')
+                      );
+                      const hasErrorNotifications = notifications.some(n => 
+                        !n.read && n.data?.severity === 'error'
+                      );
+                      
+                      if (hasErrorNotifications) return "destructive";
+                      if (hasWarningNotifications) return "secondary";
+                      return "destructive";
+                    })()}
                     className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
                   >
                     {unreadCount > 9 ? '9+' : unreadCount}
@@ -387,61 +415,85 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
                     No notifications
                   </div>
                 ) : (
-                  notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={cn(
-                        "p-3 border-b hover:bg-muted/50 cursor-pointer transition-colors",
-                        !notification.read && "bg-muted/30"
-                      )}
-                      onClick={() => !notification.read && markAsRead(notification.id)}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-sm font-medium truncate">
-                              {notification.title}
-                            </h4>
-                            {!notification.read && (
-                              <div className="h-2 w-2 bg-primary rounded-full flex-shrink-0" />
-                            )}
+                  notifications.map((notification) => {
+                    // Get appropriate icon based on notification type
+                    const getNotificationIcon = (type: string, severity: string) => {
+                      if (type === 'low_stock') {
+                        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+                      } else if (type === 'expired_product') {
+                        return <AlertCircle className="h-4 w-4 text-red-500" />;
+                      } else if (severity === 'warning') {
+                        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+                      } else if (severity === 'error') {
+                        return <AlertCircle className="h-4 w-4 text-red-500" />;
+                      }
+                      return <Bell className="h-4 w-4 text-blue-500" />;
+                    };
+
+                    return (
+                      <div
+                        key={notification.id}
+                        className={cn(
+                          "p-3 border-b hover:bg-muted/50 cursor-pointer transition-colors",
+                          !notification.read && "bg-muted/30"
+                        )}
+                        onClick={() => !notification.read && markAsRead(notification.id)}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-start gap-2 flex-1 min-w-0">
+                            {/* Notification Icon */}
+                            <div className="flex-shrink-0 mt-0.5">
+                              {getNotificationIcon(notification.type, notification.data?.severity)}
+                            </div>
+                            
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="text-sm font-medium truncate">
+                                  {notification.title}
+                                </h4>
+                                {!notification.read && (
+                                  <div className="h-2 w-2 bg-primary rounded-full flex-shrink-0" />
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mb-1 line-clamp-2">
+                                {notification.message}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {notification.time_ago}
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-xs text-muted-foreground mb-1 line-clamp-2">
-                            {notification.message}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {notification.time_ago}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {!notification.read && (
+                          
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            {!notification.read && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  markAsRead(notification.id);
+                                }}
+                              >
+                                <Check className="h-3 w-3" />
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="sm"
                               className="h-6 w-6 p-0"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                markAsRead(notification.id);
+                                deleteNotification(notification.id);
                               }}
                             >
-                              <Check className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </Button>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteNotification(notification.id);
-                            }}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
               {notifications.length > 0 && (
