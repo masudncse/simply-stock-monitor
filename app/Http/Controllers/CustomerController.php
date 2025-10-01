@@ -125,4 +125,29 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')
             ->with('success', 'Customer deleted successfully.');
     }
+
+    /**
+     * Search customers for API (autocomplete/select)
+     */
+    public function searchCustomers(Request $request)
+    {
+        $search = $request->input('search', '');
+        
+        $customers = Customer::query()
+            ->where('is_active', true)
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('code', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('name', 'asc')
+            ->limit(50)  // Return max 50 results
+            ->get(['id', 'name', 'code', 'email', 'phone']);
+        
+        return response()->json([
+            'customers' => $customers
+        ]);
+    }
 }

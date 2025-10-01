@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CustomerCombobox } from '@/components/CustomerCombobox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -201,19 +202,12 @@ const SalesReport: React.FC<SalesReportProps> = ({
               </div>
               <div className="space-y-2">
                 <Label htmlFor="customer">Customer</Label>
-                <Select value={localFilters.customer_id?.toString() || "all"} onValueChange={(value) => handleFilterChange('customer_id', value === "all" ? "" : parseInt(value))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Customers" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Customers</SelectItem>
-                    {customers.map((customer) => (
-                      <SelectItem key={customer.id} value={customer.id.toString()}>
-                        {customer.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <CustomerCombobox
+                  value={localFilters.customer_id?.toString() || ""}
+                  onValueChange={(value) => handleFilterChange('customer_id', value === "" ? "" : parseInt(value))}
+                  placeholder="All Customers"
+                  showAllOption={true}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="warehouse">Warehouse</Label>

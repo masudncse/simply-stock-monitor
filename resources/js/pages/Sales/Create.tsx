@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ProductCombobox } from '@/components/ProductCombobox';
+import { CustomerCombobox } from '@/components/CustomerCombobox';
 import { Badge } from '@/components/ui/badge';
 import {
   Plus,
@@ -195,21 +196,14 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
                 <div className="space-y-2">
                   <Label htmlFor="customer">Customer</Label>
                   <div className="flex gap-2">
-                    <Select
-                      value={formData.customer_id}
-                      onValueChange={(value) => setFormData({ ...formData, customer_id: value })}
-                    >
-                      <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Select customer" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {customers.map((customer) => (
-                          <SelectItem key={customer.id} value={customer.id.toString()}>
-                            {customer.name} ({customer.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex-1">
+                      <CustomerCombobox
+                        value={formData.customer_id}
+                        onValueChange={(value) => setFormData({ ...formData, customer_id: value })}
+                        placeholder="Select customer"
+                        showAllOption={false}
+                      />
+                    </div>
                     <Button
                       type="button"
                       variant="outline"

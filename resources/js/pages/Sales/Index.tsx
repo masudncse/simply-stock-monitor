@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CustomerCombobox } from '@/components/CustomerCombobox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import CustomPagination from '@/components/CustomPagination';
@@ -264,19 +265,12 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
               
               <div className="space-y-2">
                 <Label htmlFor="customer">Customer</Label>
-                <Select value={customerFilter || "all"} onValueChange={(value) => setCustomerFilter(value === "all" ? "" : value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Customers" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Customers</SelectItem>
-                    {customers.map((customer) => (
-                      <SelectItem key={customer.id} value={customer.id.toString()}>
-                        {customer.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <CustomerCombobox
+                  value={customerFilter || ""}
+                  onValueChange={(value) => setCustomerFilter(value === "" ? "" : value)}
+                  placeholder="All Customers"
+                  showAllOption={true}
+                />
               </div>
 
               <div className="space-y-2">

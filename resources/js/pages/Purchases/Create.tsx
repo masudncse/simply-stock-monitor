@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ProductCombobox } from '@/components/ProductCombobox';
+import { SupplierCombobox } from '@/components/SupplierCombobox';
 import {
   Plus as AddIcon,
   Trash2 as DeleteIcon,
@@ -216,18 +217,15 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                 <div className="space-y-2">
                   <Label htmlFor="supplier">Supplier *</Label>
                   <div className="flex gap-2">
-                    <Select value={formData.supplier_id} onValueChange={(value) => setFormData('supplier_id', value)}>
-                      <SelectTrigger className={`flex-1 ${errors.supplier_id ? 'border-destructive' : ''}`}>
-                        <SelectValue placeholder="Select a supplier" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {suppliers.map((supplier) => (
-                          <SelectItem key={supplier.id} value={supplier.id.toString()}>
-                            {supplier.name} ({supplier.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex-1">
+                      <SupplierCombobox
+                        value={formData.supplier_id}
+                        onValueChange={(value) => setFormData('supplier_id', value)}
+                        placeholder="Select a supplier"
+                        showAllOption={false}
+                        error={!!errors.supplier_id}
+                      />
+                    </div>
                     <Button
                       type="button"
                       variant="outline"

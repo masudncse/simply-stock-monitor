@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ProductCombobox } from '@/components/ProductCombobox';
+import { SupplierCombobox } from '@/components/SupplierCombobox';
 import {
   Plus as AddIcon,
   Trash2 as DeleteIcon,
@@ -192,18 +193,13 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="supplier">Supplier *</Label>
-                  <Select value={formData.supplier_id} onValueChange={(value) => setFormData({ ...formData, supplier_id: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a supplier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {suppliers.map((supplier) => (
-                        <SelectItem key={supplier.id} value={supplier.id.toString()}>
-                          {supplier.name} ({supplier.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SupplierCombobox
+                    value={formData.supplier_id}
+                    onValueChange={(value) => setFormData({ ...formData, supplier_id: value })}
+                    placeholder="Select a supplier"
+                    showAllOption={false}
+                    error={false}
+                  />
                 </div>
 
                 <div className="space-y-2">

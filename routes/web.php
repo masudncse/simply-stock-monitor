@@ -73,9 +73,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Customers
     Route::resource('customers', CustomerController::class);
+    Route::get('customers-api/search', [CustomerController::class, 'searchCustomers'])->name('customers.search');
     
     // Suppliers
     Route::resource('suppliers', SupplierController::class);
+    Route::get('suppliers-api/search', [SupplierController::class, 'searchSuppliers'])->name('suppliers.search');
     
     // Accounts
     Route::resource('accounts', AccountController::class);

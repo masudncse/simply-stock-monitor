@@ -125,4 +125,29 @@ class SupplierController extends Controller
         return redirect()->route('suppliers.index')
             ->with('success', 'Supplier deleted successfully.');
     }
+
+    /**
+     * Search suppliers for API (autocomplete/select)
+     */
+    public function searchSuppliers(Request $request)
+    {
+        $search = $request->input('search', '');
+        
+        $suppliers = Supplier::query()
+            ->where('is_active', true)
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('code', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('name', 'asc')
+            ->limit(50)  // Return max 50 results
+            ->get(['id', 'name', 'code', 'email', 'phone']);
+        
+        return response()->json([
+            'suppliers' => $suppliers
+        ]);
+    }
 }

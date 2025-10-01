@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ProductCombobox } from '@/components/ProductCombobox';
+import { CustomerCombobox } from '@/components/CustomerCombobox';
 import { Badge } from '@/components/ui/badge';
 import {
   Plus,
@@ -179,21 +180,12 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="customer">Customer</Label>
-                  <Select
+                  <CustomerCombobox
                     value={formData.customer_id}
                     onValueChange={(value) => setFormData({ ...formData, customer_id: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select customer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {customers.map((customer) => (
-                        <SelectItem key={customer.id} value={customer.id.toString()}>
-                          {customer.name} ({customer.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select customer"
+                    showAllOption={false}
+                  />
                 </div>
 
                 <div className="space-y-2">
