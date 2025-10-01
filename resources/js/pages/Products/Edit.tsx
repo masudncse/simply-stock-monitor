@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CategoryCombobox } from '@/components/CategoryCombobox';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -178,18 +179,13 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="category">Category *</Label>
-                  <Select value={data.category_id.toString()} onValueChange={(value) => setData('category_id', parseInt(value))}>
-                    <SelectTrigger className={errors.category_id ? 'border-destructive' : ''}>
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <CategoryCombobox
+                    value={data.category_id.toString()}
+                    onValueChange={(value) => setData('category_id', parseInt(value))}
+                    placeholder="Select a category"
+                    showAllOption={false}
+                    error={!!errors.category_id}
+                  />
                   {errors.category_id && (
                     <p className="text-sm text-destructive">{errors.category_id}</p>
                   )}

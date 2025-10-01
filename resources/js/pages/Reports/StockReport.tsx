@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CategoryCombobox } from '@/components/CategoryCombobox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -168,19 +169,12 @@ const StockReport: React.FC<StockReportProps> = ({
               </div>
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <Select value={localFilters.category_id?.toString() || "all"} onValueChange={(value) => handleFilterChange('category_id', value === "all" ? "" : parseInt(value))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <CategoryCombobox
+                  value={localFilters.category_id?.toString() || ""}
+                  onValueChange={(value) => handleFilterChange('category_id', value === "" ? "" : parseInt(value))}
+                  placeholder="All Categories"
+                  showAllOption={true}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="stock_status">Stock Status</Label>
