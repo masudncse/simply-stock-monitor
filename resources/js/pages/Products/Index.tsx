@@ -160,7 +160,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
             <CardTitle>Filters</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-6">
+            <div className="flex gap-4 w-full">
               <div className="space-y-2">
                 <Label htmlFor="search">Search</Label>
                 <div className="relative">
@@ -233,9 +233,9 @@ export default function ProductsIndex({ products, categories, filters }: Product
               
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
-                <Button variant="outline" onClick={() => handleSearch()} className="w-full">
-                  <SearchIcon className="mr-2 h-4 w-4" />
-                  Filter
+                <Button variant="default" onClick={() => handleSearch()} className="w-full">
+                  <SearchIcon className="mr-1 h-4 w-4" />
+                  Apply Filters
                 </Button>
               </div>
             </div>
