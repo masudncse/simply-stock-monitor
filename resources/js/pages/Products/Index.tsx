@@ -68,6 +68,7 @@ interface ProductsIndexProps {
     sort_by?: string;
     sort_direction?: string;
     page?: number;
+    per_page?: number;
   };
 }
 
@@ -75,6 +76,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
   const [search, setSearch] = useState(filters.search || '');
   const [categoryFilter, setCategoryFilter] = useState(filters.category_id?.toString() || '');
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
+  const [perPage, setPerPage] = useState(filters.per_page || 15);
   const [sortBy, setSortBy] = useState(filters.sort_by || 'name');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
 
@@ -83,6 +85,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
       search: search || undefined,
       category_id: categoryFilter || undefined,
       status: statusFilter || undefined,
+      per_page: perPage,
       sort_by: sortBy,
       sort_direction: sortDirection,
       page: page,
@@ -118,6 +121,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
       search: search || undefined,
       category_id: categoryFilter || undefined,
       status: statusFilter || undefined,
+      per_page: perPage,
       sort_by: column,
       sort_direction: newDirection,
       page: 1,
@@ -230,6 +234,24 @@ export default function ProductsIndex({ products, categories, filters }: Product
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="per_page">Per Page</Label>
+                <Select value={perPage.toString()} onValueChange={(value) => setPerPage(parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15">15 Items</SelectItem>
+                    <SelectItem value="30">30 Items</SelectItem>
+                    <SelectItem value="50">50 Items</SelectItem>
+                    <SelectItem value="75">75 Items</SelectItem>
+                    <SelectItem value="100">100 Items</SelectItem>
+                    <SelectItem value="200">200 Items</SelectItem>
+                    <SelectItem value="500">500 Items</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
@@ -242,6 +264,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                     setSearch('');
                     setCategoryFilter('');
                     setStatusFilter('');
+                    setPerPage(15);
                     router.get('/products', {}, { preserveState: true, replace: true });
                   }}>
                     Clear

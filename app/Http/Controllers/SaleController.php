@@ -70,14 +70,15 @@ class SaleController extends Controller
         }
         
         // Apply sorting
-        $sales = $sales->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
+        $perPage = $request->get('per_page', 15);
+        $sales = $sales->orderBy($sortBy, $sortDirection)->paginate($perPage)->appends($request->query());
 
         $customers = Customer::where('is_active', true)->get();
         
         return Inertia::render('Sales/Index', [
             'sales' => $sales,
             'customers' => $customers,
-            'filters' => $request->only(['search', 'status', 'customer_id', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'status', 'customer_id', 'date_from', 'date_to', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

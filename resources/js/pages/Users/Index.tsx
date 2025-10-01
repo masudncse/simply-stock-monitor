@@ -51,17 +51,20 @@ interface UsersIndexProps {
         search?: string;
         sort_by?: string;
         sort_direction?: string;
+        per_page?: number;
     };
 }
 
 export default function UsersIndex({ users, filters }: UsersIndexProps) {
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [perPage, setPerPage] = useState(filters.per_page || 15);
     const [sortBy, setSortBy] = useState(filters.sort_by || 'name');
     const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
 
     const handleSearch = () => {
         router.get('/users', {
             search: searchTerm,
+            per_page: perPage,
             sort_by: sortBy,
             sort_direction: sortDirection,
         }, {
@@ -84,6 +87,7 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
         // Trigger search with new sort parameters
         router.get('/users', {
             search: searchTerm,
+            per_page: perPage,
             sort_by: column,
             sort_direction: newDirection,
         }, {

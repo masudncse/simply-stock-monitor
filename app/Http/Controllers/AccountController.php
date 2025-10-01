@@ -57,11 +57,12 @@ class AccountController extends Controller
         }
         
         // Apply sorting
-        $accounts = $accounts->orderBy($sortBy, $sortDirection)->paginate(20)->appends($request->query());
+        $perPage = $request->get('per_page', 15);
+        $accounts = $accounts->orderBy($sortBy, $sortDirection)->paginate($perPage)->appends($request->query());
 
         return Inertia::render('Accounts/Index', [
             'accounts' => $accounts,
-            'filters' => $request->only(['search', 'type', 'sub_type', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'type', 'sub_type', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

@@ -68,7 +68,8 @@ class StockController extends Controller
         }
         
         // Apply sorting
-        $stocks = $query->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
+        $perPage = $request->get('per_page', 15);
+        $stocks = $query->orderBy($sortBy, $sortDirection)->paginate($perPage)->appends($request->query());
 
         $warehouses = Warehouse::where('is_active', true)->get();
         $products = Product::where('is_active', true)->get(['id', 'name', 'sku']);
@@ -77,7 +78,7 @@ class StockController extends Controller
             'stocks' => $stocks,
             'warehouses' => $warehouses,
             'products' => $products,
-            'filters' => $request->only(['warehouse_id', 'product_id', 'search', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['warehouse_id', 'product_id', 'search', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

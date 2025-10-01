@@ -63,11 +63,12 @@ class QuotationController extends Controller
         }
         
         // Apply sorting
-        $quotations = $quotations->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
+        $perPage = $request->get('per_page', 15);
+        $quotations = $quotations->orderBy($sortBy, $sortDirection)->paginate($perPage)->appends($request->query());
 
         return Inertia::render('Quotations/Index', [
             'quotations' => $quotations,
-            'filters' => $request->only(['search', 'status', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'status', 'date_from', 'date_to', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

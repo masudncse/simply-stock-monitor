@@ -58,6 +58,7 @@ interface StockIndexProps {
     search?: string;
     sort_by?: string;
     sort_direction?: string;
+    per_page?: number;
   };
 }
 
@@ -65,6 +66,7 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
   const [search, setSearch] = useState(filters.search || '');
   const [warehouseFilter, setWarehouseFilter] = useState(filters.warehouse_id?.toString() || '');
   const [productFilter, setProductFilter] = useState(filters.product_id?.toString() || '');
+  const [perPage, setPerPage] = useState(filters.per_page || 15);
   const [sortBy, setSortBy] = useState(filters.sort_by || 'product_id');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
 
@@ -73,6 +75,7 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
       search: search || undefined,
       warehouse_id: warehouseFilter || undefined,
       product_id: productFilter || undefined,
+      per_page: perPage,
       sort_by: sortBy,
       sort_direction: sortDirection,
     }, {
@@ -97,6 +100,7 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
       search: search || undefined,
       warehouse_id: warehouseFilter || undefined,
       product_id: productFilter || undefined,
+      per_page: perPage,
       sort_by: column,
       sort_direction: newDirection,
     }, {
@@ -200,6 +204,24 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
               </div>
               
               <div className="space-y-2">
+                <Label htmlFor="per_page">Per Page</Label>
+                <Select value={perPage.toString()} onValueChange={(value) => setPerPage(parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15">15 Items</SelectItem>
+                    <SelectItem value="30">30 Items</SelectItem>
+                    <SelectItem value="50">50 Items</SelectItem>
+                    <SelectItem value="75">75 Items</SelectItem>
+                    <SelectItem value="100">100 Items</SelectItem>
+                    <SelectItem value="200">200 Items</SelectItem>
+                    <SelectItem value="500">500 Items</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label>&nbsp;</Label>
                 <div className="flex gap-2">
                   <Button variant="default" onClick={handleSearch} className="flex-1">
@@ -210,6 +232,7 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
                     setSearch('');
                     setWarehouseFilter('');
                     setProductFilter('');
+                    setPerPage(15);
                     router.get('/stock', {}, { preserveState: true, replace: true });
                   }}>
                     Clear

@@ -62,7 +62,8 @@ class ProductController extends Controller
         // Apply sorting
         $query->orderBy($sortBy, $sortDirection);
 
-        $products = $query->paginate(15)->appends($request->query());
+        $perPage = $request->get('per_page', 15);
+        $products = $query->paginate($perPage)->appends($request->query());
 
         // Only send selected category if filter is active (for display purposes)
         $selectedCategory = null;
@@ -73,7 +74,7 @@ class ProductController extends Controller
         return Inertia::render('Products/Index', [
             'products' => $products,
             'categories' => $selectedCategory ? [$selectedCategory] : [], // Only send selected category
-            'filters' => $request->only(['search', 'category_id', 'status', 'sort_by', 'sort_direction', 'page']),
+            'filters' => $request->only(['search', 'category_id', 'status', 'sort_by', 'sort_direction', 'page', 'per_page']),
         ]);
     }
 

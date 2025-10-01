@@ -45,11 +45,12 @@ class SupplierController extends Controller
         }
         
         // Apply sorting
-        $suppliers = $suppliers->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
+        $perPage = $request->get('per_page', 15);
+        $suppliers = $suppliers->orderBy($sortBy, $sortDirection)->paginate($perPage)->appends($request->query());
 
         return Inertia::render('Suppliers/Index', [
             'suppliers' => $suppliers,
-            'filters' => $request->only(['search', 'status', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'status', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

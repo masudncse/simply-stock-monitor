@@ -70,14 +70,15 @@ class PurchaseController extends Controller
         }
         
         // Apply sorting
-        $purchases = $purchases->orderBy($sortBy, $sortDirection)->paginate(15)->appends($request->query());
+        $perPage = $request->get('per_page', 15);
+        $purchases = $purchases->orderBy($sortBy, $sortDirection)->paginate($perPage)->appends($request->query());
 
         $suppliers = Supplier::where('is_active', true)->get();
         
         return Inertia::render('Purchases/Index', [
             'purchases' => $purchases,
             'suppliers' => $suppliers,
-            'filters' => $request->only(['search', 'status', 'supplier_id', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['search', 'status', 'supplier_id', 'date_from', 'date_to', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

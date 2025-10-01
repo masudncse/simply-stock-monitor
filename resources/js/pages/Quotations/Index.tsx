@@ -69,6 +69,7 @@ interface QuotationsIndexProps {
     date_to?: string;
     sort_by?: string;
     sort_direction?: string;
+    per_page?: number;
   };
 }
 
@@ -77,6 +78,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
   const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
   const [dateFrom, setDateFrom] = useState(filters.date_from || '');
   const [dateTo, setDateTo] = useState(filters.date_to || '');
+  const [perPage, setPerPage] = useState(filters.per_page || 15);
   const [sortBy, setSortBy] = useState(filters.sort_by || 'created_at');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'desc');
 
@@ -101,6 +103,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
       status: statusFilter === 'all' ? undefined : statusFilter,
       date_from: dateFrom || undefined,
       date_to: dateTo || undefined,
+      per_page: perPage,
       sort_by: sortBy,
       sort_direction: sortDirection,
     }, {
@@ -126,6 +129,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
       status: statusFilter === 'all' ? undefined : statusFilter,
       date_from: dateFrom || undefined,
       date_to: dateTo || undefined,
+      per_page: perPage,
       sort_by: column,
       sort_direction: newDirection,
     }, {
@@ -229,6 +233,24 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
                   onChange={(e) => setDateTo(e.target.value)}
                 />
               </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Per Page</label>
+                <Select value={perPage.toString()} onValueChange={(value) => setPerPage(parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15">15 Items</SelectItem>
+                    <SelectItem value="30">30 Items</SelectItem>
+                    <SelectItem value="50">50 Items</SelectItem>
+                    <SelectItem value="75">75 Items</SelectItem>
+                    <SelectItem value="100">100 Items</SelectItem>
+                    <SelectItem value="200">200 Items</SelectItem>
+                    <SelectItem value="500">500 Items</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               
               <div className="space-y-2">
                 <label className="text-sm font-medium">&nbsp;</label>
@@ -242,6 +264,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
                     setStatusFilter('all');
                     setDateFrom('');
                     setDateTo('');
+                    setPerPage(15);
                     router.get('/quotations', {}, { preserveState: true, replace: true });
                   }}>
                     Clear

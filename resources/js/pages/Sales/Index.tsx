@@ -85,6 +85,7 @@ interface SalesIndexProps {
     date_to?: string;
     sort_by?: string;
     sort_direction?: string;
+    per_page?: number;
   };
 }
 
@@ -94,6 +95,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
   const [customerFilter, setCustomerFilter] = useState(filters.customer_id?.toString() || '');
   const [dateFrom, setDateFrom] = useState(filters.date_from || '');
   const [dateTo, setDateTo] = useState(filters.date_to || '');
+  const [perPage, setPerPage] = useState(filters.per_page || 15);
   const [sortBy, setSortBy] = useState(filters.sort_by || 'created_at');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'desc');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -106,6 +108,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
       customer_id: customerFilter,
       date_from: dateFrom,
       date_to: dateTo,
+      per_page: perPage,
       sort_by: sortBy,
       sort_direction: sortDirection,
     }, {
@@ -137,6 +140,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
       customer_id: customerFilter,
       date_from: dateFrom,
       date_to: dateTo,
+      per_page: perPage,
       sort_by: column,
       sort_direction: newDirection,
     }, {
@@ -292,6 +296,24 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
                   onChange={(e) => setDateTo(e.target.value)}
                 />
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="per_page">Per Page</Label>
+                <Select value={perPage.toString()} onValueChange={(value) => setPerPage(parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15">15 Items</SelectItem>
+                    <SelectItem value="30">30 Items</SelectItem>
+                    <SelectItem value="50">50 Items</SelectItem>
+                    <SelectItem value="75">75 Items</SelectItem>
+                    <SelectItem value="100">100 Items</SelectItem>
+                    <SelectItem value="200">200 Items</SelectItem>
+                    <SelectItem value="500">500 Items</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
@@ -306,6 +328,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
                     setStatusFilter('');
                     setDateFrom('');
                     setDateTo('');
+                    setPerPage(15);
                     router.get('/sales', {}, { preserveState: true, replace: true });
                   }}>
                     Clear

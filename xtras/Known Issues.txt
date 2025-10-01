@@ -11,10 +11,6 @@ Search items should justify start
 http://127.0.0.1:8000/accounts
 Trial Balance Not Working
 
-Add Per Page list 15, 30, 50, 100
-
-Add Clear button beside Apply Filter button
-
 http://127.0.0.1:8000/reports/purchases
 Export CSV Issue
 
