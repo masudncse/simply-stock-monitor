@@ -24,13 +24,6 @@ Aproval for Purchase & Sales is missing
 
 Backup & Maintenance not Working
 
-Timezone Missing some important country
-
-Page title is not chaning
-
-
-Change sidebar collapse icon
-
 Breadcrumb Subtitle should implement
 
 Cash expense income managment missing

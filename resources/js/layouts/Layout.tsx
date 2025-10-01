@@ -83,6 +83,43 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
   const { appearance, updateAppearance, primaryColor, updatePrimaryColor } = useAppearance();
   const { toasts, removeToast } = useToast();
   
+  // Set browser tab title
+  useEffect(() => {
+    const appName = company?.name || 'Stock Management';
+    const fullTitle = `${title} - ${appName}`;
+    
+    // Set the title immediately
+    document.title = fullTitle;
+    
+    // Use MutationObserver to watch for title changes and restore our title
+    const observer = new MutationObserver(() => {
+      if (document.title !== fullTitle) {
+        document.title = fullTitle;
+      }
+    });
+    
+    // Observe changes to the document head
+    observer.observe(document.head, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+    
+    // Also set up an interval as a fallback to ensure title stays correct
+    const titleInterval = setInterval(() => {
+      if (document.title !== fullTitle) {
+        document.title = fullTitle;
+      }
+    }, 100);
+    
+    // Cleanup function
+    return () => {
+      observer.disconnect();
+      clearInterval(titleInterval);
+      // Don't reset title on unmount to avoid flashing
+    };
+  }, [title, company?.name]);
+  
   // Automatically show toasts from Inertia responses
   useInertiaToast();
   
@@ -333,9 +370,9 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
             className="hidden md:flex"
           >
             {sidebarCollapsed ? (
-              <PanelLeftOpen className="h-5 w-5" />
+              <PanelLeftOpen className="h-6 w-6" />
             ) : (
-              <PanelLeftClose className="h-5 w-5" />
+              <PanelLeftClose className="h-6 w-6" />
             )}
             <span className="sr-only">Toggle sidebar</span>
           </Button>
