@@ -235,7 +235,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                 <Label>&nbsp;</Label>
                 <div className="flex gap-2">
                   <Button variant="default" onClick={() => handleSearch()} className="flex-1">
-                    <SearchIcon className="mr-1 h-4 w-4" />
+                    <SearchIcon className="mr-2 h-4 w-4" />
                     Apply Filters
                   </Button>
                   <Button variant="outline" onClick={() => {
