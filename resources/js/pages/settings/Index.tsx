@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Settings as SettingsIcon,
   Building2 as BusinessIcon,
+  Building2,
   Settings2 as TuneIcon,
   Users as PeopleIcon,
   Shield as SecurityIcon,
@@ -56,6 +57,13 @@ const SettingsIndex: React.FC = () => {
       icon: <PaletteIcon className="h-10 w-10" />,
       href: '/settings/appearance',
       color: 'text-amber-600',
+    },
+    {
+      title: 'Warehouse Management',
+      description: 'Manage warehouses, locations, and inventory storage',
+      icon: <Building2 className="h-10 w-10" />,
+      href: '/warehouses',
+      color: 'text-indigo-600',
     },
   ];
 

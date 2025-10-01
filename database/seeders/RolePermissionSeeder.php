@@ -54,6 +54,12 @@ class RolePermissionSeeder extends Seeder
             'edit-suppliers',
             'delete-suppliers',
             
+            // Warehouse permissions
+            'view-warehouses',
+            'create-warehouses',
+            'edit-warehouses',
+            'delete-warehouses',
+            
             // Account permissions
             'view-accounts',
             'create-accounts',
@@ -112,6 +118,7 @@ class RolePermissionSeeder extends Seeder
             'view-customers',
             'create-customers',
             'edit-customers',
+            'view-warehouses',
             'view-reports',
             'export-reports',
         ]);
@@ -130,6 +137,10 @@ class RolePermissionSeeder extends Seeder
             'view-suppliers',
             'create-suppliers',
             'edit-suppliers',
+            'view-warehouses',
+            'create-warehouses',
+            'edit-warehouses',
+            'delete-warehouses',
             'view-reports',
         ]);
 

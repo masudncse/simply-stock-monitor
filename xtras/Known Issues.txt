@@ -20,9 +20,7 @@ http://127.0.0.1:8000/reports/supplier-outstanding
 http://127.0.0.1:8000/reports/sales
 Export CSV Issue
 
-Ensure pagination for all of pages, edit etc.
-
-Werare create functionality missing
+Werhouse are create functionality missing
 
 Aproval for Purchase & Sales is missing
 

@@ -58,6 +58,7 @@ const menuItems = [
   { text: 'POS', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/pos' },
   { text: 'Products', icon: <InventoryIcon className="h-5 w-5" />, href: '/products' },
   { text: 'Stock', icon: <StoreIcon className="h-5 w-5" />, href: '/stock' },
+  { text: 'Warehouses', icon: <StoreIcon className="h-5 w-5" />, href: '/warehouses' },
   { text: 'Purchases', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/purchases' },
   { text: 'Sales', icon: <AddIcon className="h-5 w-5" />, href: '/sales' },
   { text: 'Quotations', icon: <FileTextIcon className="h-5 w-5" />, href: '/quotations' },

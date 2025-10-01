@@ -20,6 +20,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\WarehouseController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -35,6 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('products-api/search', [ProductController::class, 'searchProducts'])->name('products.search');
     Route::delete('product-images/{productImage}', [ProductController::class, 'deleteImage'])->name('products.images.delete');
     Route::patch('product-images/{productImage}/set-primary', [ProductController::class, 'setPrimaryImage'])->name('products.images.set-primary');
+    
+    // Warehouses
+    Route::resource('warehouses', WarehouseController::class);
     
     // Stock
     Route::resource('stock', StockController::class)->only(['index']);
