@@ -232,9 +232,9 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
               
               <div className="space-y-2">
                 <label className="text-sm font-medium">&nbsp;</label>
-                <Button onClick={handleSearch} className="w-full">
+                <Button variant="default" onClick={handleSearch} className="w-full">
                   <SearchIcon className="mr-2 h-4 w-4" />
-                  Search
+                  Apply Filters
                 </Button>
               </div>
             </div>

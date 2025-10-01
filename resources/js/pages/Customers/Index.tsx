@@ -190,7 +190,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
                 </Select>
               </div>
               <div className="flex gap-2">
-                <Button onClick={handleSearch}>
+                <Button variant="default" onClick={handleSearch}>
                   <SearchIcon className="mr-2 h-4 w-4" />
                   Apply Filters
                 </Button>

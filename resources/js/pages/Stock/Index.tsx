@@ -201,9 +201,9 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
               
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
-                <Button variant="outline" onClick={handleSearch} className="w-full">
+                <Button variant="default" onClick={handleSearch} className="w-full">
                   <SearchIcon className="mr-2 h-4 w-4" />
-                  Filter
+                  Apply Filters
                 </Button>
               </div>
             </div>

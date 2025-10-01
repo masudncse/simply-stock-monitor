@@ -160,7 +160,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
             <CardTitle>Filters</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4 w-full">
+            <div className="grid gap-4 md:grid-cols-6">
               <div className="space-y-2">
                 <Label htmlFor="search">Search</Label>
                 <div className="relative">

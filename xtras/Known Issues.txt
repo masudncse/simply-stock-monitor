@@ -5,6 +5,9 @@ Export CSV: http://127.0.0.1:8000/reports/stock
 
 Apply Filter button should primary color
 
+http://127.0.0.1:8000/purchases
+All statuses should colored accordintly status
+
 Search items should justify start
 
 While back browser last page not showing

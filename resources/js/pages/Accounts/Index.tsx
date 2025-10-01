@@ -218,7 +218,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
               
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
-                <Button variant="outline" onClick={handleSearch} className="w-full">
+                <Button variant="default" onClick={handleSearch} className="w-full">
                   <SearchIcon className="mr-2 h-4 w-4" />
                   Apply Filters
                 </Button>

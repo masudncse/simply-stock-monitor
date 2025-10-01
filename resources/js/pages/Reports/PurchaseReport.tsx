@@ -215,7 +215,7 @@ const PurchaseReport: React.FC<PurchaseReportProps> = ({
               </div>
             </div>
             <div className="flex gap-2 mt-4">
-              <Button onClick={applyFilters}>
+              <Button variant="default" onClick={applyFilters}>
                 Apply Filters
               </Button>
               <Button variant="outline" onClick={clearFilters}>

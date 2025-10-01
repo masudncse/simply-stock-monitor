@@ -180,7 +180,7 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
                 </Select>
               </div>
               <div className="flex gap-2">
-                <Button onClick={applyFilters}>
+                <Button variant="default" onClick={applyFilters}>
                   Apply Filters
                 </Button>
                 <Button variant="outline" onClick={clearFilters}>

@@ -104,7 +104,7 @@ const ProfitLossReport: React.FC<ProfitLossReportProps> = ({
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
                 <div className="flex gap-2">
-                  <Button onClick={applyFilters}>
+                  <Button variant="default" onClick={applyFilters}>
                     Apply Filters
                   </Button>
                   <Button variant="outline" onClick={clearFilters}>
