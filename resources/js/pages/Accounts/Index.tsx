@@ -150,7 +150,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
   ];
 
   return (
-    <Layout title="Chart of Accounts">
+    <Layout title="Chart of Accounts - Manage your accounting structure">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

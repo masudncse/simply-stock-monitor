@@ -91,7 +91,7 @@ const StockReport: React.FC<StockReportProps> = ({
   };
 
   return (
-    <Layout title="Stock Report">
+    <Layout title="Stock Report - View inventory levels and stock analytics">
       <div className="space-y-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">

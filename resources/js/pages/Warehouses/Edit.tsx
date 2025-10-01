@@ -62,7 +62,7 @@ export default function EditWarehouse({ warehouse }: EditWarehouseProps) {
   };
 
   return (
-    <Layout title="Edit Warehouse">
+    <Layout title="Edit Warehouse - Update warehouse information">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">

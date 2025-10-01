@@ -65,7 +65,7 @@ export default function AccountsShow({ account, balance }: AccountsShowProps) {
   };
 
   return (
-    <Layout title="Account Details" breadcrumbs={breadcrumbs}>
+    <Layout title="Account Details - View account information and transaction history" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

@@ -75,7 +75,7 @@ export default function CustomersShow({ customer }: CustomersShowProps) {
   const availableCredit = customer.credit_limit - customer.outstanding_amount;
 
   return (
-    <Layout title={`Customer Details - ${customer.name}`}>
+    <Layout title={`Customer Details - ${customer.name} - View customer information and transaction history`}>
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

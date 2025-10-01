@@ -75,7 +75,7 @@ export default function ProductCreate({ categories }: ProductCreateProps) {
   };
 
   return (
-    <Layout title="Create Product">
+    <Layout title="Create Product - Add a new product to your inventory">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

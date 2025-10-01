@@ -81,7 +81,7 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
   };
 
   return (
-    <Layout title="Appearance Settings">
+    <Layout title="Appearance Settings - Customize theme, colors, and display preferences">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

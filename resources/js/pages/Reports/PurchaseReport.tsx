@@ -104,7 +104,7 @@ const PurchaseReport: React.FC<PurchaseReportProps> = ({
   };
 
   return (
-    <Layout title="Purchase Report">
+    <Layout title="Purchase Report - View purchase performance and analytics">
       <div className="space-y-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">

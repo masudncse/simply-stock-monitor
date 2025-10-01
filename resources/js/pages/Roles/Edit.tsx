@@ -95,7 +95,7 @@ export default function RolesEdit({ role, permissions }: RolesEditProps) {
     };
 
     return (
-        <Layout title={`Edit Role: ${role.name}`}>
+        <Layout title={`Edit Role: ${role.name} - Update role permissions and settings`}>
             <div className="space-y-6">
                 <div className="flex items-center gap-4 mb-6">
                     <Button variant="outline" asChild>

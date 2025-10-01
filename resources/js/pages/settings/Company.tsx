@@ -142,7 +142,7 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
   ];
 
   return (
-    <Layout title="Company Settings">
+    <Layout title="Company Settings - Configure company information and branding">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

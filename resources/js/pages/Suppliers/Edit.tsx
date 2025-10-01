@@ -65,7 +65,7 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
   };
 
   return (
-    <Layout title={`Edit Supplier - ${supplier.name}`}>
+    <Layout title={`Edit Supplier - ${supplier.name} - Update supplier information`}>
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

@@ -48,7 +48,7 @@ export default function CustomersCreate() {
   };
 
   return (
-    <Layout title="Create Customer">
+    <Layout title="Create Customer - Add a new customer to your database">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

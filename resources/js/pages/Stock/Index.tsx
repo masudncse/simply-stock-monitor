@@ -123,7 +123,7 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
   };
 
   return (
-    <Layout title="Stock Management">
+    <Layout title="Stock Management - Monitor and manage inventory levels">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

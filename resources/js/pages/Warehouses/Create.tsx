@@ -46,7 +46,7 @@ export default function CreateWarehouse() {
   };
 
   return (
-    <Layout title="Create Warehouse">
+    <Layout title="Create Warehouse - Add a new storage location">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">

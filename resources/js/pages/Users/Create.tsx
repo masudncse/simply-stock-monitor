@@ -62,7 +62,7 @@ export default function UsersCreate({ roles }: UsersCreateProps) {
     };
 
     return (
-        <Layout title="Create New User">
+        <Layout title="Create New User - Add a new user to the system">
             <div>
                 <div className="flex items-center gap-4 mb-6">
                     <Button

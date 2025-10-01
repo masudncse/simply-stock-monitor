@@ -47,7 +47,7 @@ export default function SuppliersCreate() {
   };
 
   return (
-    <Layout title="Create Supplier">
+    <Layout title="Create Supplier - Add a new supplier to your vendor database">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

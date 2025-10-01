@@ -59,7 +59,7 @@ export default function StockAdjust({ products, warehouses }: StockAdjustProps) 
   };
 
   return (
-    <Layout title="Adjust Stock">
+    <Layout title="Adjust Stock - Update inventory quantities and levels">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

@@ -82,7 +82,7 @@ const SystemSettings: React.FC<SystemSettingsProps> = ({ settings }) => {
   ];
 
   return (
-    <Layout title="System Settings" breadcrumbs={breadcrumbs}>
+    <Layout title="System Settings - Configure system behavior and operational settings" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">

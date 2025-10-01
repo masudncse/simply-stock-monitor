@@ -82,7 +82,7 @@ export default function UsersEdit({ user, roles }: UsersEditProps) {
     };
 
     return (
-        <Layout title={`Edit User: ${user.name}`}>
+        <Layout title={`Edit User: ${user.name} - Update user information and permissions`}>
             <div>
                 <div className="flex items-center gap-4 mb-6">
                     <Button

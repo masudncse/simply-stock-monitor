@@ -53,7 +53,7 @@ export default function ProductShow({ product }: ProductShowProps) {
   const isLowStock = totalStock <= product.min_stock;
 
   return (
-    <Layout title={`Product: ${product.name}`}>
+    <Layout title={`Product: ${product.name} - View product details and inventory`}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

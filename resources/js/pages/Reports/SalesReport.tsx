@@ -116,7 +116,7 @@ const SalesReport: React.FC<SalesReportProps> = ({
   };
 
   return (
-    <Layout title="Sales Report">
+    <Layout title="Sales Report - View sales performance and analytics">
       <div className="space-y-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">

@@ -96,7 +96,7 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
   };
 
   return (
-    <Layout title="Purchase Details">
+    <Layout title="Purchase Details - View purchase order information and items">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

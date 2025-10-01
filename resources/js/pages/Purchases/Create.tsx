@@ -176,7 +176,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
   const totals = calculateTotals();
 
   return (
-    <Layout title="Create Purchase">
+    <Layout title="Create Purchase - Add a new purchase order">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

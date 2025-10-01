@@ -164,7 +164,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
   };
 
   return (
-    <Layout title="Quotations">
+    <Layout title="Quotations - View and manage sales quotations">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

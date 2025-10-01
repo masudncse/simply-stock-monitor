@@ -69,7 +69,7 @@ export default function TrialBalance({ trialBalance }: TrialBalanceProps) {
   const isBalanced = totalDebit === totalCredit;
 
   return (
-    <Layout title="Trial Balance">
+    <Layout title="Trial Balance - View account balances and financial summary">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

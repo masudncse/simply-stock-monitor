@@ -77,7 +77,7 @@ export default function Dashboard({ stats, chartData, currentCashBalance }: Dash
   ];
 
   return (
-    <Layout title="Dashboard">
+    <Layout title="Dashboard - Overview of your business performance">
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>

@@ -68,7 +68,7 @@ export default function AccountsCreate({ parentAccounts }: AccountsCreateProps) 
   ];
 
   return (
-    <Layout title="Create Account">
+    <Layout title="Create Account - Add a new account to your chart of accounts">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

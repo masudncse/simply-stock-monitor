@@ -86,7 +86,7 @@ export default function RolesCreate({ permissions }: RolesCreateProps) {
     };
 
     return (
-        <Layout title="Create New Role">
+        <Layout title="Create New Role - Add a new user role with specific permissions">
             <div className="space-y-6">
                 <div className="flex items-center gap-4 mb-6">
                     <Button variant="outline" asChild>

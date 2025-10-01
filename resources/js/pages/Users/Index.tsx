@@ -136,7 +136,7 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
     };
 
     return (
-        <Layout title="Users Management">
+        <Layout title="Users Management - Manage system users and their access">
             <div className="space-y-6">
                 <div className="flex justify-between items-center mb-6">
                     <div>

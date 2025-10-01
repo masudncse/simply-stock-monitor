@@ -56,7 +56,7 @@ export default function SuppliersShow({ supplier }: SuppliersShowProps) {
   };
 
   return (
-    <Layout title="Supplier Details">
+    <Layout title="Supplier Details - View supplier information and purchase history">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

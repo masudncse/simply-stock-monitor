@@ -168,7 +168,7 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
   const totals = calculateTotals();
 
   return (
-    <Layout title={`Edit Purchase - ${purchase.invoice_number}`}>
+    <Layout title={`Edit Purchase - ${purchase.invoice_number} - Update purchase order information`}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

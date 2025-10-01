@@ -80,7 +80,7 @@ export default function AccountsEdit({ account, parentAccounts }: AccountsEditPr
   ];
 
   return (
-    <Layout title="Edit Account">
+    <Layout title="Edit Account - Update account information">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

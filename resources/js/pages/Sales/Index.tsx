@@ -215,7 +215,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
   };
 
   return (
-    <Layout title="Sales">
+    <Layout title="Sales - View and manage sales transactions">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

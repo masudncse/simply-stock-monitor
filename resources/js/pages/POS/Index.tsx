@@ -167,7 +167,7 @@ export default function POS({ products, taxRate }: POSProps) {
   };
 
   return (
-    <Layout title="Point of Sale">
+    <Layout title="Point of Sale - Process sales transactions and payments">
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Point of Sale</h1>

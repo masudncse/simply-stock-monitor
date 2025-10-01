@@ -97,7 +97,7 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
   };
 
   return (
-    <Layout title="Edit Product">
+    <Layout title="Edit Product - Update product information">
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

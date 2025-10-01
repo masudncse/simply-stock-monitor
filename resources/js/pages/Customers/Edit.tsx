@@ -66,7 +66,7 @@ export default function CustomersEdit({ customer }: CustomersEditProps) {
   };
 
   return (
-    <Layout title={`Edit Customer - ${customer.name}`}>
+    <Layout title={`Edit Customer - ${customer.name} - Update customer information`}>
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>

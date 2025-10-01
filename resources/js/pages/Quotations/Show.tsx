@@ -111,7 +111,7 @@ export default function QuotationsShow({ quotation }: QuotationsShowProps) {
   };
 
   return (
-    <Layout title={`Quotation ${quotation.quotation_number}`}>
+    <Layout title={`Quotation ${quotation.quotation_number} - View quotation details and items`}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

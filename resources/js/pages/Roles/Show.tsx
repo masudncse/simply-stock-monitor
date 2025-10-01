@@ -74,7 +74,7 @@ export default function RolesShow({ role }: RolesShowProps) {
     const groupedPermissions = groupPermissionsByCategory();
 
     return (
-        <Layout title={`Role: ${role.name}`}>
+        <Layout title={`Role: ${role.name} - View role details and assigned permissions`}>
             <div>
                 <div className="flex items-center gap-4 mb-6">
                     <Button

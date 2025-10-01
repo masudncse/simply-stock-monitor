@@ -81,7 +81,7 @@ export default function ShowWarehouse({ warehouse }: ShowWarehouseProps) {
   const totalSales = warehouse.sales?.reduce((sum, sale) => sum + sale.total_amount, 0) || 0;
 
   return (
-    <Layout title="Warehouse Details">
+    <Layout title="Warehouse Details - View warehouse information and inventory">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">

@@ -55,7 +55,7 @@ export default function LowStock({ products }: LowStockProps) {
   };
 
   return (
-    <Layout title="Low Stock Products">
+    <Layout title="Low Stock Products - Monitor inventory below minimum levels">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">

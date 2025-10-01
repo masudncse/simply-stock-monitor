@@ -51,7 +51,7 @@ export default function StockTransfer({ products, warehouses }: StockTransferPro
   };
 
   return (
-    <Layout title="Transfer Stock">
+    <Layout title="Transfer Stock - Move inventory between warehouses">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

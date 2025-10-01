@@ -163,7 +163,7 @@ export default function QuotationsCreate({ customers, warehouses, products, taxR
   const totals = calculateTotals();
 
   return (
-    <Layout title="Create Quotation">
+    <Layout title="Create Quotation - Generate a new sales quotation">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

@@ -58,7 +58,7 @@ export default function UsersShow({ user }: UsersShowProps) {
     };
 
     return (
-        <Layout title={`User: ${user.name}`}>
+        <Layout title={`User: ${user.name} - View user profile and activity`}>
             <div>
                 <div className="flex items-center gap-4 mb-6">
                     <Button
