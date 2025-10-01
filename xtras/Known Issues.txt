@@ -3,8 +3,6 @@ http://127.0.0.1:8000/accounts/1
 
 Export CSV: http://127.0.0.1:8000/reports/stock
 
-Searchable Customer, Supplier, Product, etc select option
-
 Apply Filter button should primary color
 
 Search items should justify start

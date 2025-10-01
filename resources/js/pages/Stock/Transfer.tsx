@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ProductCombobox } from '@/components/ProductCombobox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 import { transfer as transferRoute } from '@/routes/stock';
 
 interface Product {
@@ -27,17 +27,6 @@ interface StockTransferProps {
   products: Product[];
   warehouses: Warehouse[];
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Stock',
-    href: '/stock',
-  },
-  {
-    title: 'Transfer Stock',
-    href: '#',
-  },
-];
 
 export default function StockTransfer({ products, warehouses }: StockTransferProps) {
   const { data, setData, post, processing, errors } = useForm({
@@ -62,7 +51,7 @@ export default function StockTransfer({ products, warehouses }: StockTransferPro
   };
 
   return (
-    <Layout title="Transfer Stock" breadcrumbs={breadcrumbs}>
+    <Layout title="Transfer Stock">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -87,18 +76,13 @@ export default function StockTransfer({ products, warehouses }: StockTransferPro
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="product">Product *</Label>
-                <Select value={data.product_id} onValueChange={handleProductChange}>
-                  <SelectTrigger className={errors.product_id ? 'border-destructive' : ''}>
-                    <SelectValue placeholder="Select a product" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {products.map((product) => (
-                      <SelectItem key={product.id} value={product.id.toString()}>
-                        {product.name} ({product.sku})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <ProductCombobox
+                  value={data.product_id}
+                  onValueChange={handleProductChange}
+                  placeholder="Select a product"
+                  showAllOption={false}
+                  error={!!errors.product_id}
+                />
                 {errors.product_id && (
                   <p className="text-sm text-destructive">{errors.product_id}</p>
                 )}
