@@ -73,9 +73,11 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('sidebarCollapsed') === 'true';
+      const saved = localStorage.getItem('sidebarCollapsed');
+      // Default to collapsed (true) if no saved preference
+      return saved !== null ? saved === 'true' : true;
     }
-    return false;
+    return true;
   });
   const { auth, company } = usePage<SharedData>().props;
   const { appearance, updateAppearance, primaryColor, updatePrimaryColor } = useAppearance();

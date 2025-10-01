@@ -17,7 +17,6 @@ import { useAppearance, type Appearance, type PrimaryColor } from '@/hooks/use-a
 interface AppearanceSettings {
   theme: string;
   primary_color: string;
-  sidebar_collapsed: boolean;
   language: string;
   date_format: string;
   time_format: string;
@@ -148,14 +147,6 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="sidebar_collapsed"
-                  checked={settings.sidebar_collapsed}
-                  onCheckedChange={(checked) => handleChange('sidebar_collapsed', checked)}
-                />
-                <Label htmlFor="sidebar_collapsed">Collapse Sidebar by Default</Label>
-              </div>
             </CardContent>
           </Card>
 
@@ -191,17 +182,65 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
                   <SelectTrigger>
                     <SelectValue placeholder="Select timezone" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="UTC">UTC</SelectItem>
-                    <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                    <SelectItem value="America/Chicago">Central Time</SelectItem>
-                    <SelectItem value="America/Denver">Mountain Time</SelectItem>
-                    <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
-                    <SelectItem value="Europe/London">London</SelectItem>
-                    <SelectItem value="Europe/Paris">Paris</SelectItem>
-                    <SelectItem value="Asia/Tokyo">Tokyo</SelectItem>
-                    <SelectItem value="Asia/Shanghai">Shanghai</SelectItem>
-                    <SelectItem value="Australia/Sydney">Sydney</SelectItem>
+                  <SelectContent className="max-h-[300px]">
+                    <SelectItem value="UTC">UTC (Universal Time Coordinated)</SelectItem>
+                    
+                    {/* Americas */}
+                    <SelectItem value="America/New_York">America/New_York (EST/EDT)</SelectItem>
+                    <SelectItem value="America/Chicago">America/Chicago (CST/CDT)</SelectItem>
+                    <SelectItem value="America/Denver">America/Denver (MST/MDT)</SelectItem>
+                    <SelectItem value="America/Los_Angeles">America/Los_Angeles (PST/PDT)</SelectItem>
+                    <SelectItem value="America/Toronto">America/Toronto (Canada)</SelectItem>
+                    <SelectItem value="America/Vancouver">America/Vancouver (Canada)</SelectItem>
+                    <SelectItem value="America/Mexico_City">America/Mexico_City (Mexico)</SelectItem>
+                    <SelectItem value="America/Sao_Paulo">America/Sao_Paulo (Brazil)</SelectItem>
+                    <SelectItem value="America/Argentina/Buenos_Aires">America/Buenos_Aires (Argentina)</SelectItem>
+                    
+                    {/* Europe */}
+                    <SelectItem value="Europe/London">Europe/London (GMT/BST)</SelectItem>
+                    <SelectItem value="Europe/Paris">Europe/Paris (CET/CEST)</SelectItem>
+                    <SelectItem value="Europe/Berlin">Europe/Berlin (Germany)</SelectItem>
+                    <SelectItem value="Europe/Rome">Europe/Rome (Italy)</SelectItem>
+                    <SelectItem value="Europe/Madrid">Europe/Madrid (Spain)</SelectItem>
+                    <SelectItem value="Europe/Amsterdam">Europe/Amsterdam (Netherlands)</SelectItem>
+                    <SelectItem value="Europe/Brussels">Europe/Brussels (Belgium)</SelectItem>
+                    <SelectItem value="Europe/Vienna">Europe/Vienna (Austria)</SelectItem>
+                    <SelectItem value="Europe/Zurich">Europe/Zurich (Switzerland)</SelectItem>
+                    <SelectItem value="Europe/Stockholm">Europe/Stockholm (Sweden)</SelectItem>
+                    <SelectItem value="Europe/Moscow">Europe/Moscow (Russia)</SelectItem>
+                    <SelectItem value="Europe/Istanbul">Europe/Istanbul (Turkey)</SelectItem>
+                    
+                    {/* Asia */}
+                    <SelectItem value="Asia/Dubai">Asia/Dubai (UAE)</SelectItem>
+                    <SelectItem value="Asia/Karachi">Asia/Karachi (Pakistan)</SelectItem>
+                    <SelectItem value="Asia/Kolkata">Asia/Kolkata (India)</SelectItem>
+                    <SelectItem value="Asia/Dhaka">Asia/Dhaka (Bangladesh)</SelectItem>
+                    <SelectItem value="Asia/Kathmandu">Asia/Kathmandu (Nepal)</SelectItem>
+                    <SelectItem value="Asia/Bangkok">Asia/Bangkok (Thailand)</SelectItem>
+                    <SelectItem value="Asia/Jakarta">Asia/Jakarta (Indonesia)</SelectItem>
+                    <SelectItem value="Asia/Singapore">Asia/Singapore</SelectItem>
+                    <SelectItem value="Asia/Kuala_Lumpur">Asia/Kuala_Lumpur (Malaysia)</SelectItem>
+                    <SelectItem value="Asia/Manila">Asia/Manila (Philippines)</SelectItem>
+                    <SelectItem value="Asia/Hong_Kong">Asia/Hong_Kong</SelectItem>
+                    <SelectItem value="Asia/Shanghai">Asia/Shanghai (China)</SelectItem>
+                    <SelectItem value="Asia/Taipei">Asia/Taipei (Taiwan)</SelectItem>
+                    <SelectItem value="Asia/Tokyo">Asia/Tokyo (Japan)</SelectItem>
+                    <SelectItem value="Asia/Seoul">Asia/Seoul (South Korea)</SelectItem>
+                    <SelectItem value="Asia/Riyadh">Asia/Riyadh (Saudi Arabia)</SelectItem>
+                    <SelectItem value="Asia/Jerusalem">Asia/Jerusalem (Israel)</SelectItem>
+                    
+                    {/* Australia & Pacific */}
+                    <SelectItem value="Australia/Sydney">Australia/Sydney</SelectItem>
+                    <SelectItem value="Australia/Melbourne">Australia/Melbourne</SelectItem>
+                    <SelectItem value="Australia/Brisbane">Australia/Brisbane</SelectItem>
+                    <SelectItem value="Australia/Perth">Australia/Perth</SelectItem>
+                    <SelectItem value="Pacific/Auckland">Pacific/Auckland (New Zealand)</SelectItem>
+                    
+                    {/* Africa */}
+                    <SelectItem value="Africa/Cairo">Africa/Cairo (Egypt)</SelectItem>
+                    <SelectItem value="Africa/Johannesburg">Africa/Johannesburg (South Africa)</SelectItem>
+                    <SelectItem value="Africa/Lagos">Africa/Lagos (Nigeria)</SelectItem>
+                    <SelectItem value="Africa/Nairobi">Africa/Nairobi (Kenya)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

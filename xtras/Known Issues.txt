@@ -24,10 +24,6 @@ Aproval for Purchase & Sales is missing
 
 Backup & Maintenance not Working
 
-Theme changing is not Working
-
-Collapse Sidebar by Default not Working
-
 Timezone Missing some important country
 
 Page title is not chaning
