@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ProductCombobox } from '@/components/ProductCombobox';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft as BackIcon, Info as InfoIcon, AlertTriangle as WarningIcon } from 'lucide-react';
@@ -84,18 +85,13 @@ export default function StockAdjust({ products, warehouses }: StockAdjustProps) 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="product">Product *</Label>
-                  <Select value={data.product_id} onValueChange={handleProductChange}>
-                    <SelectTrigger className={errors.product_id ? 'border-destructive' : ''}>
-                      <SelectValue placeholder="Select a product" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {products.map((product) => (
-                        <SelectItem key={product.id} value={product.id.toString()}>
-                          {product.name} ({product.sku})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <ProductCombobox
+                    value={data.product_id}
+                    onValueChange={handleProductChange}
+                    placeholder="Select a product"
+                    showAllOption={false}
+                    error={!!errors.product_id}
+                  />
                   {errors.product_id && (
                     <p className="text-sm text-destructive">{errors.product_id}</p>
                   )}

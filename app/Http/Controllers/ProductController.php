@@ -229,6 +229,31 @@ class ProductController extends Controller
     }
 
     /**
+     * Search products for API (autocomplete/select)
+     */
+    public function searchProducts(Request $request)
+    {
+        $search = $request->input('search', '');
+        
+        $products = Product::query()
+            ->where('is_active', true)
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('sku', 'like', "%{$search}%")
+                      ->orWhere('barcode', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('name', 'asc')
+            ->limit(50)  // Return max 50 results
+            ->get(['id', 'name', 'sku', 'price', 'unit']);
+        
+        return response()->json([
+            'products' => $products
+        ]);
+    }
+
+    /**
      * Delete a specific product image.
      */
     public function deleteImage(ProductImage $productImage)

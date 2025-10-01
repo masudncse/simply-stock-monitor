@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ProductCombobox } from '@/components/ProductCombobox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import CustomPagination from '@/components/CustomPagination';
@@ -190,19 +191,12 @@ export default function StockIndex({ stocks, warehouses, products, filters }: St
               
               <div className="space-y-2">
                 <Label htmlFor="product">Product</Label>
-                <Select value={productFilter || "all"} onValueChange={(value) => setProductFilter(value === "all" ? "" : value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Products" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Products</SelectItem>
-                    {products.map((product) => (
-                      <SelectItem key={product.id} value={product.id.toString()}>
-                        {product.name} ({product.sku})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <ProductCombobox
+                  value={productFilter || ""}
+                  onValueChange={(value) => setProductFilter(value === "" ? "" : value)}
+                  placeholder="All Products"
+                  showAllOption={true}
+                />
               </div>
               
               <div className="space-y-2">

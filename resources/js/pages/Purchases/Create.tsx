@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ProductCombobox } from '@/components/ProductCombobox';
 import {
   Plus as AddIcon,
   Trash2 as DeleteIcon,
@@ -304,48 +305,18 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Select Product</Label>
-                  <Popover open={productOpen} onOpenChange={setProductOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={productOpen}
-                        className="w-full justify-between"
-                      >
-                        {selectedProduct ? `${selectedProduct.name} (${selectedProduct.sku})` : "Select product..."}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      <Command>
-                        <CommandInput placeholder="Search products..." />
-                        <CommandList>
-                          <CommandEmpty>No product found.</CommandEmpty>
-                          <CommandGroup>
-                            {products.map((product) => (
-                              <CommandItem
-                                key={product.id}
-                                value={`${product.name} ${product.sku}`}
-                                onSelect={() => {
-                                  setSelectedProduct(product);
-                                  setNewItem({ ...newItem, unit_price: product.price });
-                                  setProductOpen(false);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    selectedProduct?.id === product.id ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                {product.name} ({product.sku})
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <ProductCombobox
+                    value={selectedProduct?.id.toString() || ''}
+                    onValueChange={(value) => {
+                      const product = products.find(p => p.id.toString() === value);
+                      setSelectedProduct(product || null);
+                      if (product) {
+                        setNewItem({ ...newItem, unit_price: product.price });
+                      }
+                    }}
+                    placeholder="Select product..."
+                    showAllOption={false}
+                  />
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">

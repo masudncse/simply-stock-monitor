@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ProductCombobox } from '@/components/ProductCombobox';
 import { Badge } from '@/components/ui/badge';
 import {
   Plus,
@@ -272,7 +273,7 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="product">Product</Label>
-                  <Select
+                  <ProductCombobox
                     value={selectedProduct?.id.toString() || ''}
                     onValueChange={(value) => {
                       const product = products.find(p => p.id.toString() === value);
@@ -281,18 +282,9 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
                         setNewItem({ ...newItem, unit_price: product.price });
                       }
                     }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select product" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {products.map((product) => (
-                        <SelectItem key={product.id} value={product.id.toString()}>
-                          {product.name} ({product.sku})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select product"
+                    showAllOption={false}
+                  />
                 </div>
 
                 {selectedProduct && (
