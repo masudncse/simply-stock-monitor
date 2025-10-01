@@ -64,11 +64,15 @@ class ProductController extends Controller
 
         $products = $query->paginate(15)->appends($request->query());
 
-        $categories = Category::where('is_active', true)->get();
+        // Only send selected category if filter is active (for display purposes)
+        $selectedCategory = null;
+        if ($request->filled('category_id')) {
+            $selectedCategory = Category::find($request->category_id);
+        }
 
         return Inertia::render('Products/Index', [
             'products' => $products,
-            'categories' => $categories,
+            'categories' => $selectedCategory ? [$selectedCategory] : [], // Only send selected category
             'filters' => $request->only(['search', 'category_id', 'status', 'sort_by', 'sort_direction', 'page']),
         ]);
     }
@@ -201,6 +205,27 @@ class ProductController extends Controller
         }
 
         return $query->limit(20)->get(['id', 'name', 'sku', 'price', 'unit']);
+    }
+
+    /**
+     * Search categories for API (autocomplete/select)
+     */
+    public function searchCategories(Request $request)
+    {
+        $search = $request->input('search', '');
+        
+        $categories = Category::query()
+            ->where('is_active', true)
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->orderBy('name', 'asc')
+            ->limit(50)  // Return max 50 results
+            ->get(['id', 'name']);
+        
+        return response()->json([
+            'categories' => $categories
+        ]);
     }
 
     /**

@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Products
     Route::resource('products', ProductController::class);
     Route::get('products-api', [ProductController::class, 'getProducts'])->name('products.api');
+    Route::get('categories-api/search', [ProductController::class, 'searchCategories'])->name('categories.search');
     Route::delete('product-images/{productImage}', [ProductController::class, 'deleteImage'])->name('products.images.delete');
     Route::patch('product-images/{productImage}/set-primary', [ProductController::class, 'setPrimaryImage'])->name('products.images.set-primary');
     

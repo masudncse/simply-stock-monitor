@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CategoryCombobox } from '@/components/CategoryCombobox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import CustomPagination from '@/components/CustomPagination';
@@ -177,19 +178,12 @@ export default function ProductsIndex({ products, categories, filters }: Product
               
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <Select value={categoryFilter || "all"} onValueChange={(value) => setCategoryFilter(value === "all" ? "" : value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <CategoryCombobox
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                  placeholder="Select category..."
+                  showAllOption={true}
+                />
               </div>
               
               <div className="space-y-2">
@@ -239,7 +233,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
               
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
-                <Button variant="outline" onClick={handleSearch} className="w-full">
+                <Button variant="outline" onClick={() => handleSearch()} className="w-full">
                   <SearchIcon className="mr-2 h-4 w-4" />
                   Filter
                 </Button>
