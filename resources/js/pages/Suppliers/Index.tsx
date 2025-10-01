@@ -188,10 +188,19 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
               
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
-                <Button variant="default" onClick={handleSearch} className="w-full">
-                  <SearchIcon className="mr-2 h-4 w-4" />
-                  Apply Filters
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="default" onClick={handleSearch} className="flex-1">
+                    <SearchIcon className="mr-2 h-4 w-4" />
+                    Apply Filters
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    setSearchTerm('');
+                    setStatusFilter('');
+                    router.get('/suppliers', {}, { preserveState: true, replace: true });
+                  }}>
+                    Clear
+                  </Button>
+                </div>
               </div>
             </div>
           </CardContent>

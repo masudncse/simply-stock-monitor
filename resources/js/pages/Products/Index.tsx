@@ -233,10 +233,20 @@ export default function ProductsIndex({ products, categories, filters }: Product
               
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
-                <Button variant="default" onClick={() => handleSearch()} className="w-full">
-                  <SearchIcon className="mr-1 h-4 w-4" />
-                  Apply Filters
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="default" onClick={() => handleSearch()} className="flex-1">
+                    <SearchIcon className="mr-1 h-4 w-4" />
+                    Apply Filters
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    setSearch('');
+                    setCategoryFilter('');
+                    setStatusFilter('');
+                    router.get('/products', {}, { preserveState: true, replace: true });
+                  }}>
+                    Clear
+                  </Button>
+                </div>
               </div>
             </div>
           </CardContent>

@@ -232,10 +232,21 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
               
               <div className="space-y-2">
                 <label className="text-sm font-medium">&nbsp;</label>
-                <Button variant="default" onClick={handleSearch} className="w-full">
-                  <SearchIcon className="mr-2 h-4 w-4" />
-                  Apply Filters
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="default" onClick={handleSearch} className="flex-1">
+                    <SearchIcon className="mr-2 h-4 w-4" />
+                    Apply Filters
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    setSearchTerm('');
+                    setStatusFilter('all');
+                    setDateFrom('');
+                    setDateTo('');
+                    router.get('/quotations', {}, { preserveState: true, replace: true });
+                  }}>
+                    Clear
+                  </Button>
+                </div>
               </div>
             </div>
           </CardContent>
