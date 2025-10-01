@@ -38,7 +38,7 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function markAsRead(Request $request, int $id): JsonResponse
+    public function markAsRead(Request $request, int $id)
     {
         $notification = Notification::where('user_id', $request->user()->id)
             ->where('id', $id)
@@ -46,24 +46,32 @@ class NotificationController extends Controller
 
         $notification->markAsRead();
 
-        return response()->json([
-            'success' => true,
-            'unread_count' => Notification::getUnreadCountForUser($request->user()->id),
-        ]);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'unread_count' => Notification::getUnreadCountForUser($request->user()->id),
+            ]);
+        }
+
+        return redirect()->back();
     }
 
-    public function markAllAsRead(Request $request): JsonResponse
+    public function markAllAsRead(Request $request)
     {
         $count = Notification::markAllAsReadForUser($request->user()->id);
 
-        return response()->json([
-            'success' => true,
-            'marked_count' => $count,
-            'unread_count' => 0,
-        ]);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'marked_count' => $count,
+                'unread_count' => 0,
+            ]);
+        }
+
+        return redirect()->back();
     }
 
-    public function delete(Request $request, int $id): JsonResponse
+    public function delete(Request $request, int $id)
     {
         $notification = Notification::where('user_id', $request->user()->id)
             ->where('id', $id)
@@ -71,10 +79,14 @@ class NotificationController extends Controller
 
         $notification->delete();
 
-        return response()->json([
-            'success' => true,
-            'unread_count' => Notification::getUnreadCountForUser($request->user()->id),
-        ]);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'unread_count' => Notification::getUnreadCountForUser($request->user()->id),
+            ]);
+        }
+
+        return redirect()->back();
     }
 
     public function getUnreadCount(Request $request): JsonResponse

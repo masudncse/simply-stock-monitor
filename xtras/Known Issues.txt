@@ -20,10 +20,6 @@ http://127.0.0.1:8000/reports/supplier-outstanding
 http://127.0.0.1:8000/reports/sales
 Export CSV Issue
 
-Show app notification
-- Low Stock Alert (warning)
-- Expired Product (warning)
-
 Ensure pagination for all of pages, edit etc.
 
 Werare create functionality missing

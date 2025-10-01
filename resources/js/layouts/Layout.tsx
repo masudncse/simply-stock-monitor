@@ -112,20 +112,19 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
   // Mark notification as read
   const markAsRead = async (notificationId: number) => {
     try {
-      const response = await fetch(`/notifications/${notificationId}/mark-read`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+      router.post(`/notifications/${notificationId}/mark-read`, {}, {
+        preserveState: true,
+        onSuccess: (page) => {
+          // Update local state optimistically
+          setNotifications(prev => 
+            prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+          );
+          setUnreadCount(prev => Math.max(0, prev - 1));
         },
+        onError: (errors) => {
+          console.error('Failed to mark notification as read:', errors);
+        }
       });
-      const data = await response.json();
-      if (data.success) {
-        setUnreadCount(data.unread_count);
-        setNotifications(prev => 
-          prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
-        );
-      }
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
     }
@@ -134,20 +133,19 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
   // Mark all notifications as read
   const markAllAsRead = async () => {
     try {
-      const response = await fetch('/notifications/mark-all-read', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+      router.post('/notifications/mark-all-read', {}, {
+        preserveState: true,
+        onSuccess: (page) => {
+          // Update local state optimistically
+          setUnreadCount(0);
+          setNotifications(prev => 
+            prev.map(n => ({ ...n, read: true }))
+          );
         },
+        onError: (errors) => {
+          console.error('Failed to mark all notifications as read:', errors);
+        }
       });
-      const data = await response.json();
-      if (data.success) {
-        setUnreadCount(0);
-        setNotifications(prev => 
-          prev.map(n => ({ ...n, read: true }))
-        );
-      }
     } catch (error) {
       console.error('Failed to mark all notifications as read:', error);
     }
@@ -156,18 +154,21 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
   // Delete notification
   const deleteNotification = async (notificationId: number) => {
     try {
-      const response = await fetch(`/notifications/${notificationId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+      router.delete(`/notifications/${notificationId}`, {
+        preserveState: true,
+        onSuccess: (page) => {
+          // Update local state optimistically
+          setNotifications(prev => prev.filter(n => n.id !== notificationId));
+          // Update unread count
+          const deletedNotification = notifications.find(n => n.id === notificationId);
+          if (deletedNotification && !deletedNotification.read) {
+            setUnreadCount(prev => Math.max(0, prev - 1));
+          }
         },
+        onError: (errors) => {
+          console.error('Failed to delete notification:', errors);
+        }
       });
-      const data = await response.json();
-      if (data.success) {
-        setUnreadCount(data.unread_count);
-        setNotifications(prev => prev.filter(n => n.id !== notificationId));
-      }
     } catch (error) {
       console.error('Failed to delete notification:', error);
     }
