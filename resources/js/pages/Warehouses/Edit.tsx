@@ -14,7 +14,7 @@ import {
   AlertCircle as AlertIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type SharedData } from '@/types';
 
 interface Warehouse {
   id: number;
@@ -31,20 +31,6 @@ interface EditWarehouseProps {
   warehouse: Warehouse;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Settings',
-    href: '/settings',
-  },
-  {
-    title: 'Warehouse Management',
-    href: '/warehouses',
-  },
-  {
-    title: 'Edit Warehouse',
-    href: '/warehouses/edit',
-  },
-];
 
 export default function EditWarehouse({ warehouse }: EditWarehouseProps) {
   const { errors } = usePage<SharedData>().props;
@@ -76,7 +62,7 @@ export default function EditWarehouse({ warehouse }: EditWarehouseProps) {
   };
 
   return (
-    <Layout title="Edit Warehouse" breadcrumbs={breadcrumbs}>
+    <Layout title="Edit Warehouse">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">

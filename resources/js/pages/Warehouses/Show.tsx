@@ -17,7 +17,6 @@ import {
   MapPin as LocationIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 
 interface Warehouse {
   id: number;
@@ -59,20 +58,6 @@ interface ShowWarehouseProps {
   warehouse: Warehouse;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Settings',
-    href: '/settings',
-  },
-  {
-    title: 'Warehouse Management',
-    href: '/warehouses',
-  },
-  {
-    title: 'Warehouse Details',
-    href: '/warehouses/show',
-  },
-];
 
 export default function ShowWarehouse({ warehouse }: ShowWarehouseProps) {
   const handleDelete = () => {
@@ -96,7 +81,7 @@ export default function ShowWarehouse({ warehouse }: ShowWarehouseProps) {
   const totalSales = warehouse.sales?.reduce((sum, sale) => sum + sale.total_amount, 0) || 0;
 
   return (
-    <Layout title="Warehouse Details" breadcrumbs={breadcrumbs}>
+    <Layout title="Warehouse Details">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">

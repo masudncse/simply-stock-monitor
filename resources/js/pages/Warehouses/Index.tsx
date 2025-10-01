@@ -20,7 +20,6 @@ import {
   Building2 as WarehouseIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 
 interface Warehouse {
   id: number;
@@ -59,16 +58,6 @@ interface WarehousesIndexProps {
   };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Settings',
-    href: '/settings',
-  },
-  {
-    title: 'Warehouse Management',
-    href: '/warehouses',
-  },
-];
 
 export default function WarehousesIndex({ warehouses, filters }: WarehousesIndexProps) {
   const [search, setSearch] = useState(filters.search || '');
@@ -80,7 +69,7 @@ export default function WarehousesIndex({ warehouses, filters }: WarehousesIndex
   const handleSearch = () => {
     router.get('/warehouses', {
       search: search || undefined,
-      status: statusFilter || undefined,
+      status: statusFilter && statusFilter !== 'all' ? statusFilter : undefined,
       per_page: perPage,
       sort_by: sortBy,
       sort_direction: sortDirection,
@@ -102,10 +91,24 @@ export default function WarehousesIndex({ warehouses, filters }: WarehousesIndex
     
     router.get('/warehouses', {
       search: search || undefined,
-      status: statusFilter || undefined,
+      status: statusFilter && statusFilter !== 'all' ? statusFilter : undefined,
       per_page: perPage,
       sort_by: column,
       sort_direction: newDirection,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    router.get('/warehouses', {
+      search: search || undefined,
+      status: statusFilter && statusFilter !== 'all' ? statusFilter : undefined,
+      per_page: perPage,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
+      page: page,
     }, {
       preserveState: true,
       replace: true,
@@ -133,7 +136,7 @@ export default function WarehousesIndex({ warehouses, filters }: WarehousesIndex
   };
 
   return (
-    <Layout title="Warehouse Management" breadcrumbs={breadcrumbs}>
+    <Layout title="Warehouse Management">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -178,12 +181,12 @@ export default function WarehousesIndex({ warehouses, filters }: WarehousesIndex
 
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select value={statusFilter || "all"} onValueChange={setStatusFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
@@ -366,9 +369,9 @@ export default function WarehousesIndex({ warehouses, filters }: WarehousesIndex
         {/* Pagination */}
         {warehouses.last_page > 1 && (
           <CustomPagination
-            currentPage={warehouses.current_page}
-            lastPage={warehouses.last_page}
-            links={warehouses.links || []}
+            className="mt-6"
+            pagination={warehouses}
+            onPageChange={handlePageChange}
           />
         )}
       </div>

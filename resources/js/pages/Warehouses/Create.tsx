@@ -14,22 +14,7 @@ import {
   AlertCircle as AlertIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem, type SharedData } from '@/types';
-
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Settings',
-    href: '/settings',
-  },
-  {
-    title: 'Warehouse Management',
-    href: '/warehouses',
-  },
-  {
-    title: 'Create Warehouse',
-    href: '/warehouses/create',
-  },
-];
+import { type SharedData } from '@/types';
 
 export default function CreateWarehouse() {
   const { errors } = usePage<SharedData>().props;
@@ -61,7 +46,7 @@ export default function CreateWarehouse() {
   };
 
   return (
-    <Layout title="Create Warehouse" breadcrumbs={breadcrumbs}>
+    <Layout title="Create Warehouse">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
