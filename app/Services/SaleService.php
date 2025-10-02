@@ -8,6 +8,7 @@ use App\Models\SaleItem;
 use App\Models\Stock;
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\SystemSetting;
 use Illuminate\Support\Facades\DB;
 
 class SaleService
@@ -28,6 +29,10 @@ class SaleService
             // Generate invoice number
             $invoiceNumber = $this->generateInvoiceNumber();
 
+            // Check if approval is required
+            $requireApproval = SystemSetting::get('require_approval_for_sales', false);
+            $initialStatus = $requireApproval ? 'pending' : 'draft';
+
             $sale = Sale::create([
                 'invoice_number' => $invoiceNumber,
                 'customer_id' => $saleData['customer_id'] ?? null,
@@ -37,7 +42,7 @@ class SaleService
                 'tax_amount' => $saleData['tax_amount'] ?? 0,
                 'discount_amount' => $saleData['discount_amount'] ?? 0,
                 'total_amount' => $saleData['total_amount'],
-                'status' => 'draft',
+                'status' => $initialStatus,
                 'payment_status' => 'pending',
                 'notes' => $saleData['notes'] ?? null,
                 'created_by' => $userId,
@@ -249,6 +254,77 @@ class SaleService
             }
             
             $sale->save();
+        });
+    }
+
+    /**
+     * Approve a sale
+     */
+    public function approveSale(Sale $sale): Sale
+    {
+        if ($sale->status !== 'pending') {
+            throw new \Exception('Only pending sales can be approved');
+        }
+
+        return DB::transaction(function () use ($sale) {
+            // Check stock availability and reduce stock
+            foreach ($sale->items as $item) {
+                $this->reduceStockForSale($item, $sale->warehouse_id);
+            }
+
+            // Update sale status
+            $sale->status = 'approved';
+            $sale->save();
+
+            // Create accounting transactions
+            $this->createSaleTransactions($sale);
+
+            return $sale;
+        });
+    }
+
+    /**
+     * Update a sale
+     */
+    public function updateSale(Sale $sale, array $saleData, array $items = null): Sale
+    {
+        return DB::transaction(function () use ($sale, $saleData, $items) {
+            // Update sale data
+            $sale->update($saleData);
+
+            // Update items if provided
+            if ($items !== null) {
+                // Delete existing items
+                $sale->items()->delete();
+
+                // Create new items
+                foreach ($items as $itemData) {
+                    $sale->items()->create([
+                        'product_id' => $itemData['product_id'],
+                        'quantity' => $itemData['quantity'],
+                        'unit_price' => $itemData['unit_price'],
+                        'total_price' => $itemData['quantity'] * $itemData['unit_price'],
+                        'batch' => $itemData['batch'] ?? null,
+                    ]);
+                }
+            }
+
+            return $sale->fresh(['items.product']);
+        });
+    }
+
+    /**
+     * Delete a sale
+     */
+    public function deleteSale(Sale $sale): void
+    {
+        if ($sale->status === 'approved' || $sale->status === 'completed') {
+            throw new \Exception('Cannot delete approved or completed sale');
+        }
+
+        DB::transaction(function () use ($sale) {
+            $sale->items()->delete();
+            $sale->delete();
         });
     }
 }

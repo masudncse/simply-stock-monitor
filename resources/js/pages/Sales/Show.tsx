@@ -8,10 +8,11 @@ import {
   CheckCircle,
   ArrowLeft,
   Printer,
+  Check,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { index as indexRoute, edit as editRoute, process as processRoute } from '@/routes/sales';
+import { index as indexRoute, edit as editRoute, process as processRoute, approve as approveRoute } from '@/routes/sales';
 
 interface Customer {
   id: number;
@@ -105,6 +106,10 @@ export default function SalesShow({ sale }: SalesShowProps) {
     }
   };
 
+  const handleApprove = () => {
+    router.post(approveRoute.url({ sale: sale.id }));
+  };
+
   const handleProcess = () => {
     router.post(processRoute.url({ sale: sale.id }));
   };
@@ -125,6 +130,23 @@ export default function SalesShow({ sale }: SalesShowProps) {
               Back
             </Button>
             {sale.status === 'pending' && (
+              <>
+                <Button
+                  onClick={() => router.visit(editRoute.url({ sale: sale.id }))}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+                <Button
+                  onClick={handleApprove}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  Approve
+                </Button>
+              </>
+            )}
+            {sale.status === 'draft' && (
               <>
                 <Button
                   onClick={() => router.visit(editRoute.url({ sale: sale.id }))}

@@ -40,6 +40,7 @@ class RolePermissionSeeder extends Seeder
             'create-sales',
             'edit-sales',
             'delete-sales',
+            'approve-sales',
             'process-sales',
             
             // Customer permissions
@@ -114,6 +115,7 @@ class RolePermissionSeeder extends Seeder
             'view-sales',
             'create-sales',
             'edit-sales',
+            'approve-sales',
             'process-sales',
             'view-customers',
             'create-customers',

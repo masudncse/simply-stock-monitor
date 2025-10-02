@@ -106,7 +106,24 @@ class SaleController extends Controller
      */
     public function store(StoreSaleRequest $request)
     {
-        $sale = $this->saleService->createSale($request->validated());
+        $validated = $request->validated();
+        
+        // Extract items from validated data
+        $items = $validated['items'] ?? [];
+        unset($validated['items']); // Remove items from sale data
+        
+        // Calculate total_price for each item if not present
+        foreach ($items as &$item) {
+            if (!isset($item['total_price'])) {
+                $item['total_price'] = $item['quantity'] * $item['unit_price'];
+            }
+        }
+        
+        $sale = $this->saleService->createSale(
+            $validated,
+            $items,
+            $request->user()->id
+        );
 
         return redirect()->route('sales.show', $sale)
             ->with('success', 'Sale created successfully.');
@@ -151,7 +168,22 @@ class SaleController extends Controller
      */
     public function update(UpdateSaleRequest $request, Sale $sale)
     {
-        $this->saleService->updateSale($sale, $request->validated());
+        $validated = $request->validated();
+        
+        // Extract items from validated data
+        $items = $validated['items'] ?? null;
+        if ($items !== null) {
+            unset($validated['items']); // Remove items from sale data
+            
+            // Calculate total_price for each item if not present
+            foreach ($items as &$item) {
+                if (!isset($item['total_price'])) {
+                    $item['total_price'] = $item['quantity'] * $item['unit_price'];
+                }
+            }
+        }
+        
+        $this->saleService->updateSale($sale, $validated, $items);
 
         return redirect()->route('sales.show', $sale)
             ->with('success', 'Sale updated successfully.');
@@ -171,13 +203,26 @@ class SaleController extends Controller
     }
 
     /**
-     * Process a sale (approve)
+     * Approve a sale
+     */
+    public function approve(Sale $sale)
+    {
+        $this->authorize('approve-sales');
+
+        $this->saleService->approveSale($sale);
+
+        return redirect()->back()
+            ->with('success', 'Sale approved successfully.');
+    }
+
+    /**
+     * Process a sale (complete)
      */
     public function process(Sale $sale)
     {
         $this->authorize('process-sales');
 
-        $this->saleService->processSale($sale);
+        $this->saleService->processSale($sale->id);
 
         return redirect()->back()
             ->with('success', 'Sale processed successfully.');

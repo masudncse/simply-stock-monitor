@@ -7,6 +7,7 @@ use App\Models\PurchaseItem;
 use App\Models\Stock;
 use App\Models\Transaction;
 use App\Models\Account;
+use App\Models\SystemSetting;
 use Illuminate\Support\Facades\DB;
 
 class PurchaseService
@@ -27,6 +28,10 @@ class PurchaseService
             // Generate invoice number
             $invoiceNumber = $this->generateInvoiceNumber();
 
+            // Check if approval is required
+            $requireApproval = SystemSetting::get('require_approval_for_purchases', false);
+            $initialStatus = $requireApproval ? 'pending' : 'draft';
+
             $purchase = Purchase::create([
                 'invoice_number' => $invoiceNumber,
                 'supplier_id' => $purchaseData['supplier_id'],
@@ -37,7 +42,7 @@ class PurchaseService
                 'tax_amount' => $purchaseData['tax_amount'] ?? 0,
                 'discount_amount' => $purchaseData['discount_amount'] ?? 0,
                 'total_amount' => $purchaseData['total_amount'],
-                'status' => 'draft',
+                'status' => $initialStatus,
                 'notes' => $purchaseData['notes'] ?? null,
                 'created_by' => $userId,
             ]);
@@ -187,5 +192,53 @@ class PurchaseService
             'discount_amount' => $discountAmount,
             'total_amount' => $totalAmount,
         ];
+    }
+
+    /**
+     * Approve a purchase order
+     */
+    public function approvePurchase(Purchase $purchase): Purchase
+    {
+        if ($purchase->status !== 'pending') {
+            throw new \Exception('Only pending purchases can be approved');
+        }
+
+        return DB::transaction(function () use ($purchase) {
+            // Update stock for each item
+            foreach ($purchase->items as $item) {
+                $this->stockService->updateStock(
+                    $item->product_id,
+                    $purchase->warehouse_id,
+                    $item->quantity,
+                    $item->batch,
+                    $item->expiry_date,
+                    $item->unit_price
+                );
+            }
+
+            // Update purchase status
+            $purchase->status = 'approved';
+            $purchase->save();
+
+            // Create accounting transactions
+            $this->createPurchaseTransactions($purchase);
+
+            return $purchase;
+        });
+    }
+
+    /**
+     * Delete a purchase order
+     */
+    public function deletePurchase(Purchase $purchase): void
+    {
+        if ($purchase->status === 'approved') {
+            throw new \Exception('Cannot delete approved purchase');
+        }
+
+        DB::transaction(function () use ($purchase) {
+            $purchase->items()->delete();
+            $purchase->delete();
+        });
     }
 }

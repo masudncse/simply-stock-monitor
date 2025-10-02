@@ -20,8 +20,6 @@ http://127.0.0.1:8000/reports/supplier-outstanding
 http://127.0.0.1:8000/reports/sales
 Export CSV Issue
 
-Aproval for Purchase & Sales is missing
-
 Backup & Maintenance not Working
 SMTP Email configuration, test direct email and queue email and option to set email address before test
 Job management
