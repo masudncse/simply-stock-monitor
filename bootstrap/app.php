@@ -37,5 +37,11 @@ return Application::configure(basePath: dirname(__DIR__))
             ->weeklyOn(0, '02:00')
             ->withoutOverlapping()
             ->runInBackground();
+        
+        // Daily database backup at 2:30 AM (compressed)
+        $schedule->command('db:backup --compress')
+            ->dailyAt('02:30')
+            ->withoutOverlapping()
+            ->runInBackground();
     })
     ->create();

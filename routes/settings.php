@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Settings\AppearanceController;
-use App\Http\Controllers\Settings\BackupController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\Settings\CompanyController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
@@ -65,5 +65,6 @@ Route::middleware('auth')->group(function () {
     Route::get('settings/backup', [BackupController::class, 'index'])->name('settings.backup');
     Route::post('settings/backup', [BackupController::class, 'create'])->name('settings.backup.create');
     Route::get('settings/backup/{filename}/download', [BackupController::class, 'download'])->name('settings.backup.download');
+    Route::post('settings/backup/restore', [BackupController::class, 'restore'])->name('settings.backup.restore');
     Route::delete('settings/backup/{filename}', [BackupController::class, 'destroy'])->name('settings.backup.destroy');
 });

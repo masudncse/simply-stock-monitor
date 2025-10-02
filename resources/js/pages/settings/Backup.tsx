@@ -4,29 +4,53 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   Database as BackupIcon,
+  Database as Database,
   Download as DownloadIcon,
   Trash2 as DeleteIcon,
   Plus as CreateIcon,
   AlertTriangle as WarningIcon,
   CheckCircle as SuccessIcon,
+  RotateCcw as RestoreIcon,
+  Archive as ArchiveIcon,
+  Settings as SettingsIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
 interface BackupFile {
-  name: string;
+  filename: string;
+  filepath: string;
   size: number;
-  created_at: number;
+  created_at: string;
+  is_compressed: boolean;
 }
 
 interface BackupSettingsProps {
   backups: BackupFile[];
+  diskConfig: {
+    disk: string;
+    path: string;
+    total_size: number;
+    backup_count: number;
+    mysql_path: string;
+    mysqldump_path: string;
+  };
 }
 
-const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
+const BackupSettings: React.FC<BackupSettingsProps> = ({ backups, diskConfig }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [isRestoring, setIsRestoring] = useState<string | null>(null);
+  const [compressBackup, setCompressBackup] = useState(false);
+  const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedBackupForRestore, setSelectedBackupForRestore] = useState<string | null>(null);
+  const [selectedBackupForDelete, setSelectedBackupForDelete] = useState<string | null>(null);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -36,13 +60,13 @@ const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const formatDate = (timestamp: number): string => {
-    return new Date(timestamp * 1000).toLocaleString();
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleString();
   };
 
   const handleCreateBackup = () => {
     setIsCreating(true);
-    router.post('/settings/backup', {}, {
+    router.post('/settings/backup', { compress: compressBackup }, {
       onFinish: () => setIsCreating(false),
     });
   };
@@ -52,16 +76,43 @@ const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
   };
 
   const handleDeleteBackup = (filename: string) => {
-    if (confirm('Are you sure you want to delete this backup? This action cannot be undone.')) {
-      setIsDeleting(filename);
-      router.delete(`/settings/backup/${filename}`, {
-        onFinish: () => setIsDeleting(null),
+    setSelectedBackupForDelete(filename);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (selectedBackupForDelete) {
+      setIsDeleting(selectedBackupForDelete);
+      router.delete(`/settings/backup/${selectedBackupForDelete}`, {
+        onFinish: () => {
+          setIsDeleting(null);
+          setDeleteDialogOpen(false);
+          setSelectedBackupForDelete(null);
+        },
+      });
+    }
+  };
+
+  const handleRestoreBackup = (filename: string) => {
+    setSelectedBackupForRestore(filename);
+    setRestoreDialogOpen(true);
+  };
+
+  const confirmRestore = () => {
+    if (selectedBackupForRestore) {
+      setIsRestoring(selectedBackupForRestore);
+      router.post('/settings/backup/restore', { filename: selectedBackupForRestore }, {
+        onFinish: () => {
+          setIsRestoring(null);
+          setRestoreDialogOpen(false);
+          setSelectedBackupForRestore(null);
+        },
       });
     }
   };
 
   return (
-    <Layout title="Backup & Maintenance">
+    <Layout title="Backup & Maintenance - Manage database backups and system maintenance">
       <div className="space-y-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
@@ -87,21 +138,32 @@ const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
             <CardTitle>Backup Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4">
-              <Button
-                onClick={handleCreateBackup}
-                disabled={isCreating}
-                className="flex items-center gap-2"
-              >
-                <CreateIcon className="h-4 w-4" />
-                {isCreating ? 'Creating Backup...' : 'Create Backup'}
-              </Button>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="compress-backup"
+                  checked={compressBackup}
+                  onCheckedChange={setCompressBackup}
+                />
+                <Label htmlFor="compress-backup">Compress backup (saves space)</Label>
+              </div>
               
-              <Button variant="outline" asChild>
-                <InertiaLink href="/settings">
-                  Back to Settings
-                </InertiaLink>
-              </Button>
+              <div className="flex gap-4">
+                <Button
+                  onClick={handleCreateBackup}
+                  disabled={isCreating}
+                  className="flex items-center gap-2"
+                >
+                  <CreateIcon className="h-4 w-4" />
+                  {isCreating ? 'Creating Backup...' : 'Create Backup'}
+                </Button>
+                
+                <Button variant="outline" asChild>
+                  <InertiaLink href="/settings">
+                    Back to Settings
+                  </InertiaLink>
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -124,13 +186,22 @@ const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
               <div className="space-y-4">
                 {backups.map((backup) => (
                   <div
-                    key={backup.name}
+                    key={backup.filename}
                     className="flex items-center justify-between p-4 border rounded-lg"
                   >
                     <div className="flex items-center gap-4">
-                      <BackupIcon className="h-8 w-8 text-primary" />
+                      {backup.is_compressed ? (
+                        <ArchiveIcon className="h-8 w-8 text-primary" />
+                      ) : (
+                        <BackupIcon className="h-8 w-8 text-primary" />
+                      )}
                       <div>
-                        <h3 className="font-medium">{backup.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium">{backup.filename}</h3>
+                          {backup.is_compressed && (
+                            <Badge variant="secondary" className="text-xs">Compressed</Badge>
+                          )}
+                        </div>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span>{formatFileSize(backup.size)}</span>
                           <span>•</span>
@@ -143,7 +214,7 @@ const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDownloadBackup(backup.name)}
+                        onClick={() => handleDownloadBackup(backup.filename)}
                         className="flex items-center gap-2"
                       >
                         <DownloadIcon className="h-4 w-4" />
@@ -153,12 +224,23 @@ const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDeleteBackup(backup.name)}
-                        disabled={isDeleting === backup.name}
+                        onClick={() => handleRestoreBackup(backup.filename)}
+                        disabled={isRestoring === backup.filename}
+                        className="flex items-center gap-2"
+                      >
+                        <RestoreIcon className="h-4 w-4" />
+                        {isRestoring === backup.filename ? 'Restoring...' : 'Restore'}
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteBackup(backup.filename)}
+                        disabled={isDeleting === backup.filename}
                         className="flex items-center gap-2 text-destructive hover:text-destructive"
                       >
                         <DeleteIcon className="h-4 w-4" />
-                        {isDeleting === backup.name ? 'Deleting...' : 'Delete'}
+                        {isDeleting === backup.filename ? 'Deleting...' : 'Delete'}
                       </Button>
                     </div>
                   </div>
@@ -197,6 +279,31 @@ const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
                 </ul>
               </div>
             </div>
+            
+            <div className="mt-6 pt-6 border-t">
+              <h4 className="font-medium mb-3">System Configuration</h4>
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Database className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">MySQL Path:</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground bg-gray-50 p-2 rounded font-mono">
+                    {diskConfig.mysql_path || 'Not detected'}
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <SettingsIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">mysqldump Path:</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground bg-gray-50 p-2 rounded font-mono">
+                    {diskConfig.mysqldump_path || 'Not detected'}
+                  </div>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -233,6 +340,104 @@ const BackupSettings: React.FC<BackupSettingsProps> = ({ backups }) => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Restore Confirmation Dialog */}
+        <Dialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Database Restore</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to restore the database from this backup? This action will replace all current data and cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <WarningIcon className="h-5 w-5 text-red-600 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-red-900">Warning</h4>
+                    <p className="text-sm text-red-700 mt-1">
+                      This will completely replace your current database with the backup data. All current data will be lost.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {selectedBackupForRestore && (
+                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm font-medium">Selected backup:</p>
+                  <p className="text-sm text-gray-600">{selectedBackupForRestore}</p>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setRestoreDialogOpen(false)}
+                disabled={isRestoring === selectedBackupForRestore}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={confirmRestore}
+                disabled={isRestoring === selectedBackupForRestore}
+                className="flex items-center gap-2"
+              >
+                <RestoreIcon className="h-4 w-4" />
+                {isRestoring === selectedBackupForRestore ? 'Restoring...' : 'Restore Database'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Backup Deletion</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this backup? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <WarningIcon className="h-5 w-5 text-orange-600 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-orange-900">Warning</h4>
+                    <p className="text-sm text-orange-700 mt-1">
+                      This will permanently delete the backup file. Make sure you have downloaded it if needed.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {selectedBackupForDelete && (
+                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm font-medium">Selected backup:</p>
+                  <p className="text-sm text-gray-600">{selectedBackupForDelete}</p>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDeleteDialogOpen(false)}
+                disabled={isDeleting === selectedBackupForDelete}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={confirmDelete}
+                disabled={isDeleting === selectedBackupForDelete}
+                className="flex items-center gap-2"
+              >
+                <DeleteIcon className="h-4 w-4" />
+                {isDeleting === selectedBackupForDelete ? 'Deleting...' : 'Delete Backup'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );

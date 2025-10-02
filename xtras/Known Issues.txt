@@ -24,7 +24,7 @@ Aproval for Purchase & Sales is missing
 
 Backup & Maintenance not Working
 
-Breadcrumb Subtitle should implement
+SMTP Email configuration, test direct email and queue email and option to set email address before test
 
 Cash expense income managment missing
 
