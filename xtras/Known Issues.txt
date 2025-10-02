@@ -26,6 +26,8 @@ Backup & Maintenance not Working
 
 SMTP Email configuration, test direct email and queue email and option to set email address before test
 
+Job management
+
 Cash expense income managment missing
 
 Bank transaction missing 

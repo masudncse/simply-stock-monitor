@@ -11,6 +11,7 @@ import {
   Shield as SecurityIcon,
   Database as BackupIcon,
   Palette as PaletteIcon,
+  Mail as MailIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
@@ -45,11 +46,18 @@ const SettingsIndex: React.FC = () => {
       color: 'text-purple-600',
     },
     {
+      title: 'Email Settings',
+      description: 'Configure SMTP settings and test email functionality',
+      icon: <MailIcon className="h-10 w-10" />,
+      href: '/settings/email',
+      color: 'text-red-600',
+    },
+    {
       title: 'Backup & Maintenance',
       description: 'Database backup, maintenance, and system health',
       icon: <BackupIcon className="h-10 w-10" />,
       href: '/settings/backup',
-      color: 'text-red-600',
+      color: 'text-indigo-600',
     },
     {
       title: 'Appearance',

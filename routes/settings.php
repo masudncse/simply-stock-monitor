@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Settings\AppearanceController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\Settings\CompanyController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
@@ -60,6 +61,12 @@ Route::middleware('auth')->group(function () {
     Route::get('settings/roles/{role}/edit', [RolesController::class, 'edit'])->name('settings.roles.edit');
     Route::put('settings/roles/{role}', [RolesController::class, 'update'])->name('settings.roles.update');
     Route::delete('settings/roles/{role}', [RolesController::class, 'destroy'])->name('settings.roles.destroy');
+
+    // Email configuration
+    Route::get('settings/email', [EmailController::class, 'index'])->name('settings.email');
+    Route::post('settings/email', [EmailController::class, 'update'])->name('settings.email.update');
+    Route::post('settings/email/test-direct', [EmailController::class, 'testDirect'])->name('settings.email.test.direct');
+    Route::post('settings/email/test-queued', [EmailController::class, 'testQueued'])->name('settings.email.test.queued');
 
     // Backup and maintenance
     Route::get('settings/backup', [BackupController::class, 'index'])->name('settings.backup');
