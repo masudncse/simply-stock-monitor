@@ -9,7 +9,7 @@ All statuses should colored accordintly status
 Search items should justify start
 
 http://127.0.0.1:8000/accounts
-Trial Balance Not Working
+Trial Balance Not Working ✅ FIXED - Properly handles account types and opening balances
 
 http://127.0.0.1:8000/reports/purchases
 Export CSV Issue
@@ -44,17 +44,3 @@ Enhancement:
 - Payment history timeline
 - Remaining balance alerts
 - Auto-calculate next due date
-
-
-Credit Notes & Refunds 🧾
-What: Issue credit notes for returns/discounts
-Why:
-Handle returns professionally
-Track refunded amounts
-Maintain accurate accounting
-Customer satisfaction
-Accounting Impact:
-
-
-
-

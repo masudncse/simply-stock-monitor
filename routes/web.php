@@ -78,6 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Sale Returns
     Route::resource('sale-returns', SaleReturnController::class);
     Route::post('sale-returns/{saleReturn}/approve', [SaleReturnController::class, 'approve'])->name('sale-returns.approve');
+    Route::post('sale-returns/{saleReturn}/process-refund', [SaleReturnController::class, 'processRefund'])->name('sale-returns.process-refund');
     Route::get('sale-returns/{saleReturn}/print', [SaleReturnController::class, 'print'])->name('sale-returns.print');
     
     // Purchase Returns

@@ -181,6 +181,55 @@ class SaleReturnService
     }
 
     /**
+     * Process refund for sale return
+     */
+    public function processRefund(SaleReturn $saleReturn, array $refundData): SaleReturn
+    {
+        if ($saleReturn->refund_status === 'completed') {
+            throw new \Exception('Refund already processed');
+        }
+
+        return DB::transaction(function () use ($saleReturn, $refundData) {
+            // Update refund details
+            $saleReturn->update([
+                'refund_status' => 'completed',
+                'refund_method' => $refundData['refund_method'],
+                'refund_date' => $refundData['refund_date'],
+                'refunded_amount' => $refundData['refunded_amount'],
+            ]);
+
+            // Create refund transaction if cash/bank refund
+            if (in_array($refundData['refund_method'], ['cash', 'bank'])) {
+                $this->createRefundTransaction($saleReturn, $refundData);
+            }
+
+            return $saleReturn;
+        });
+    }
+
+    /**
+     * Create refund transaction (for cash/bank refunds)
+     */
+    protected function createRefundTransaction(SaleReturn $saleReturn, array $refundData): void
+    {
+        $accountCode = $refundData['refund_method'] === 'cash' ? '1000' : '1100';
+        $account = Account::where('code', $accountCode)->first();
+
+        if ($account) {
+            Transaction::create([
+                'account_id' => $account->id,
+                'transaction_date' => $refundData['refund_date'],
+                'reference_type' => 'sale_return_refund',
+                'reference_id' => $saleReturn->id,
+                'debit' => 0,
+                'credit' => $refundData['refunded_amount'],
+                'description' => "Refund for return #{$saleReturn->return_number} ({$refundData['refund_method']})",
+                'created_by' => auth()->id(),
+            ]);
+        }
+    }
+
+    /**
      * Delete a sale return
      */
     public function deleteSaleReturn(SaleReturn $saleReturn): void
@@ -195,4 +244,5 @@ class SaleReturnService
         });
     }
 }
+
 

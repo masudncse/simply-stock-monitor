@@ -164,4 +164,23 @@ class SaleReturnController extends Controller
             'saleReturn' => $saleReturn,
         ]);
     }
+
+    /**
+     * Process refund for sale return
+     */
+    public function processRefund(Request $request, SaleReturn $saleReturn)
+    {
+        $this->authorize('approve-sale-returns');
+
+        $validated = $request->validate([
+            'refund_method' => 'required|in:cash,bank,credit_account',
+            'refund_date' => 'required|date',
+            'refunded_amount' => 'required|numeric|min:0',
+        ]);
+
+        $this->saleReturnService->processRefund($saleReturn, $validated);
+
+        return redirect()->back()
+            ->with('success', 'Refund processed successfully.');
+    }
 }

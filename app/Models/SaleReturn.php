@@ -21,6 +21,10 @@ class SaleReturn extends Model
         'tax_amount',
         'total_amount',
         'status',
+        'refund_status',
+        'refund_method',
+        'refund_date',
+        'refunded_amount',
         'reason',
         'notes',
         'created_by',
@@ -31,9 +35,11 @@ class SaleReturn extends Model
         'customer_id' => 'integer',
         'warehouse_id' => 'integer',
         'return_date' => 'date',
+        'refund_date' => 'date',
         'subtotal' => 'float',
         'tax_amount' => 'float',
         'total_amount' => 'float',
+        'refunded_amount' => 'float',
     ];
 
     public function sale(): BelongsTo

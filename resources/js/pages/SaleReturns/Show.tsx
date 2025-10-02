@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ArrowLeft,
   Edit,
   Check,
   Trash2,
   Printer,
+  DollarSign,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { index as indexRoute, edit as editRoute, approve as approveRoute, destroy as destroyRoute } from '@/routes/sale-returns';
+import { index as indexRoute, edit as editRoute, approve as approveRoute, destroy as destroyRoute, processRefund as processRefundRoute } from '@/routes/sale-returns';
 
 interface SaleReturn {
   id: number;
@@ -35,6 +39,10 @@ interface SaleReturn {
   tax_amount: number;
   total_amount: number;
   status: string;
+  refund_status: string;
+  refund_method?: string;
+  refund_date?: string;
+  refunded_amount: number;
   reason?: string;
   notes?: string;
   items: {
@@ -61,6 +69,13 @@ interface SaleReturnShowProps {
 }
 
 export default function SaleReturnShow({ saleReturn }: SaleReturnShowProps) {
+  const [showRefundForm, setShowRefundForm] = useState(false);
+  const [refundData, setRefundData] = useState({
+    refund_method: 'cash',
+    refund_date: new Date().toISOString().split('T')[0],
+    refunded_amount: saleReturn.total_amount,
+  });
+
   const handleApprove = () => {
     if (confirm('Are you sure you want to approve this return? Stock will be adjusted.')) {
       router.post(approveRoute.url({ saleReturn: saleReturn.id }));
@@ -69,7 +84,14 @@ export default function SaleReturnShow({ saleReturn }: SaleReturnShowProps) {
 
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this return?')) {
-      router.delete(destroyRoute.url({ saleReturn: saleReturn.id }));
+      router.delete(destroyRoute.url({ sale_return: saleReturn.id }));
+    }
+  };
+
+  const handleProcessRefund = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (confirm(`Process refund of $${refundData.refunded_amount} via ${refundData.refund_method}?`)) {
+      router.post(processRefundRoute.url({ saleReturn: saleReturn.id }), refundData);
     }
   };
 
@@ -80,9 +102,23 @@ export default function SaleReturnShow({ saleReturn }: SaleReturnShowProps) {
       case 'pending':
         return 'bg-yellow-500';
       case 'approved':
+      case 'completed':
         return 'bg-green-500';
       default:
         return 'bg-gray-500';
+    }
+  };
+
+  const getRefundStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'default';
+      case 'completed':
+        return 'default';
+      case 'not_required':
+        return 'secondary';
+      default:
+        return 'secondary';
     }
   };
 
@@ -103,7 +139,7 @@ export default function SaleReturnShow({ saleReturn }: SaleReturnShowProps) {
             </Button>
             {saleReturn.status === 'draft' && (
               <>
-                <Button onClick={() => router.visit(editRoute.url({ saleReturn: saleReturn.id }))}>
+                <Button onClick={() => router.visit(editRoute.url({ sale_return: saleReturn.id }))}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
                 </Button>
@@ -185,6 +221,105 @@ export default function SaleReturnShow({ saleReturn }: SaleReturnShowProps) {
             </CardContent>
           </Card>
         </div>
+
+        {/* Refund Management */}
+        {saleReturn.status === 'approved' && (
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Refund Management</CardTitle>
+                <Badge variant={getRefundStatusColor(saleReturn.refund_status)}>
+                  {saleReturn.refund_status === 'pending' && 'Refund Pending'}
+                  {saleReturn.refund_status === 'completed' && 'Refund Completed'}
+                  {saleReturn.refund_status === 'not_required' && 'No Refund Required'}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {saleReturn.refund_status === 'completed' ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Refund Method</p>
+                    <p className="font-medium capitalize">{saleReturn.refund_method}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Refund Date</p>
+                    <p className="font-medium">{saleReturn.refund_date ? new Date(saleReturn.refund_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Refunded Amount</p>
+                    <p className="font-bold text-lg text-green-600">${saleReturn.refunded_amount.toFixed(2)}</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {!showRefundForm ? (
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">
+                        Refund of ${saleReturn.total_amount.toFixed(2)} needs to be processed
+                      </p>
+                      <Button onClick={() => setShowRefundForm(true)}>
+                        <DollarSign className="mr-2 h-4 w-4" />
+                        Process Refund
+                      </Button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleProcessRefund} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="refund_method">Refund Method *</Label>
+                          <Select
+                            value={refundData.refund_method}
+                            onValueChange={(value) => setRefundData({ ...refundData, refund_method: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="cash">Cash</SelectItem>
+                              <SelectItem value="bank">Bank Transfer</SelectItem>
+                              <SelectItem value="credit_account">Credit to Customer Account</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="refund_date">Refund Date *</Label>
+                          <Input
+                            id="refund_date"
+                            type="date"
+                            value={refundData.refund_date}
+                            onChange={(e) => setRefundData({ ...refundData, refund_date: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="refunded_amount">Refund Amount *</Label>
+                          <Input
+                            id="refunded_amount"
+                            type="number"
+                            step="0.01"
+                            value={refundData.refunded_amount}
+                            onChange={(e) => setRefundData({ ...refundData, refunded_amount: parseFloat(e.target.value) })}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button type="submit" className="bg-green-600 hover:bg-green-700">
+                          <Check className="mr-2 h-4 w-4" />
+                          Confirm Refund
+                        </Button>
+                        <Button type="button" variant="outline" onClick={() => setShowRefundForm(false)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </form>
+                  )}
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Return Items */}
         <Card>

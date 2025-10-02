@@ -70,7 +70,16 @@ class AccountService
         $debitTotal = $account->transactions()->sum('debit');
         $creditTotal = $account->transactions()->sum('credit');
         
-        return $debitTotal - $creditTotal;
+        // Add opening balance
+        $openingBalance = $account->opening_balance ?? 0;
+        
+        // For assets and expenses: Debit increases, Credit decreases
+        // For liabilities, equity, and income: Credit increases, Debit decreases
+        if (in_array($account->type, ['asset', 'expense'])) {
+            return $openingBalance + $debitTotal - $creditTotal;
+        } else {
+            return $openingBalance + $creditTotal - $debitTotal;
+        }
     }
 
     /**
@@ -78,17 +87,37 @@ class AccountService
      */
     public function getTrialBalance(): array
     {
-        $accounts = Account::with('transactions')->get();
+        $accounts = Account::with('transactions')
+            ->where('is_active', true)
+            ->orderBy('code')
+            ->get();
+        
         $trialBalance = [];
 
         foreach ($accounts as $account) {
-            $balance = $this->calculateBalance($account);
+            $debitTotal = $account->transactions()->sum('debit');
+            $creditTotal = $account->transactions()->sum('credit');
+            $openingBalance = $account->opening_balance ?? 0;
             
-            if ($balance != 0) {
+            // Calculate balance based on account type
+            if (in_array($account->type, ['asset', 'expense'])) {
+                // Debit-normal accounts
+                $balance = $openingBalance + $debitTotal - $creditTotal;
+                $debit = $balance > 0 ? $balance : 0;
+                $credit = $balance < 0 ? abs($balance) : 0;
+            } else {
+                // Credit-normal accounts (liability, equity, income)
+                $balance = $openingBalance + $creditTotal - $debitTotal;
+                $debit = $balance < 0 ? abs($balance) : 0;
+                $credit = $balance > 0 ? $balance : 0;
+            }
+            
+            // Only include accounts with non-zero balance
+            if ($debit != 0 || $credit != 0) {
                 $trialBalance[] = [
                     'account' => $account,
-                    'debit' => $balance > 0 ? $balance : 0,
-                    'credit' => $balance < 0 ? abs($balance) : 0,
+                    'debit' => $debit,
+                    'credit' => $credit,
                 ];
             }
         }
