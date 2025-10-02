@@ -25,6 +25,7 @@ use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\BankTransactionController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ShipmentController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -117,6 +118,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('bank-transactions', [BankTransactionController::class, 'index'])->name('bank-transactions.index');
     Route::post('bank-transactions', [BankTransactionController::class, 'store'])->name('bank-transactions.store');
     Route::delete('bank-transactions/{bankTransaction}', [BankTransactionController::class, 'destroy'])->name('bank-transactions.destroy');
+    
+    // Shipments
+    Route::resource('shipments', ShipmentController::class);
+    Route::post('shipments/{shipment}/status', [ShipmentController::class, 'updateStatus'])->name('shipments.update-status');
+    Route::get('shipments/{shipment}/print', [ShipmentController::class, 'print'])->name('shipments.print');
         
         // Reports
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');

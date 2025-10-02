@@ -12,7 +12,6 @@ import {
   Building2 as BusinessIcon,
   Download as DownloadIcon,
   Filter as FilterIcon,
-  Printer as PrintIcon,
   AlertTriangle as WarningIcon,
   DollarSign,
   CreditCard,
@@ -76,10 +75,6 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
       report_type: 'supplier-outstanding',
       data: supplierList as any,
     });
-  };
-
-  const handlePrint = () => {
-    window.print();
   };
 
   const getCreditStatus = (supplier: SupplierOutstanding) => {
@@ -193,10 +188,6 @@ const SupplierOutstandingReport: React.FC<SupplierOutstandingReportProps> = ({
                 </Button>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={handlePrint}>
-                  <PrintIcon className="mr-2 h-4 w-4" />
-                  Print
-                </Button>
                 <Button variant="outline" onClick={exportReport}>
                   <DownloadIcon className="mr-2 h-4 w-4" />
                   Export CSV

@@ -23,8 +23,6 @@ Export CSV Issue
 Backup & Maintenance not Working
 SMTP Email configuration, test direct email and queue email and option to set email address before test
 
-Add delivery service like SA Poribahon, Redex etc...
-
 Email Invoicing & Automated Reminders 📧
 What: Send invoices directly to customers via email with payment reminders
 Add schedule in sales screen

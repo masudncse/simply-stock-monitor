@@ -76,17 +76,24 @@ class SaleService
                 throw new \Exception('Only draft or approved sales can be processed');
             }
 
-            // Check stock availability and reduce stock
-            foreach ($sale->items as $item) {
-                $this->reduceStockForSale($item, $sale->warehouse_id);
-            }
+            // Store original status before updating
+            $originalStatus = $sale->status;
 
-            // Update sale status
+            // Only reduce stock if sale is in draft status
+            // If already approved, stock was already reduced during approval
+            if ($originalStatus === 'draft') {
+                foreach ($sale->items as $item) {
+                    $this->reduceStockForSale($item, $sale->warehouse_id);
+                }
+                
+                // Create accounting transactions for draft sales
+                $this->createSaleTransactions($sale);
+            }
+            // If approved, stock and transactions were already handled during approval
+
+            // Update sale status to completed
             $sale->status = 'completed';
             $sale->save();
-
-            // Create accounting transactions
-            $this->createSaleTransactions($sale);
 
             return $sale;
         });

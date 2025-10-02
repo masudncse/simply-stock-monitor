@@ -48,6 +48,7 @@ import {
   Wallet as PaymentIcon,
   Landmark as BankIcon,
   ArrowLeftRight as TransactionIcon,
+  Truck as ShipmentIcon,
 } from 'lucide-react';
 
 const drawerWidth = 240;
@@ -74,6 +75,7 @@ const menuItems = [
   { text: 'Quotations', icon: <FileTextIcon className="h-5 w-5" />, href: '/quotations', section: 'Transactions' },
   { text: 'Sale Returns', icon: <ReturnIcon className="h-5 w-5" />, href: '/sale-returns', section: 'Transactions' },
   { text: 'Purchase Returns', icon: <ReturnIcon className="h-5 w-5" />, href: '/purchase-returns', section: 'Transactions' },
+  { text: 'Shipments', icon: <ShipmentIcon className="h-5 w-5" />, href: '/shipments', section: 'Transactions' },
   
   // Contacts
   { text: 'Customers', icon: <PeopleIcon className="h-5 w-5" />, href: '/customers', section: 'Contacts' },

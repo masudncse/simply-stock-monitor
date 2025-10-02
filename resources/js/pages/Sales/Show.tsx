@@ -10,6 +10,7 @@ import {
   Printer,
   Check,
   Undo2,
+  Truck as ShipmentIcon,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -81,6 +82,7 @@ interface SalesShowProps {
 
 export default function SalesShow({ sale }: SalesShowProps) {
   const [returnModalOpen, setReturnModalOpen] = useState(false);
+  const [shipmentModalOpen, setShipmentModalOpen] = useState(false);
   
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -162,13 +164,22 @@ export default function SalesShow({ sale }: SalesShowProps) {
               </>
             )}
             {(sale.status === 'approved' || sale.status === 'completed') && (
-              <Button
-                variant="outline"
-                onClick={() => setReturnModalOpen(true)}
-              >
-                <Undo2 className="mr-2 h-4 w-4" />
-                Create Return
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => setReturnModalOpen(true)}
+                >
+                  <Undo2 className="mr-2 h-4 w-4" />
+                  Create Return
+                </Button>
+                <Button
+                  onClick={() => router.visit(`/shipments/create?sale_id=${sale.id}`)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <ShipmentIcon className="mr-2 h-4 w-4" />
+                  Create Shipment
+                </Button>
+              </>
             )}
             <Button
               variant="outline"

@@ -99,6 +99,12 @@ class RolePermissionSeeder extends Seeder
             'create-bank-transactions',
             'delete-bank-transactions',
             
+            // Shipment permissions
+            'view-shipments',
+            'create-shipments',
+            'edit-shipments',
+            'delete-shipments',
+            
             // Report permissions
             'view-reports',
             'export-reports',
@@ -144,6 +150,9 @@ class RolePermissionSeeder extends Seeder
             'create-customers',
             'edit-customers',
             'view-warehouses',
+            'view-shipments',
+            'create-shipments',
+            'edit-shipments',
             'view-reports',
             'export-reports',
         ]);
