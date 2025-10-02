@@ -316,7 +316,7 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
                     setDateFrom('');
                     setDateTo('');
                     setPerPage(15);
-                    router.get('/purchases', {}, { preserveState: true, replace: true });
+                    router.get(indexRoute.url(), {}, { preserveState: true, replace: true });
                   }}>
                     Clear
                   </Button>

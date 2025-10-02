@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 import { cn } from '@/lib/utils';
+import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/customers';
 
 interface Customer {
   id: number;
@@ -76,7 +77,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
   const [customerToDelete, setCustomerToDelete] = useState<Customer | null>(null);
 
   const handleSearch = () => {
-    router.get('/customers', {
+    router.get(indexRoute.url(), {
       search: searchTerm,
       status: statusFilter === 'all' ? '' : statusFilter,
       per_page: perPage,
@@ -105,7 +106,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
     setSortDirection(newDirection);
     
     // Trigger search with new sort parameters
-    router.get('/customers', {
+    router.get(indexRoute.url(), {
       search: searchTerm,
       status: statusFilter === 'all' ? '' : statusFilter,
       per_page: perPage,
@@ -118,7 +119,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
   };
 
   const handlePageChange = (page: number) => {
-    router.get('/customers', {
+    router.get(indexRoute.url(), {
       search: searchTerm,
       status: statusFilter === 'all' ? '' : statusFilter,
       sort_by: sortBy,
@@ -141,7 +142,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
 
   const confirmDelete = () => {
     if (customerToDelete) {
-      router.delete(`/customers/${customerToDelete.id}`);
+      router.delete(destroyRoute.url({ customer: customerToDelete.id }));
     }
     setDeleteDialogOpen(false);
     setCustomerToDelete(null);
@@ -157,7 +158,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
               Manage your customer information and relationships
             </p>
           </div>
-          <Button onClick={() => router.visit('/customers/create')}>
+          <Button onClick={() => router.visit(createRoute.url())}>
             <AddIcon className="mr-2 h-4 w-4" />
             New Customer
           </Button>
@@ -221,7 +222,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
                   setSearchTerm('');
                   setStatusFilter('all');
                   setPerPage(15);
-                  router.get('/customers', {}, { preserveState: true, replace: true });
+                  router.get(indexRoute.url(), {}, { preserveState: true, replace: true });
                 }}>
                   Clear
                 </Button>

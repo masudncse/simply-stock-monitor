@@ -14,6 +14,8 @@ import {
   ArrowLeft as BackIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { update as updateRoute } from '@/routes/settings/company';
+import { index as settingsIndexRoute } from '@/routes/settings';
 import { type SharedData } from '@/types';
 
 interface CompanySettingsProps {
@@ -95,7 +97,7 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
       data.append('logo', logoFile);
     }
 
-    router.post('/settings/company', data, {
+    router.post(updateRoute.url(), data, {
       onFinish: () => setIsSubmitting(false),
       forceFormData: true,
     });
@@ -156,7 +158,7 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ settings }) => {
           </div>
           <Button
             variant="outline"
-            onClick={() => router.visit('/settings')}
+            onClick={() => router.visit(settingsIndexRoute.url())}
           >
             <BackIcon className="mr-2 h-4 w-4" />
             Back to Settings

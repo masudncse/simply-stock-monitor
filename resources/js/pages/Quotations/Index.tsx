@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { router, Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute } from '@/routes/quotations';
 
 interface Quotation {
   id: number;
@@ -98,7 +99,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
   };
 
   const handleSearch = () => {
-    router.get('/quotations', {
+    router.get(indexRoute.url(), {
       search: searchTerm || undefined,
       status: statusFilter === 'all' ? undefined : statusFilter,
       date_from: dateFrom || undefined,
@@ -113,7 +114,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
   };
 
   const handlePageChange = (page: number) => {
-    router.get('/quotations', {
+    router.get(indexRoute.url(), {
       search: searchTerm || undefined,
       status: statusFilter === 'all' ? undefined : statusFilter,
       date_from: dateFrom || undefined,
@@ -140,7 +141,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
     setSortDirection(newDirection);
     
     // Trigger search with new sort parameters
-    router.get('/quotations', {
+    router.get(indexRoute.url(), {
       search: searchTerm || undefined,
       status: statusFilter === 'all' ? undefined : statusFilter,
       date_from: dateFrom || undefined,
@@ -281,7 +282,7 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
                     setDateFrom('');
                     setDateTo('');
                     setPerPage(15);
-                    router.get('/quotations', {}, { preserveState: true, replace: true });
+                    router.get(indexRoute.url(), {}, { preserveState: true, replace: true });
                   }}>
                     Clear
                   </Button>

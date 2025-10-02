@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as settingsIndexRoute } from '@/routes/settings';
 import { useAppearance, type Appearance, type PrimaryColor } from '@/hooks/use-appearance';
 
 interface AppearanceSettings {
@@ -77,7 +78,7 @@ export default function Appearance({ settings: initialSettings }: AppearanceProp
   };
 
   const handleBack = () => {
-    router.visit('/settings');
+    router.visit(settingsIndexRoute.url());
   };
 
   return (

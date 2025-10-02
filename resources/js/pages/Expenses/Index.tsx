@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute, create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/expenses';
 
 interface Account {
   id: number;
@@ -68,7 +69,7 @@ export default function ExpensesIndex({ expenses, accounts, filters }: ExpensesI
   const [dateTo, setDateTo] = useState(filters.date_to || '');
 
   const handleSearch = () => {
-    router.get('/expenses', {
+    router.get(indexRoute.url(), {
       search: searchTerm,
       category: categoryFilter === 'all' ? undefined : categoryFilter,
       account_id: accountFilter === 'all' ? undefined : accountFilter,
@@ -81,12 +82,12 @@ export default function ExpensesIndex({ expenses, accounts, filters }: ExpensesI
   };
 
   const handlePageChange = (page: number) => {
-    router.get('/expenses', { ...filters, page });
+    router.get(indexRoute.url(), { ...filters, page });
   };
 
   const handleDelete = (expenseId: number) => {
     if (confirm('Are you sure you want to delete this expense?')) {
-      router.delete(`/expenses/${expenseId}`);
+      router.delete(destroyRoute.url({ expense: expenseId }));
     }
   };
 
@@ -100,7 +101,7 @@ export default function ExpensesIndex({ expenses, accounts, filters }: ExpensesI
               Track and manage business expenses
             </p>
           </div>
-          <Button onClick={() => router.visit('/expenses/create')}>
+          <Button onClick={() => router.visit(createRoute.url())}>
             <Plus className="mr-2 h-4 w-4" />
             New Expense
           </Button>
@@ -230,7 +231,7 @@ export default function ExpensesIndex({ expenses, accounts, filters }: ExpensesI
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => router.visit(`/expenses/${expense.id}/edit`)}
+                            onClick={() => router.visit(editRoute.url({ expense: expense.id }))}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>

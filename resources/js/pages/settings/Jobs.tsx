@@ -37,18 +37,18 @@ interface JobsProps {
 export default function Jobs({ jobs }: JobsProps) {
   const handleDelete = (jobId: number) => {
     if (confirm('Are you sure you want to delete this job?')) {
-      router.delete(`/settings/jobs/${jobId}`);
+      router.delete(destroyRoute.url({ job: jobId }));
     }
   };
 
   const handlePurgeAll = () => {
     if (confirm('Are you sure you want to delete ALL pending jobs? This action cannot be undone.')) {
-      router.post('/settings/jobs/purge');
+      router.post(purgeRoute.url());
     }
   };
 
   const handlePageChange = (page: number) => {
-    router.get('/settings/jobs', { page });
+    router.get(indexRoute.url(), { page });
   };
 
   return (

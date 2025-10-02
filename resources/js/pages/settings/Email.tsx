@@ -18,6 +18,7 @@ import {
   TestTube as TestIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { update as updateRoute } from '@/routes/settings/email';
 
 interface EmailSettingsProps {
   emailSettings: {
@@ -78,7 +79,7 @@ const EmailSettings: React.FC<EmailSettingsProps> = ({ emailSettings, flash, err
     setIsSaving(true);
     setTestResults(null);
 
-    router.post('/settings/email', settings, {
+    router.post(updateRoute.url(), settings, {
       onSuccess: () => {
         setTestResults({
           type: 'success',
@@ -109,7 +110,7 @@ const EmailSettings: React.FC<EmailSettingsProps> = ({ emailSettings, flash, err
     setIsTestingDirect(true);
     setTestResults(null);
 
-    router.post('/settings/email/test-direct', { test_email: testEmail }, {
+    router.post(testDirectRoute.url(), { test_email: testEmail }, {
       onSuccess: () => {
         setTestResults({
           type: 'success',

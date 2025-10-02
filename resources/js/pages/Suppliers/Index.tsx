@@ -219,7 +219,7 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
                     setSearchTerm('');
                     setStatusFilter('all');
                     setPerPage(15);
-                    router.get('/suppliers', {}, { preserveState: true, replace: true });
+                    router.get(indexRoute.url(), {}, { preserveState: true, replace: true });
                   }}>
                     Clear
                   </Button>

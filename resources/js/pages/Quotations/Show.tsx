@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { router, Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute } from '@/routes/quotations';
 
 interface QuotationItem {
   id: number;
@@ -128,7 +129,7 @@ export default function QuotationsShow({ quotation }: QuotationsShowProps) {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => router.visit('/quotations')}>
+            <Button variant="outline" onClick={() => router.visit(indexRoute.url())}>
               <BackIcon className="mr-2 h-4 w-4" />
               Back to Quotations
             </Button>

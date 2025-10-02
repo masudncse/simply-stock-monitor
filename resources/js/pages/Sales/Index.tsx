@@ -329,7 +329,7 @@ export default function SalesIndex({ sales, customers, filters }: SalesIndexProp
                     setDateFrom('');
                     setDateTo('');
                     setPerPage(15);
-                    router.get('/sales', {}, { preserveState: true, replace: true });
+                    router.get(indexRoute.url(), {}, { preserveState: true, replace: true });
                   }}>
                     Clear
                   </Button>

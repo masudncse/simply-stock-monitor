@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Upload, X, Star } from 'lucide-react';
 import { Link, useForm, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute } from '@/routes/products';
 import { update as updateRoute } from '@/routes/products';
 
 interface Category {
@@ -108,7 +109,7 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
           </div>
           <Button
             variant="outline"
-            onClick={() => router.visit('/products')}
+            onClick={() => router.visit(indexRoute.url())}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Products

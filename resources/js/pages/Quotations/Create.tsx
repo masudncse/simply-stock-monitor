@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { router, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute } from '@/routes/quotations';
 import { cn } from '@/lib/utils';
 
 interface Customer {
@@ -172,7 +173,7 @@ export default function QuotationsCreate({ customers, warehouses, products, taxR
               Create a new quotation for your customer
             </p>
           </div>
-          <Button variant="outline" onClick={() => router.visit('/quotations')}>
+          <Button variant="outline" onClick={() => router.visit(indexRoute.url())}>
             <BackIcon className="mr-2 h-4 w-4" />
             Back to Quotations
           </Button>
@@ -551,7 +552,7 @@ export default function QuotationsCreate({ customers, warehouses, products, taxR
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.visit('/quotations')}
+              onClick={() => router.visit(indexRoute.url())}
             >
               Cancel
             </Button>

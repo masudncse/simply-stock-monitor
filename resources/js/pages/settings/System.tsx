@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Settings, Save, AlertTriangle } from 'lucide-react';
 import Layout from '../../layouts/Layout';
+import { update as updateRoute } from '@/routes/settings/system';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 
 interface SystemSettingsProps {
@@ -60,7 +61,7 @@ const SystemSettings: React.FC<SystemSettingsProps> = ({ settings }) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    router.post('/settings/system', formData, {
+    router.post(updateRoute.url(), formData, {
       onFinish: () => setIsSubmitting(false),
     });
   };

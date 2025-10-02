@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { index as indexRoute } from '@/routes/sales';
 import { useToast } from '@/hooks/use-toast';
 
 interface Customer {
@@ -179,7 +180,7 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
           </h1>
           <Button
             variant="outline"
-            onClick={() => router.visit('/sales')}
+            onClick={() => router.visit(indexRoute.url())}
           >
             Back to Sales
           </Button>
@@ -478,7 +479,7 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
           <div className="flex justify-end gap-2">
             <Button
               variant="outline"
-              onClick={() => router.visit('/sales')}
+              onClick={() => router.visit(indexRoute.url())}
             >
               Cancel
             </Button>

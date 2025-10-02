@@ -265,7 +265,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                     setCategoryFilter('');
                     setStatusFilter('');
                     setPerPage(15);
-                    router.get('/products', {}, { preserveState: true, replace: true });
+                    router.get(indexRoute.url(), {}, { preserveState: true, replace: true });
                   }}>
                     Clear
                   </Button>
