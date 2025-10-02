@@ -175,6 +175,50 @@ class AccountController extends Controller
     }
 
     /**
+     * Show account ledger (transaction history)
+     */
+    public function ledger(Request $request, Account $account)
+    {
+        $this->authorize('view-accounts');
+
+        $transactions = $account->transactions()
+            ->with(['createdBy'])
+            ->when($request->date_from, function ($query, $dateFrom) {
+                $query->whereDate('transaction_date', '>=', $dateFrom);
+            })
+            ->when($request->date_to, function ($query, $dateTo) {
+                $query->whereDate('transaction_date', '<=', $dateTo);
+            })
+            ->orderBy('transaction_date', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate($request->get('per_page', 50))
+            ->appends($request->query());
+
+        // Calculate running balance
+        $runningBalance = $account->opening_balance;
+        $transactionsWithBalance = $transactions->getCollection()->map(function ($transaction) use (&$runningBalance) {
+            // For asset and expense accounts: debit increases, credit decreases
+            // For liability, equity, income: credit increases, debit decreases
+            if (in_array($account->type, ['asset', 'expense'])) {
+                $runningBalance += $transaction->debit - $transaction->credit;
+            } else {
+                $runningBalance += $transaction->credit - $transaction->debit;
+            }
+            
+            $transaction->balance = $runningBalance;
+            return $transaction;
+        });
+
+        $transactions->setCollection($transactionsWithBalance);
+
+        return Inertia::render('Accounts/Ledger', [
+            'account' => $account,
+            'transactions' => $transactions,
+            'filters' => $request->only(['date_from', 'date_to', 'per_page']),
+        ]);
+    }
+
+    /**
      * Search accounts for combobox/autocomplete
      */
     public function searchAccounts(Request $request)

@@ -6,11 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import {
   Edit as EditIcon,
   ArrowLeft as BackIcon,
+  FileText as LedgerIcon,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { type BreadcrumbItem } from '@/types';
-import { index as indexRoute, edit as editRoute } from '@/routes/accounts';
+import { index as indexRoute, edit as editRoute, ledger as ledgerRoute } from '@/routes/accounts';
 
 interface Account {
   id: number;
@@ -75,6 +76,10 @@ export default function AccountsShow({ account, balance }: AccountsShowProps) {
             </p>
           </div>
           <div className="flex gap-2">
+            <Button onClick={() => router.visit(ledgerRoute.url({ account: account.id }))} className="bg-blue-600 hover:bg-blue-700">
+              <LedgerIcon className="mr-2 h-4 w-4" />
+              View Ledger
+            </Button>
             <Button onClick={handleEdit}>
               <EditIcon className="mr-2 h-4 w-4" />
               Edit Account

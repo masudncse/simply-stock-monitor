@@ -17,6 +17,7 @@ import {
   ArrowUpDown as SortIcon,
   ArrowUp as SortAscIcon,
   ArrowDown as SortDescIcon,
+  DollarSign,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -148,10 +149,16 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
               Manage your supplier relationships and contact information
             </p>
           </div>
-          <Button onClick={() => router.visit(createRoute.url())}>
-            <AddIcon className="mr-2 h-4 w-4" />
-            New Supplier
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => router.visit('/reports/supplier-outstanding')} className="bg-red-50 hover:bg-red-100">
+              <DollarSign className="mr-2 h-4 w-4" />
+              Payables
+            </Button>
+            <Button onClick={() => router.visit(createRoute.url())}>
+              <AddIcon className="mr-2 h-4 w-4" />
+              New Supplier
+            </Button>
+          </div>
         </div>
 
         {/* Filters */}

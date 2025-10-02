@@ -27,6 +27,7 @@ import {
   ArrowUpDown as SortIcon,
   ArrowUp as SortAscIcon,
   ArrowDown as SortDescIcon,
+  DollarSign,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 import { cn } from '@/lib/utils';
@@ -158,10 +159,16 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
               Manage your customer information and relationships
             </p>
           </div>
-          <Button onClick={() => router.visit(createRoute.url())}>
-            <AddIcon className="mr-2 h-4 w-4" />
-            New Customer
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => router.visit('/reports/customer-outstanding')} className="bg-orange-50 hover:bg-orange-100">
+              <DollarSign className="mr-2 h-4 w-4" />
+              Receivables
+            </Button>
+            <Button onClick={() => router.visit(createRoute.url())}>
+              <AddIcon className="mr-2 h-4 w-4" />
+              New Customer
+            </Button>
+          </div>
         </div>
 
         {/* Filters */}

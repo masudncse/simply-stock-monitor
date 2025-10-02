@@ -23,12 +23,6 @@ Export CSV Issue
 Backup & Maintenance not Working
 SMTP Email configuration, test direct email and queue email and option to set email address before test
 
-Every business action creates accounting entries:
-Sale → Records revenue & reduces inventory
-Purchase → Increases inventory & creates payable
-Payment → Reduces cash & reduces payable/receivable
-Expense → Records cost & reduces cash
-
 Add delivery service like SA Poribahon, Redex etc...
 
 Email Invoicing & Automated Reminders 📧

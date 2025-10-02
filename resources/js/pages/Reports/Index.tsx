@@ -10,6 +10,7 @@ import {
   TrendingUp as TrendingUpIcon,
   Users as PeopleIcon,
   Building2 as BusinessIcon,
+  Scale as TrialBalanceIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
@@ -56,6 +57,13 @@ const ReportsIndex: React.FC = () => {
       icon: <BusinessIcon className="h-10 w-10" />,
       href: '/reports/supplier-outstanding',
       color: 'text-amber-600',
+    },
+    {
+      title: 'Trial Balance',
+      description: 'Complete list of all accounts with debit and credit balances',
+      icon: <TrialBalanceIcon className="h-10 w-10" />,
+      href: '/accounts/trial-balance',
+      color: 'text-indigo-600',
     },
   ];
 

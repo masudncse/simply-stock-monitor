@@ -12,6 +12,7 @@ import {
   Users as PeopleIcon,
   Download as DownloadIcon,
   Filter as FilterIcon,
+  Printer as PrintIcon,
   AlertTriangle as WarningIcon,
   DollarSign,
   CreditCard,
@@ -75,6 +76,10 @@ const CustomerOutstandingReport: React.FC<CustomerOutstandingReportProps> = ({
       report_type: 'customer-outstanding',
       data: customerList as any,
     });
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   const getCreditStatus = (customer: CustomerOutstanding) => {
@@ -193,10 +198,16 @@ const CustomerOutstandingReport: React.FC<CustomerOutstandingReportProps> = ({
           <h2 className="text-xl font-semibold">
             Customer Outstanding Details ({customerList.length} customers)
           </h2>
-          <Button onClick={exportReport}>
-            <DownloadIcon className="mr-2 h-4 w-4" />
-            Export CSV
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handlePrint}>
+              <PrintIcon className="mr-2 h-4 w-4" />
+              Print
+            </Button>
+            <Button onClick={exportReport}>
+              <DownloadIcon className="mr-2 h-4 w-4" />
+              Export CSV
+            </Button>
+          </div>
         </div>
 
         {/* Customer Outstanding Table */}
