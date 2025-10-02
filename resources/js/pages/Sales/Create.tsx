@@ -13,6 +13,7 @@ import {
   Trash2,
   Save,
   UserPlus,
+  ArrowLeft,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -172,16 +173,20 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
   const totals = calculateTotals();
 
   return (
-    <Layout>
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">
-            Create Sale
-          </h1>
+    <Layout title="Create Sale - Create a new sale transaction">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Create Sale</h1>
+            <p className="text-muted-foreground">
+              Create a new sale transaction and manage inventory
+            </p>
+          </div>
           <Button
             variant="outline"
             onClick={() => router.visit(indexRoute.url())}
           >
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Sales
           </Button>
         </div>

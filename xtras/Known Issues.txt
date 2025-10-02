@@ -26,13 +26,6 @@ SMTP Email configuration, test direct email and queue email and option to set em
 Email Invoicing & Automated Reminders 📧
 - Scheduled reminders (3 days before due, on due date, 3 days after)
 
-
-// Add to Product module:
-- Auto-generate barcode from SKU
-- Support multiple formats (Code 128, EAN-13, QR)
-- Print individual or bulk labels
-- Integration with existing barcode scanning
-
 Generate bill for due amount by customer and daily, weekly, monthly billing system 
 
 
@@ -61,29 +54,6 @@ Track refunded amounts
 Maintain accurate accounting
 Customer satisfaction
 Accounting Impact:
-
-Credit Note issued:
-Debit:  Sales Returns (5100)
-Credit: Accounts Receivable
-
-
-Sales Commission Tracking 💵
-What: Calculate and track sales person commissions
-Why:
-Motivates sales team
-Transparent commission reports
-Auto-calculate based on sales
-Performance tracking
-Features:
-
-// Add to Sales:
-- Assign salesperson to sale
-- Commission % or fixed amount
-- Monthly commission reports
-- Outstanding vs paid commissions
-
-
-
 
 
 

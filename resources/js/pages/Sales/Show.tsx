@@ -128,19 +128,22 @@ export default function SalesShow({ sale }: SalesShowProps) {
   };
 
   return (
-    <Layout>
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">
-            Sale Details
-          </h1>
+    <Layout title="Sale Details - View sale transaction information">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Sale Details</h1>
+            <p className="text-muted-foreground">
+              {sale.invoice_number} • {sale.customer?.name || 'Walk-in Customer'}
+            </p>
+          </div>
           <div className="flex gap-2">
             <Button
               variant="outline"
               onClick={() => router.visit(indexRoute.url())}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
+              Back to Sales
             </Button>
             {sale.status === 'draft' && (
               <>
