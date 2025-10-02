@@ -164,7 +164,7 @@ export default function SuppliersIndex({ suppliers, filters }: SuppliersIndexPro
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Filters</CardTitle>
+            <CardTitle>Filter & Search</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-4">

@@ -110,7 +110,7 @@ export default function ExpensesIndex({ expenses, accounts, filters }: ExpensesI
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Filter Expenses</CardTitle>
+            <CardTitle>Filter & Search</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">

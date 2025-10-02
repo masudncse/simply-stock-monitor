@@ -169,7 +169,7 @@ export default function TransactionsIndex({ transactions, accounts, filters }: T
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Filter Transactions</CardTitle>
+            <CardTitle>Filter & Search</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

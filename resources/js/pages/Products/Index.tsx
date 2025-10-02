@@ -242,7 +242,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Filters</CardTitle>
+            <CardTitle>Filter & Search</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-6">

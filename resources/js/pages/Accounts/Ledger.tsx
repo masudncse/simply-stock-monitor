@@ -160,7 +160,7 @@ export default function Ledger({ account, transactions, filters }: LedgerProps) 
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Filter Transactions</CardTitle>
+            <CardTitle>Filter & Search</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

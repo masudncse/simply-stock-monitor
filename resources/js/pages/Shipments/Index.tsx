@@ -150,7 +150,7 @@ export default function ShipmentsIndex({ shipments, filters }: ShipmentsIndexPro
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Filter Shipments</CardTitle>
+            <CardTitle>Filter & Search</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">

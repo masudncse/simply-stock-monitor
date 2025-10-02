@@ -174,7 +174,7 @@ export default function CustomersIndex({ customers, filters }: CustomersIndexPro
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Filter Customers</CardTitle>
+            <CardTitle>Filter & Search</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 items-end">

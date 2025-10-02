@@ -110,7 +110,7 @@ export default function PurchaseReturnsIndex({ returns, filters }: PurchaseRetur
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Filter Returns</CardTitle>
+            <CardTitle>Filter & Search</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
