@@ -45,7 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Barcode Routes
     Route::post('products/{product}/generate-barcode', [ProductController::class, 'generateBarcode'])->name('products.generate-barcode');
     Route::get('products/{product}/barcode-image', [ProductController::class, 'getBarcodeImage'])->name('products.barcode-image');
-    Route::post('products/print-barcode-labels', [ProductController::class, 'printBarcodeLabels'])->name('products.print-barcode-labels');
+    Route::match(['get', 'post'], 'products/print-barcode-labels', [ProductController::class, 'printBarcodeLabels'])->name('products.print-barcode-labels');
     Route::get('barcode-formats', [ProductController::class, 'getBarcodeFormats'])->name('barcode-formats');
     
     // Warehouses

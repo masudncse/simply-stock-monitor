@@ -11,7 +11,8 @@ import {
 } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Search, Trash2, X, Printer, Plus } from 'lucide-react';
+import { CategoryCombobox } from '@/components/CategoryCombobox';
+import { Search, Trash2, X, Printer, Plus, Filter } from 'lucide-react';
 import { useBarcodeQueue } from '@/hooks/useBarcodeQueue';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
@@ -23,6 +24,10 @@ interface Product {
   price: number;
   barcode?: string;
   unit: string;
+  category?: {
+    id: number;
+    name: string;
+  };
 }
 
 interface BarcodeQueueModalProps {
@@ -31,25 +36,28 @@ interface BarcodeQueueModalProps {
 }
 
 export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
-  const { queue, addToQueue, removeFromQueue, clearQueue, isInQueue, getQueueIds } = useBarcodeQueue();
+  const { queue, addToQueue, updateQuantity, removeFromQueue, clearQueue, isInQueue, getQueueWithQuantities, getTotalLabels } = useBarcodeQueue();
   const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    if (searchTerm.length > 1) {
-      searchProducts(searchTerm);
+    if (searchTerm.length > 1 || categoryFilter) {
+      searchProducts();
     } else {
       setSearchResults([]);
     }
-  }, [searchTerm]);
+  }, [searchTerm, categoryFilter]);
 
-  const searchProducts = async (term: string) => {
+  const searchProducts = async () => {
     setIsSearching(true);
     try {
-      const response = await axios.get('/products-api/search', {
-        params: { search: term }
-      });
+      const params: any = {};
+      if (searchTerm) params.search = searchTerm;
+      if (categoryFilter) params.category_id = categoryFilter;
+      
+      const response = await axios.get('/products-api/search', { params });
       setSearchResults(response.data.products || []);
     } catch (error) {
       console.error('Failed to search products:', error);
@@ -66,7 +74,12 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
       price: product.price,
       barcode: product.barcode,
     });
+    // Don't clear search - keep results visible
+  };
+
+  const handleClearSearch = () => {
     setSearchTerm('');
+    setCategoryFilter('');
     setSearchResults([]);
   };
 
@@ -75,16 +88,16 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
       alert('No products in queue');
       return;
     }
-
+    
     router.post('/products/print-barcode-labels', {
-      product_ids: getQueueIds(),
+      products: getQueueWithQuantities(),
       format: 'png'
     });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-7xl w-[95vw] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>Barcode Print Queue</DialogTitle>
           <DialogDescription>
@@ -96,15 +109,35 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
           {/* Search Section */}
           <div className="space-y-2">
             <Label htmlFor="product-search">Search Products to Add</Label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="product-search"
-                placeholder="Search by name, SKU, or barcode..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+              <div className="relative md:col-span-2">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="product-search"
+                  placeholder="Search by name, SKU, or barcode..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <div className="flex gap-2">
+                <CategoryCombobox
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                  placeholder="Filter by category"
+                  showAllOption={true}
+                />
+                {(searchTerm || categoryFilter || searchResults.length > 0) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleClearSearch}
+                    title="Clear search"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* Search Results */}
@@ -115,6 +148,7 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
                     <TableRow>
                       <TableHead>SKU</TableHead>
                       <TableHead>Name</TableHead>
+                      <TableHead>Category</TableHead>
                       <TableHead>Price</TableHead>
                       <TableHead className="w-20">Action</TableHead>
                     </TableRow>
@@ -124,11 +158,16 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
                       <TableRow key={product.id}>
                         <TableCell className="font-mono text-sm">{product.sku}</TableCell>
                         <TableCell>{product.name}</TableCell>
+                        <TableCell>
+                          <span className="text-xs text-muted-foreground">
+                            {product.category?.name || 'N/A'}
+                          </span>
+                        </TableCell>
                         <TableCell>${product.price.toFixed(2)}</TableCell>
                         <TableCell>
                           {isInQueue(product.id) ? (
                             <Badge variant="secondary" className="text-xs">
-                              Added
+                              ✓ Added
                             </Badge>
                           ) : (
                             <Button
@@ -154,9 +193,11 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
           </div>
 
           {/* Queue List */}
-          <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 flex flex-col">
             <div className="flex justify-between items-center mb-2">
-              <Label>Print Queue ({queue.length} items)</Label>
+              <div>
+                <Label>Print Queue ({queue.length} products, {getTotalLabels()} labels)</Label>
+              </div>
               {queue.length > 0 && (
                 <Button
                   size="sm"
@@ -178,7 +219,7 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
                 </div>
               </div>
             ) : (
-              <div className="flex-1 border rounded-lg overflow-y-auto">
+              <div className="flex-1 border rounded-lg max-h-48 overflow-y-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -186,6 +227,7 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
                       <TableHead>Name</TableHead>
                       <TableHead>Price</TableHead>
                       <TableHead>Barcode</TableHead>
+                      <TableHead className="w-24">Quantity</TableHead>
                       <TableHead className="w-20">Action</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -201,6 +243,16 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
                           ) : (
                             <Badge variant="outline" className="text-xs">Auto-generate</Badge>
                           )}
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="999"
+                            value={product.quantity}
+                            onChange={(e) => updateQuantity(product.id, parseInt(e.target.value) || 1)}
+                            className="h-8 w-20 text-center"
+                          />
                         </TableCell>
                         <TableCell>
                           <Button
@@ -231,7 +283,7 @@ export function BarcodeQueueModal({ isOpen, onClose }: BarcodeQueueModalProps) {
             disabled={queue.length === 0}
           >
             <Printer className="mr-2 h-4 w-4" />
-            Print {queue.length} Barcode{queue.length !== 1 ? 's' : ''}
+            Print {getTotalLabels()} Label{getTotalLabels() !== 1 ? 's' : ''} ({queue.length} product{queue.length !== 1 ? 's' : ''})
           </Button>
         </div>
       </DialogContent>

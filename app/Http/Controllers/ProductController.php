@@ -236,8 +236,10 @@ class ProductController extends Controller
     public function searchProducts(Request $request)
     {
         $search = $request->input('search', '');
+        $categoryId = $request->input('category_id', '');
         
         $products = Product::query()
+            ->with('category')
             ->where('is_active', true)
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
@@ -246,9 +248,12 @@ class ProductController extends Controller
                       ->orWhere('barcode', 'like', "%{$search}%");
                 });
             })
+            ->when($categoryId, function ($query, $categoryId) {
+                $query->where('category_id', $categoryId);
+            })
             ->orderBy('name', 'asc')
             ->limit(50)  // Return max 50 results
-            ->get(['id', 'name', 'sku', 'price', 'unit']);
+            ->get(['id', 'name', 'sku', 'price', 'unit', 'category_id', 'barcode']);
         
         return response()->json([
             'products' => $products
@@ -359,20 +364,60 @@ class ProductController extends Controller
     {
         $this->authorize('view-products');
 
-        $request->validate([
-            'product_ids' => 'required|array',
-            'product_ids.*' => 'exists:products,id',
-            'format' => 'nullable|in:png,svg',
-        ]);
+        // Handle POST request - store product data in session and generate labels
+        if ($request->isMethod('post')) {
+            // Support both old format (product_ids array) and new format (products array with quantities)
+            if ($request->has('products')) {
+                $request->validate([
+                    'products' => 'required|array',
+                    'products.*.id' => 'required|exists:products,id',
+                    'products.*.quantity' => 'nullable|integer|min:1|max:999',
+                    'format' => 'nullable|in:png,svg',
+                ]);
+                
+                $products = $request->products;
+            } else {
+                $request->validate([
+                    'product_ids' => 'required|array',
+                    'product_ids.*' => 'exists:products,id',
+                    'format' => 'nullable|in:png,svg',
+                ]);
+                
+                // Convert to new format with quantity = 1
+                $products = array_map(fn($id) => ['id' => $id, 'quantity' => 1], $request->product_ids);
+            }
 
-        $labels = $barcodeService->generateBarcodeLabels(
-            $request->product_ids,
-            $request->get('format', 'png')
-        );
+            // Store products in session for page refresh
+            session(['barcode_print_data' => $products]);
+            
+            $labels = $barcodeService->generateBarcodeLabelsWithQuantities(
+                $products,
+                $request->get('format', 'png')
+            );
 
-        return Inertia::render('Products/PrintBarcodeLabels', [
-            'labels' => $labels,
-        ]);
+            return Inertia::render('Products/PrintBarcodeLabels', [
+                'labels' => $labels,
+            ]);
+        }
+
+        // Handle GET request (page refresh) - retrieve from session
+        if ($request->isMethod('get')) {
+            $products = session('barcode_print_data');
+
+            if (!$products || empty($products)) {
+                return redirect()->route('products.index')
+                    ->with('error', 'No products selected for barcode printing. Please select products first.');
+            }
+
+            $labels = $barcodeService->generateBarcodeLabelsWithQuantities(
+                $products,
+                $request->get('format', 'png')
+            );
+
+            return Inertia::render('Products/PrintBarcodeLabels', [
+                'labels' => $labels,
+            ]);
+        }
     }
 
     /**

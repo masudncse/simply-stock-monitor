@@ -8,8 +8,10 @@ use Picqer\Barcode\BarcodeGeneratorSVG;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 
 class BarcodeService
 {
@@ -26,6 +28,10 @@ class BarcodeService
     public function generateBarcodeFromSku(Product $product): string
     {
         if ($product->barcode) {
+            \Log::info("Product already has barcode", [
+                'sku' => $product->sku,
+                'barcode' => $product->barcode
+            ]);
             return $product->barcode;
         }
 
@@ -52,6 +58,13 @@ class BarcodeService
                 $barcode = strtoupper($cleanSku);
                 break;
         }
+
+        \Log::info("Generated barcode from SKU", [
+            'sku' => $product->sku,
+            'clean_sku' => $cleanSku,
+            'barcode' => $barcode,
+            'format' => $barcodeFormat
+        ]);
 
         // Update the product with the generated barcode
         $product->update(['barcode' => $barcode]);
@@ -109,18 +122,51 @@ class BarcodeService
      */
     public function generateBarcodePNG(Product $product, int $width = 2, int $height = 50): string
     {
-        $barcode = $this->ensureBarcodeExists($product);
-        $barcodeFormat = $this->getBarcodeFormat();
-        
-        if ($barcodeFormat === 'QR') {
-            return $this->generateQRCodePNG($barcode);
+        try {
+            $barcode = $this->ensureBarcodeExists($product);
+            $barcodeFormat = $this->getBarcodeFormat();
+            
+            \Log::info("Generating barcode image", [
+                'product_id' => $product->id,
+                'sku' => $product->sku,
+                'barcode' => $barcode,
+                'format' => $barcodeFormat
+            ]);
+            
+            if ($barcodeFormat === 'QR') {
+                return $this->generateQRCodePNG($barcode);
+            }
+            
+            $generator = new BarcodeGeneratorPNG();
+            $type = $this->getBarcodeType($barcodeFormat);
+            
+            \Log::info("Barcode type selected", ['type' => $type]);
+            
+            $barcodeImage = $generator->getBarcode($barcode, $type, $width, $height);
+            
+            \Log::info("Raw barcode image generated", [
+                'length' => strlen($barcodeImage),
+                'first_bytes' => bin2hex(substr($barcodeImage, 0, 10))
+            ]);
+            
+            $encoded = base64_encode($barcodeImage);
+            $result = 'data:image/png;base64,' . $encoded;
+            
+            \Log::info("Encoded barcode image", [
+                'encoded_length' => strlen($encoded),
+                'total_length' => strlen($result),
+                'prefix' => substr($result, 0, 50)
+            ]);
+            
+            return $result;
+        } catch (\Exception $e) {
+            \Log::error("Failed to generate PNG barcode", [
+                'product_id' => $product->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
-        
-        $generator = new BarcodeGeneratorPNG();
-        $type = $this->getBarcodeType($barcodeFormat);
-        
-        $barcodeImage = $generator->getBarcode($barcode, $type, $width, $height);
-        return 'data:image/png;base64,' . base64_encode($barcodeImage);
     }
 
     /**
@@ -128,13 +174,16 @@ class BarcodeService
      */
     private function generateQRCodeSVG(string $data): string
     {
-        $qrCode = QrCode::create($data)
-            ->setEncoding(new Encoding('UTF-8'))
-            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
-            ->setSize(200)
-            ->setMargin(10);
-
-        $writer = new \Endroid\QrCode\Writer\SvgWriter();
+        $qrCode = new QrCode(
+            data: $data,
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::Low,
+            size: 200,
+            margin: 10,
+            roundBlockSizeMode: RoundBlockSizeMode::Margin
+        );
+        
+        $writer = new SvgWriter();
         $result = $writer->write($qrCode);
         
         return $result->getString();
@@ -145,12 +194,15 @@ class BarcodeService
      */
     private function generateQRCodePNG(string $data): string
     {
-        $qrCode = QrCode::create($data)
-            ->setEncoding(new Encoding('UTF-8'))
-            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
-            ->setSize(200)
-            ->setMargin(10);
-
+        $qrCode = new QrCode(
+            data: $data,
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::Low,
+            size: 200,
+            margin: 10,
+            roundBlockSizeMode: RoundBlockSizeMode::Margin
+        );
+        
         $writer = new PngWriter();
         $result = $writer->write($qrCode);
         
@@ -185,22 +237,80 @@ class BarcodeService
      */
     public function generateBarcodeLabels(array $productIds, string $format = 'png'): array
     {
-        $products = Product::whereIn('id', $productIds)->get();
+        // Convert to new format for backward compatibility
+        $productsWithQuantities = array_map(fn($id) => ['id' => $id, 'quantity' => 1], $productIds);
+        return $this->generateBarcodeLabelsWithQuantities($productsWithQuantities, $format);
+    }
+
+    /**
+     * Generate barcode labels with quantities for printing
+     */
+    public function generateBarcodeLabelsWithQuantities(array $productsData, string $format = 'png'): array
+    {
+        $productIds = array_column($productsData, 'id');
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
         $barcodeFormat = $this->getBarcodeFormat();
         $labels = [];
 
-        foreach ($products as $product) {
-            $labels[] = [
-                'product_id' => $product->id,
-                'sku' => $product->sku,
-                'name' => $product->name,
-                'price' => $product->price,
-                'barcode' => $this->ensureBarcodeExists($product),
-                'barcode_format' => $barcodeFormat,
-                'barcode_image' => $format === 'svg' 
+        foreach ($productsData as $productData) {
+            $productId = $productData['id'];
+            $quantity = $productData['quantity'] ?? 1;
+            
+            if (!isset($products[$productId])) {
+                continue;
+            }
+            
+            $product = $products[$productId];
+
+            try {
+                // Ensure barcode exists
+                $barcode = $this->ensureBarcodeExists($product);
+                
+                // Generate barcode image once
+                $barcodeImage = $format === 'svg' 
                     ? $this->generateBarcodeSVG($product)
-                    : $this->generateBarcodePNG($product),
-            ];
+                    : $this->generateBarcodePNG($product);
+
+                $labelData = [
+                    'product_id' => $product->id,
+                    'sku' => $product->sku,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'barcode' => $barcode,
+                    'barcode_format' => $barcodeFormat,
+                    'barcode_image' => $barcodeImage,
+                ];
+
+                // Duplicate the label based on quantity
+                for ($i = 0; $i < $quantity; $i++) {
+                    $labels[] = $labelData;
+                }
+
+                \Log::info("Generated barcode for product: {$product->sku}", [
+                    'barcode' => $barcode,
+                    'format' => $barcodeFormat,
+                    'quantity' => $quantity,
+                    'image_length' => strlen($barcodeImage)
+                ]);
+            } catch (\Exception $e) {
+                \Log::error("Failed to generate barcode for product: {$product->sku}", [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
+                // Add label with error placeholder
+                for ($i = 0; $i < $quantity; $i++) {
+                    $labels[] = [
+                        'product_id' => $product->id,
+                        'sku' => $product->sku,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'barcode' => $product->barcode ?? 'ERROR',
+                        'barcode_format' => $barcodeFormat,
+                        'barcode_image' => '',
+                    ];
+                }
+            }
         }
 
         return $labels;

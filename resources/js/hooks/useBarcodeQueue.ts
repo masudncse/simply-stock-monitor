@@ -6,6 +6,7 @@ interface QueuedProduct {
   name: string;
   price: number;
   barcode?: string;
+  quantity: number;
 }
 
 const STORAGE_KEY = 'barcode_print_queue';
@@ -31,14 +32,22 @@ export function useBarcodeQueue() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(queue));
   }, [queue]);
 
-  const addToQueue = (product: QueuedProduct) => {
+  const addToQueue = (product: Omit<QueuedProduct, 'quantity'>) => {
     setQueue((prev) => {
       // Check if product already exists
       if (prev.some((p) => p.id === product.id)) {
         return prev;
       }
-      return [...prev, product];
+      return [...prev, { ...product, quantity: 1 }];
     });
+  };
+
+  const updateQuantity = (productId: number, quantity: number) => {
+    setQueue((prev) =>
+      prev.map((p) =>
+        p.id === productId ? { ...p, quantity: Math.max(1, quantity) } : p
+      )
+    );
   };
 
   const removeFromQueue = (productId: number) => {
@@ -58,14 +67,25 @@ export function useBarcodeQueue() {
     return queue.map((p) => p.id);
   };
 
+  const getQueueWithQuantities = () => {
+    return queue.map((p) => ({ id: p.id, quantity: p.quantity }));
+  };
+
+  const getTotalLabels = () => {
+    return queue.reduce((sum, p) => sum + p.quantity, 0);
+  };
+
   return {
     queue,
     addToQueue,
+    updateQuantity,
     removeFromQueue,
     clearQueue,
     isInQueue,
     getQueueIds,
+    getQueueWithQuantities,
     queueCount: queue.length,
+    getTotalLabels,
   };
 }
 
