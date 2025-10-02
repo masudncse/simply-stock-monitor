@@ -30,9 +30,16 @@ interface EmailSettingsProps {
     smtp_from_name: string;
     smtp_enabled: boolean;
   };
+  flash?: {
+    success?: string;
+    error?: string;
+  };
+  errors?: {
+    message?: string;
+  };
 }
 
-const EmailSettings: React.FC<EmailSettingsProps> = ({ emailSettings }) => {
+const EmailSettings: React.FC<EmailSettingsProps> = ({ emailSettings, flash, errors }) => {
   const [settings, setSettings] = useState(emailSettings);
   const [isSaving, setIsSaving] = useState(false);
   const [isTestingDirect, setIsTestingDirect] = useState(false);
@@ -42,6 +49,26 @@ const EmailSettings: React.FC<EmailSettingsProps> = ({ emailSettings }) => {
     type: 'success' | 'error';
     message: string;
   } | null>(null);
+
+  // Handle flash messages and errors from backend
+  React.useEffect(() => {
+    if (flash?.success) {
+      setTestResults({
+        type: 'success',
+        message: flash.success
+      });
+    } else if (flash?.error) {
+      setTestResults({
+        type: 'error',
+        message: flash.error
+      });
+    } else if (errors?.message) {
+      setTestResults({
+        type: 'error',
+        message: errors.message
+      });
+    }
+  }, [flash, errors]);
 
   const handleChange = (field: string, value: any) => {
     setSettings(prev => ({ ...prev, [field]: value }));
@@ -70,7 +97,7 @@ const EmailSettings: React.FC<EmailSettingsProps> = ({ emailSettings }) => {
     });
   };
 
-  const handleTestDirect = async () => {
+  const handleTestDirect = () => {
     if (!testEmail) {
       setTestResults({
         type: 'error',
@@ -82,33 +109,26 @@ const EmailSettings: React.FC<EmailSettingsProps> = ({ emailSettings }) => {
     setIsTestingDirect(true);
     setTestResults(null);
 
-    try {
-      const response = await fetch('/settings/email/test-direct', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-        },
-        body: JSON.stringify({ test_email: testEmail })
-      });
-
-      const data = await response.json();
-
-      setTestResults({
-        type: data.success ? 'success' : 'error',
-        message: data.message
-      });
-    } catch (error) {
-      setTestResults({
-        type: 'error',
-        message: 'Failed to send test email'
-      });
-    } finally {
-      setIsTestingDirect(false);
-    }
+    router.post('/settings/email/test-direct', { test_email: testEmail }, {
+      onSuccess: () => {
+        setTestResults({
+          type: 'success',
+          message: 'Direct test email sent successfully!'
+        });
+      },
+      onError: (errors) => {
+        setTestResults({
+          type: 'error',
+          message: errors.message || 'Failed to send direct test email'
+        });
+      },
+      onFinish: () => {
+        setIsTestingDirect(false);
+      }
+    });
   };
 
-  const handleTestQueued = async () => {
+  const handleTestQueued = () => {
     if (!testEmail) {
       setTestResults({
         type: 'error',
@@ -120,30 +140,23 @@ const EmailSettings: React.FC<EmailSettingsProps> = ({ emailSettings }) => {
     setIsTestingQueued(true);
     setTestResults(null);
 
-    try {
-      const response = await fetch('/settings/email/test-queued', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-        },
-        body: JSON.stringify({ test_email: testEmail })
-      });
-
-      const data = await response.json();
-
-      setTestResults({
-        type: data.success ? 'success' : 'error',
-        message: data.message
-      });
-    } catch (error) {
-      setTestResults({
-        type: 'error',
-        message: 'Failed to queue test email'
-      });
-    } finally {
-      setIsTestingQueued(false);
-    }
+    router.post('/settings/email/test-queued', { test_email: testEmail }, {
+      onSuccess: () => {
+        setTestResults({
+          type: 'success',
+          message: 'Queued test email sent successfully!'
+        });
+      },
+      onError: (errors) => {
+        setTestResults({
+          type: 'error',
+          message: errors.message || 'Failed to queue test email'
+        });
+      },
+      onFinish: () => {
+        setIsTestingQueued(false);
+      }
+    });
   };
 
   return (

@@ -99,18 +99,12 @@ class EmailController extends Controller
 
             Log::info("Test email sent directly to: {$request->test_email}");
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Test email sent successfully!',
-            ]);
+            return redirect()->back()->with('success', 'Direct test email sent successfully!');
 
         } catch (\Exception $e) {
             Log::error("Direct test email failed: " . $e->getMessage());
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to send test email: ' . $e->getMessage(),
-            ], 500);
+            return redirect()->back()->withErrors(['message' => 'Failed to send test email: ' . $e->getMessage()]);
         }
     }
 
@@ -134,18 +128,12 @@ class EmailController extends Controller
 
             Log::info("Test email queued to: {$request->test_email}");
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Test email queued successfully! Check your email in a few moments.',
-            ]);
+            return redirect()->back()->with('success', 'Queued test email sent successfully! Check your email in a few moments.');
 
         } catch (\Exception $e) {
             Log::error("Queued test email failed: " . $e->getMessage());
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to queue test email: ' . $e->getMessage(),
-            ], 500);
+            return redirect()->back()->withErrors(['message' => 'Failed to queue test email: ' . $e->getMessage()]);
         }
     }
 
