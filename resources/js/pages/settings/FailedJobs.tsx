@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { router, Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 
 interface FailedJob {
   id: number;
@@ -41,12 +40,6 @@ interface FailedJobsProps {
     to?: number;
   };
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Settings', href: '/settings' },
-  { title: 'Job Management', href: '/settings/jobs' },
-  { title: 'Failed Jobs', href: '/settings/jobs/failed' },
-];
 
 export default function FailedJobs({ failedJobs }: FailedJobsProps) {
   const [exceptionModalOpen, setExceptionModalOpen] = useState(false);
@@ -84,7 +77,7 @@ export default function FailedJobs({ failedJobs }: FailedJobsProps) {
   };
 
   return (
-    <Layout title="Failed Jobs - View and manage failed queue jobs" breadcrumbs={breadcrumbs}>
+    <Layout title="Failed Jobs - View and manage failed queue jobs">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

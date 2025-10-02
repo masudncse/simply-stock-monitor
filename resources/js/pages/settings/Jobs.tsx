@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { router, Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { type BreadcrumbItem } from '@/types';
 
 interface Job {
   id: number;
@@ -35,11 +34,6 @@ interface JobsProps {
   };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Settings', href: '/settings' },
-  { title: 'Job Management', href: '/settings/jobs' },
-];
-
 export default function Jobs({ jobs }: JobsProps) {
   const handleDelete = (jobId: number) => {
     if (confirm('Are you sure you want to delete this job?')) {
@@ -58,7 +52,7 @@ export default function Jobs({ jobs }: JobsProps) {
   };
 
   return (
-    <Layout title="Job Management - Manage queue jobs" breadcrumbs={breadcrumbs}>
+    <Layout title="Job Management - Manage queue jobs">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>

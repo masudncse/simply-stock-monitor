@@ -60,7 +60,7 @@ interface PurchaseReturnsIndexProps {
 
 export default function PurchaseReturnsIndex({ returns, filters }: PurchaseReturnsIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
-  const [statusFilter, setStatusFilter] = useState(filters.status || '');
+  const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
   const [dateFrom, setDateFrom] = useState(filters.date_from || '');
   const [dateTo, setDateTo] = useState(filters.date_to || '');
   const [perPage, setPerPage] = useState(filters.per_page || 15);
@@ -68,7 +68,7 @@ export default function PurchaseReturnsIndex({ returns, filters }: PurchaseRetur
   const handleSearch = () => {
     router.get(indexRoute.url(), {
       search: searchTerm,
-      status: statusFilter,
+      status: statusFilter === 'all' ? undefined : statusFilter,
       date_from: dateFrom,
       date_to: dateTo,
       per_page: perPage,
@@ -114,7 +114,7 @@ export default function PurchaseReturnsIndex({ returns, filters }: PurchaseRetur
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
+              <div className="space-y-2">
                 <Label>Search</Label>
                 <Input
                   placeholder="Return number..."
@@ -123,21 +123,21 @@ export default function PurchaseReturnsIndex({ returns, filters }: PurchaseRetur
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label>Status</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="draft">Draft</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="approved">Approved</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label>Date From</Label>
                 <Input
                   type="date"
@@ -145,7 +145,7 @@ export default function PurchaseReturnsIndex({ returns, filters }: PurchaseRetur
                   onChange={(e) => setDateFrom(e.target.value)}
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label>Date To</Label>
                 <Input
                   type="date"

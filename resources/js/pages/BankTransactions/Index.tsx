@@ -78,7 +78,7 @@ export default function BankTransactionsIndex({
   filters 
 }: BankTransactionsIndexProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
-  const [typeFilter, setTypeFilter] = useState(filters.transaction_type || '');
+  const [typeFilter, setTypeFilter] = useState(filters.transaction_type || 'all');
   const [dateFrom, setDateFrom] = useState(filters.date_from || '');
   const [dateTo, setDateTo] = useState(filters.date_to || '');
   const [perPage, setPerPage] = useState(filters.per_page || 15);
@@ -98,7 +98,7 @@ export default function BankTransactionsIndex({
   const handleSearch = () => {
     router.get(indexRoute.url(), {
       search: searchTerm,
-      transaction_type: typeFilter,
+      transaction_type: typeFilter === 'all' ? undefined : typeFilter,
       date_from: dateFrom,
       date_to: dateTo,
       per_page: perPage,
@@ -267,40 +267,43 @@ export default function BankTransactionsIndex({
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <Label>Search</Label>
+              <div className="space-y-2">
+                <Label htmlFor="search">Search</Label>
                 <Input
+                  id="search"
                   placeholder="Transaction number..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
-              <div>
-                <Label>Type</Label>
+              <div className="space-y-2">
+                <Label htmlFor="type">Type</Label>
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger id="type">
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="deposit">Deposit</SelectItem>
                     <SelectItem value="withdraw">Withdraw</SelectItem>
                     <SelectItem value="transfer">Transfer</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label>Date From</Label>
+              <div className="space-y-2">
+                <Label htmlFor="date_from">Date From</Label>
                 <Input
+                  id="date_from"
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
                 />
               </div>
-              <div>
-                <Label>Date To</Label>
+              <div className="space-y-2">
+                <Label htmlFor="date_to">Date To</Label>
                 <Input
+                  id="date_to"
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
@@ -401,17 +404,19 @@ export default function BankTransactionsIndex({
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Transaction Date</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="transaction_date">Transaction Date</Label>
                   <Input
+                    id="transaction_date"
                     type="date"
                     value={transactionDate}
                     onChange={(e) => setTransactionDate(e.target.value)}
                   />
                 </div>
-                <div>
-                  <Label>Amount *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="amount">Amount *</Label>
                   <Input
+                    id="amount"
                     type="number"
                     step="0.01"
                     min="0.01"
@@ -423,10 +428,10 @@ export default function BankTransactionsIndex({
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>From Account *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="from_account">From Account *</Label>
                   <Select value={fromAccountId} onValueChange={setFromAccountId}>
-                    <SelectTrigger>
+                    <SelectTrigger id="from_account">
                       <SelectValue placeholder="Select account" />
                     </SelectTrigger>
                     <SelectContent>
@@ -447,10 +452,10 @@ export default function BankTransactionsIndex({
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label>To Account *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="to_account">To Account *</Label>
                   <Select value={toAccountId} onValueChange={setToAccountId}>
-                    <SelectTrigger>
+                    <SelectTrigger id="to_account">
                       <SelectValue placeholder="Select account" />
                     </SelectTrigger>
                     <SelectContent>
@@ -473,27 +478,30 @@ export default function BankTransactionsIndex({
                 </div>
               </div>
 
-              <div>
-                <Label>Reference Number</Label>
+              <div className="space-y-2">
+                <Label htmlFor="reference_number">Reference Number</Label>
                 <Input
+                  id="reference_number"
                   placeholder="Cheque number, transaction ID, etc."
                   value={referenceNumber}
                   onChange={(e) => setReferenceNumber(e.target.value)}
                 />
               </div>
 
-              <div>
-                <Label>Description</Label>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
                 <Input
+                  id="description"
                   placeholder="Brief description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
 
-              <div>
-                <Label>Notes (Optional)</Label>
+              <div className="space-y-2">
+                <Label htmlFor="notes">Notes (Optional)</Label>
                 <Textarea
+                  id="notes"
                   placeholder="Additional notes..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
