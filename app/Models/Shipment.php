@@ -14,6 +14,7 @@ class Shipment extends Model
         'shipment_number',
         'sale_id',
         'customer_id',
+        'courier_id',
         'courier_service',
         'tracking_number',
         'shipping_date',
@@ -53,6 +54,11 @@ class Shipment extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function courier(): BelongsTo
+    {
+        return $this->belongsTo(Courier::class);
     }
 
     public function createdBy(): BelongsTo

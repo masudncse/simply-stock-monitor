@@ -26,6 +26,7 @@ use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\BankTransactionController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ShipmentController;
+use App\Http\Controllers\CourierController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -131,6 +132,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('shipments', ShipmentController::class);
     Route::post('shipments/{shipment}/status', [ShipmentController::class, 'updateStatus'])->name('shipments.update-status');
     Route::get('shipments/{shipment}/print', [ShipmentController::class, 'print'])->name('shipments.print');
+    
+    // Couriers
+    Route::resource('couriers', CourierController::class);
+    Route::get('couriers-api/active', [CourierController::class, 'getActiveCouriers'])->name('couriers.active');
         
         // Reports
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');

@@ -14,6 +14,7 @@ import {
   Mail as MailIcon,
   Telescope as TelescopeIcon,
   ListTodo as JobIcon,
+  Truck as CourierIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
@@ -88,6 +89,13 @@ const SettingsIndex: React.FC = () => {
       icon: <Building2 className="h-10 w-10" />,
       href: '/warehouses',
       color: 'text-indigo-600',
+    },
+    {
+      title: 'Courier Management',
+      description: 'Manage courier services, shipping rates, and delivery partners',
+      icon: <CourierIcon className="h-10 w-10" />,
+      href: '/couriers',
+      color: 'text-sky-600',
     },
   ];
 

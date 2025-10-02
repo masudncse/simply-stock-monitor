@@ -42,6 +42,9 @@ class DatabaseSeeder extends Seeder
             ReturnManagementSeeder::class,
             BankTransactionSeeder::class,
             
+            // Courier seeder
+            CourierSeeder::class,
+            
             // Shipment seeder
             ShipmentSeeder::class,
             

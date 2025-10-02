@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('shipment_number')->unique();
             $table->foreignId('sale_id')->constrained()->onDelete('cascade');
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
-            $table->string('courier_service'); // SA Poribahan, Sundorbon Express, FedEx, DHL, Pathao, etc.
+            $table->foreignId('courier_id')->nullable()->constrained('couriers')->onDelete('restrict');
+            $table->string('courier_service')->nullable(); // SA Poribahan, Sundorbon Express, FedEx, DHL, Pathao, etc. (kept for backward compatibility)
             $table->string('tracking_number')->nullable();
             $table->date('shipping_date');
             $table->date('expected_delivery_date')->nullable();

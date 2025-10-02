@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -13,6 +12,7 @@ import {
 } from 'lucide-react';
 import { router, useForm } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
+import { CourierCombobox } from '@/components/CourierCombobox';
 import { index as indexRoute, store as storeRoute } from '@/routes/shipments';
 
 interface Product {
@@ -49,7 +49,8 @@ interface ShipmentsCreateProps {
 export default function ShipmentsCreate({ sale }: ShipmentsCreateProps) {
   const { data, setData, post, processing, errors } = useForm({
     sale_id: sale?.id || '',
-    courier_service: '',
+    courier_id: '',
+    courier_service: '', // Keep for backward compatibility
     tracking_number: '',
     shipping_date: new Date().toISOString().split('T')[0],
     expected_delivery_date: '',
@@ -67,18 +68,33 @@ export default function ShipmentsCreate({ sale }: ShipmentsCreateProps) {
     special_instructions: '',
   });
 
-  const courierServices = [
-    'SA Poribahan',
-    'Sundorbon Express',
-    'Janani',
-    'FedEx',
-    'DHL',
-    'Pathao Courier',
-    'RedX',
-    'Aramex',
-    'eCourier',
-    'Other',
-  ];
+  const [selectedCourierData, setSelectedCourierData] = useState<{ base_rate: number; per_kg_rate: number } | null>(null);
+
+  // Fetch courier data when courier_id changes
+  useEffect(() => {
+    if (data.courier_id) {
+      fetch(`/couriers-api/active`)
+        .then(res => res.json())
+        .then(couriers => {
+          const courier = couriers.find((c: any) => c.id.toString() === data.courier_id);
+          if (courier) {
+            setSelectedCourierData({ base_rate: courier.base_rate, per_kg_rate: courier.per_kg_rate });
+          }
+        })
+        .catch(err => console.error('Error fetching courier data:', err));
+    } else {
+      setSelectedCourierData(null);
+    }
+  }, [data.courier_id]);
+
+  // Auto-calculate shipping cost when courier or weight changes
+  useEffect(() => {
+    if (selectedCourierData && data.total_weight) {
+      const weight = parseFloat(data.total_weight) || 0;
+      const calculatedCost = selectedCourierData.base_rate + (weight * selectedCourierData.per_kg_rate);
+      setData('shipping_cost', parseFloat(calculatedCost.toFixed(2)));
+    }
+  }, [selectedCourierData, data.total_weight]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,21 +156,21 @@ export default function ShipmentsCreate({ sale }: ShipmentsCreateProps) {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="courier_service">Courier Service *</Label>
-                  <Select value={data.courier_service} onValueChange={(value) => setData('courier_service', value)}>
-                    <SelectTrigger className={errors.courier_service ? 'border-destructive' : ''}>
-                      <SelectValue placeholder="Select courier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {courierServices.map((service) => (
-                        <SelectItem key={service} value={service}>
-                          {service}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.courier_service && (
-                    <p className="text-sm text-destructive">{errors.courier_service}</p>
+                  <Label htmlFor="courier_id">Courier Service *</Label>
+                  <CourierCombobox
+                    value={data.courier_id}
+                    onValueChange={(value) => setData('courier_id', value)}
+                    placeholder="Select courier..."
+                    showRates={true}
+                    error={!!(errors.courier_id || errors.courier_service)}
+                  />
+                  {(errors.courier_id || errors.courier_service) && (
+                    <p className="text-sm text-destructive">{errors.courier_id || errors.courier_service}</p>
+                  )}
+                  {selectedCourierData && (
+                    <p className="text-xs text-muted-foreground">
+                      Base: ৳{selectedCourierData.base_rate.toFixed(2)} + ৳{selectedCourierData.per_kg_rate.toFixed(2)}/kg
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -202,7 +218,7 @@ export default function ShipmentsCreate({ sale }: ShipmentsCreateProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="shipping_cost">Shipping Cost *</Label>
+                <Label htmlFor="shipping_cost">Shipping Cost (৳) *</Label>
                 <Input
                   id="shipping_cost"
                   type="number"
@@ -215,6 +231,9 @@ export default function ShipmentsCreate({ sale }: ShipmentsCreateProps) {
                 {errors.shipping_cost && (
                   <p className="text-sm text-destructive">{errors.shipping_cost}</p>
                 )}
+                <p className="text-xs text-muted-foreground">
+                  Auto-calculated based on courier rates and weight (you can modify)
+                </p>
               </div>
             </CardContent>
           </Card>

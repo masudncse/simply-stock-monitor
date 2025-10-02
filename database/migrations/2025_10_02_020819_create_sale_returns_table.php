@@ -22,6 +22,10 @@ return new class extends Migration
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2)->default(0);
             $table->enum('status', ['draft', 'pending', 'approved', 'completed'])->default('draft');
+            $table->enum('refund_status', ['pending', 'completed', 'not_required'])->default('pending');
+            $table->enum('refund_method', ['cash', 'bank', 'credit_account'])->nullable();
+            $table->date('refund_date')->nullable();
+            $table->decimal('refunded_amount', 15, 2)->default(0);
             $table->string('reason')->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Shipment;
 use App\Models\Sale;
 use App\Models\Customer;
+use App\Models\Courier;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -88,7 +89,8 @@ class ShipmentController extends Controller
 
         $validated = $request->validate([
             'sale_id' => 'required|exists:sales,id',
-            'courier_service' => 'required|string|max:255',
+            'courier_id' => 'nullable|exists:couriers,id',
+            'courier_service' => 'nullable|string|max:255',
             'tracking_number' => 'nullable|string|max:255',
             'shipping_date' => 'required|date',
             'expected_delivery_date' => 'nullable|date|after_or_equal:shipping_date',
