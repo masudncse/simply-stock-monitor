@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import CustomPagination from '@/components/CustomPagination';
+import { AccountCombobox } from '@/components/AccountCombobox';
 import {
   Plus,
   Search as SearchIcon,
@@ -143,19 +143,12 @@ export default function ExpensesIndex({ expenses, accounts, filters }: ExpensesI
               </div>
               <div className="space-y-2">
                 <Label htmlFor="account">Account</Label>
-                <Select value={accountFilter} onValueChange={setAccountFilter}>
-                  <SelectTrigger id="account">
-                    <SelectValue placeholder="All Accounts" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Accounts</SelectItem>
-                    {accounts.map(account => (
-                      <SelectItem key={account.id} value={account.id.toString()}>
-                        {account.name} ({account.code})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <AccountCombobox
+                  value={accountFilter === 'all' ? '' : accountFilter}
+                  onValueChange={(value) => setAccountFilter(value || 'all')}
+                  placeholder="All Accounts"
+                  showAllOption={true}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="date_from">Date From</Label>

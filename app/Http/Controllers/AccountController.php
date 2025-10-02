@@ -173,4 +173,28 @@ class AccountController extends Controller
             'trialBalance' => $trialBalance,
         ]);
     }
+
+    /**
+     * Search accounts for combobox/autocomplete
+     */
+    public function searchAccounts(Request $request)
+    {
+        $search = $request->input('search', '');
+        
+        $accounts = Account::query()
+            ->where('is_active', true)
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('code', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('code', 'asc')
+            ->limit(50)  // Return max 50 results
+            ->get(['id', 'name', 'code', 'type', 'sub_type']);
+        
+        return response()->json([
+            'accounts' => $accounts
+        ]);
+    }
 }

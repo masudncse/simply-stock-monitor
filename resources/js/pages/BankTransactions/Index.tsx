@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import CustomPagination from '@/components/CustomPagination';
+import { AccountCombobox } from '@/components/AccountCombobox';
 import {
   Dialog,
   DialogContent,
@@ -430,51 +430,21 @@ export default function BankTransactionsIndex({
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="from_account">From Account *</Label>
-                  <Select value={fromAccountId} onValueChange={setFromAccountId}>
-                    <SelectTrigger id="from_account">
-                      <SelectValue placeholder="Select account" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <optgroup label="Cash Accounts">
-                        {cashAccounts.map(acc => (
-                          <SelectItem key={acc.id} value={acc.id.toString()}>
-                            {acc.name} ({acc.code})
-                          </SelectItem>
-                        ))}
-                      </optgroup>
-                      <optgroup label="Bank Accounts">
-                        {bankAccounts.map(acc => (
-                          <SelectItem key={acc.id} value={acc.id.toString()}>
-                            {acc.name} ({acc.code})
-                          </SelectItem>
-                        ))}
-                      </optgroup>
-                    </SelectContent>
-                  </Select>
+                  <AccountCombobox
+                    value={fromAccountId}
+                    onValueChange={setFromAccountId}
+                    placeholder="Select account"
+                    showAllOption={false}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="to_account">To Account *</Label>
-                  <Select value={toAccountId} onValueChange={setToAccountId}>
-                    <SelectTrigger id="to_account">
-                      <SelectValue placeholder="Select account" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <optgroup label="Cash Accounts">
-                        {cashAccounts.map(acc => (
-                          <SelectItem key={acc.id} value={acc.id.toString()}>
-                            {acc.name} ({acc.code})
-                          </SelectItem>
-                        ))}
-                      </optgroup>
-                      <optgroup label="Bank Accounts">
-                        {bankAccounts.map(acc => (
-                          <SelectItem key={acc.id} value={acc.id.toString()}>
-                            {acc.name} ({acc.code})
-                          </SelectItem>
-                        ))}
-                      </optgroup>
-                    </SelectContent>
-                  </Select>
+                  <AccountCombobox
+                    value={toAccountId}
+                    onValueChange={setToAccountId}
+                    placeholder="Select account"
+                    showAllOption={false}
+                  />
                 </div>
               </div>
 

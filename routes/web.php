@@ -100,6 +100,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Accounts
     Route::resource('accounts', AccountController::class);
     Route::get('accounts/trial-balance', [AccountController::class, 'trialBalance'])->name('accounts.trial-balance');
+    Route::get('accounts-api/search', [AccountController::class, 'searchAccounts'])->name('accounts.search');
     
     // Payments
     Route::resource('payments', PaymentController::class);
