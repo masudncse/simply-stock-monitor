@@ -18,9 +18,13 @@ class SaleFactory extends Factory
     public function definition(): array
     {
         $subtotal = rand(10000, 1000000) / 100; // 100.00 to 10000.00
-        $taxRate = rand(0, 2500) / 100; // 0 to 25%
+        
+        // Random tax rate: 0%, 4%, 8%, or 10%
+        $taxRates = [0, 4, 8, 10];
+        $taxRate = $taxRates[array_rand($taxRates)];
+        
         $discountAmount = rand(0, $subtotal * 20) / 100; // Max 20% discount
-        $taxAmount = ($subtotal - $discountAmount) * ($taxRate / 100);
+        $taxAmount = $subtotal * ($taxRate / 100);
         $totalAmount = $subtotal - $discountAmount + $taxAmount;
         $paidAmount = rand(0, $totalAmount * 100) / 100;
         
@@ -36,6 +40,7 @@ class SaleFactory extends Factory
             'warehouse_id' => \App\Models\Warehouse::factory(),
             'sale_date' => now()->subDays(rand(0, 365)),
             'subtotal' => $subtotal,
+            'tax_rate' => $taxRate,
             'tax_amount' => $taxAmount,
             'discount_amount' => $discountAmount,
             'total_amount' => $totalAmount,

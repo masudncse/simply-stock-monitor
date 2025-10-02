@@ -39,6 +39,7 @@ class PurchaseService
                 'purchase_date' => $purchaseData['purchase_date'],
                 'due_date' => $purchaseData['due_date'] ?? null,
                 'subtotal' => $purchaseData['subtotal'],
+                'tax_rate' => $purchaseData['tax_rate'] ?? 0,
                 'tax_amount' => $purchaseData['tax_amount'] ?? 0,
                 'discount_amount' => $purchaseData['discount_amount'] ?? 0,
                 'total_amount' => $purchaseData['total_amount'],

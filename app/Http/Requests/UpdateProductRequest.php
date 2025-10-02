@@ -34,7 +34,7 @@ class UpdateProductRequest extends FormRequest
             'min_stock' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
             'cost_price' => 'required|numeric|min:0',
-            'tax_rate' => 'required|numeric|min:0|max:100',
+            'tax_rate' => 'nullable|numeric|min:0|max:100',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',

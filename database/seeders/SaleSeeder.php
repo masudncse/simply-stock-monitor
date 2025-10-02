@@ -30,14 +30,20 @@ class SaleSeeder extends Seeder
             return;
         }
 
-        $sales = Sale::factory(30)->create([
-            'customer_id' => fn() => $customers->random()->id,
-            'warehouse_id' => fn() => $warehouses->random()->id,
-            'created_by' => fn() => $users->random()->id,
-        ]);
+        // Create sales with customer's default tax rate
+        foreach (range(1, 30) as $index) {
+            $customer = $customers->random();
+            $warehouse = $warehouses->random();
+            $user = $users->random();
+            
+            $sale = Sale::factory()->create([
+                'customer_id' => $customer->id,
+                'warehouse_id' => $warehouse->id,
+                'tax_rate' => $customer->default_tax_rate, // Use customer's default tax rate
+                'created_by' => $user->id,
+            ]);
 
-        // Create sale items
-        foreach ($sales as $sale) {
+            // Create sale items
             $itemCount = rand(1, 5);
             $selectedProducts = $products->random($itemCount);
             

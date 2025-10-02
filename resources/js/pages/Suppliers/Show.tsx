@@ -29,6 +29,7 @@ interface Supplier {
   email?: string;
   address?: string;
   tax_number?: string;
+  default_tax_rate: number;
   credit_limit: number;
   outstanding_amount: number;
   is_active: boolean;
@@ -133,6 +134,13 @@ export default function SuppliersShow({ supplier }: SuppliersShowProps) {
               <CardTitle>Financial Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Default Tax Rate</p>
+                <p className="text-lg font-semibold text-primary">{supplier.default_tax_rate}%</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Applied automatically when creating purchases from this supplier
+                </p>
+              </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <p className="text-sm text-muted-foreground">Credit Limit</p>

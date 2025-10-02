@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->text('address')->nullable();
             $table->string('tax_number')->nullable();
+            $table->decimal('default_tax_rate', 5, 2)->default(0); // Default tax rate for this supplier (e.g., 10 for 10%)
             $table->decimal('credit_limit', 10, 2)->default(0);
             $table->decimal('outstanding_amount', 10, 2)->default(0);
             $table->boolean('is_active')->default(true);

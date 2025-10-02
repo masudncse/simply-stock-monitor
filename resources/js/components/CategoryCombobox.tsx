@@ -25,6 +25,7 @@ interface CategoryComboboxProps {
   disabled?: boolean;
   showAllOption?: boolean;
   error?: boolean;
+  selectedCategory?: { id: number; name: string } | null;
 }
 
 /**
@@ -62,6 +63,7 @@ export function CategoryCombobox({
   disabled = false,
   showAllOption = true,
   error = false,
+  selectedCategory: selectedCategoryProp,
 }: CategoryComboboxProps) {
   const [open, setOpen] = useState(false);
   const { categories, loading, searchTerm, setSearchTerm, fetchCategories } = useCategorySearch();
@@ -73,12 +75,12 @@ export function CategoryCombobox({
     }
   }, [open]);
 
-  // Find selected category name for display
-  const selectedCategory = categories.find((cat) => cat.id.toString() === value);
+  // Use the selected category from props, or find it in the current categories list
+  const displayCategory = selectedCategoryProp || categories.find((cat) => cat.id.toString() === value);
   
   const getDisplayValue = () => {
-    if (value && selectedCategory) {
-      return selectedCategory.name;
+    if (value && displayCategory) {
+      return displayCategory.name;
     }
     if (showAllOption && !value) {
       return 'All Categories';

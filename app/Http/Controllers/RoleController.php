@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -45,20 +47,14 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request)
     {
-        $this->authorize('view-users');
+        $validated = $request->validated();
 
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'array',
-            'permissions.*' => 'exists:permissions,name',
-        ]);
+        $role = Role::create(['name' => $validated['name']]);
 
-        $role = Role::create(['name' => $request->name]);
-
-        if ($request->permissions) {
-            $role->givePermissionTo($request->permissions);
+        if (!empty($validated['permissions'])) {
+            $role->givePermissionTo($validated['permissions']);
         }
 
         return redirect()->route('roles.index')
@@ -101,20 +97,14 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Role $role)
+    public function update(UpdateRoleRequest $request, Role $role)
     {
-        $this->authorize('view-users');
+        $validated = $request->validated();
 
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'permissions' => 'array',
-            'permissions.*' => 'exists:permissions,name',
-        ]);
+        $role->update(['name' => $validated['name']]);
 
-        $role->update(['name' => $request->name]);
-
-        if ($request->has('permissions')) {
-            $role->syncPermissions($request->permissions);
+        if (isset($validated['permissions'])) {
+            $role->syncPermissions($validated['permissions']);
         }
 
         return redirect()->route('roles.index')

@@ -29,6 +29,7 @@ class StoreCustomerRequest extends FormRequest
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
             'tax_number' => 'nullable|string|max:50',
+            'default_tax_rate' => 'nullable|numeric|min:0|max:100',
             'credit_limit' => 'nullable|numeric|min:0',
             'outstanding_amount' => 'nullable|numeric|min:0',
             'is_active' => 'boolean',

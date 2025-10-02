@@ -24,6 +24,7 @@ interface Customer {
   id: number;
   name: string;
   code: string;
+  default_tax_rate?: number;
 }
 
 interface Warehouse {
@@ -59,15 +60,16 @@ interface SalesCreateProps {
   customers: Customer[];
   warehouses: Warehouse[];
   products: Product[];
-  taxRate: number;
+  defaultTaxRate: number;
 }
 
-export default function SalesCreate({ customers, warehouses, products, taxRate }: SalesCreateProps) {
+export default function SalesCreate({ customers, warehouses, products, defaultTaxRate }: SalesCreateProps) {
   const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     customer_id: '',
     warehouse_id: '',
     sale_date: new Date().toISOString().split('T')[0],
+    tax_rate: defaultTaxRate,
     notes: '',
   });
   
@@ -122,7 +124,7 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
 
   const calculateTotals = () => {
     const subtotal = items.reduce((sum, item) => sum + item.total_price, 0);
-    const taxAmount = (subtotal * taxRate) / 100;
+    const taxAmount = (subtotal * formData.tax_rate) / 100;
     
     // Calculate discount
     let discountAmount = 0;
@@ -205,7 +207,14 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
                     <div className="flex-1">
                       <CustomerCombobox
                         value={formData.customer_id}
-                        onValueChange={(value) => setFormData({ ...formData, customer_id: value })}
+                        onValueChange={(value) => {
+                          setFormData({ ...formData, customer_id: value });
+                          // Auto-fill tax rate from customer if selected
+                          const customer = customers.find(c => c.id.toString() === value);
+                          if (customer && customer.default_tax_rate !== undefined) {
+                            setFormData(prev => ({ ...prev, customer_id: value, tax_rate: customer.default_tax_rate }));
+                          }
+                        }}
                         placeholder="Select customer"
                         showAllOption={false}
                       />
@@ -284,6 +293,7 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
                     }}
                     placeholder="Select product"
                     showAllOption={false}
+                    selectedProduct={selectedProduct}
                   />
                 </div>
 
@@ -459,8 +469,24 @@ export default function SalesCreate({ customers, warehouses, products, taxRate }
                     <span>Subtotal:</span>
                     <span>${totals.subtotal.toFixed(2)}</span>
                   </div>
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="tax_rate" className="text-sm font-normal">Tax Rate (%):</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="tax_rate"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        value={formData.tax_rate}
+                        onChange={(e) => setFormData({ ...formData, tax_rate: parseFloat(e.target.value) || 0 })}
+                        className="w-20 h-8 text-right"
+                      />
+                      <span className="text-muted-foreground">%</span>
+                    </div>
+                  </div>
                   <div className="flex justify-between">
-                    <span>Tax ({taxRate}%):</span>
+                    <span>Tax Amount:</span>
                     <span>${totals.taxAmount.toFixed(2)}</span>
                   </div>
                   {totals.discountAmount > 0 && (

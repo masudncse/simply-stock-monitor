@@ -39,6 +39,7 @@ class SaleService
                 'warehouse_id' => $saleData['warehouse_id'],
                 'sale_date' => $saleData['sale_date'],
                 'subtotal' => $saleData['subtotal'],
+                'tax_rate' => $saleData['tax_rate'] ?? 0,
                 'tax_amount' => $saleData['tax_amount'] ?? 0,
                 'discount_amount' => $saleData['discount_amount'] ?? 0,
                 'total_amount' => $saleData['total_amount'],

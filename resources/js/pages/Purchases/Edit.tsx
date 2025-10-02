@@ -271,6 +271,7 @@ export default function PurchasesEdit({ purchase, suppliers, warehouses, product
                     }}
                     placeholder="Select product..."
                     showAllOption={false}
+                    selectedProduct={selectedProduct}
                   />
                 </div>
 

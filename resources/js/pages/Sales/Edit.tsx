@@ -249,6 +249,7 @@ export default function SalesEdit({ sale, customers, warehouses, products }: Sal
                     }}
                     placeholder="Select product"
                     showAllOption={false}
+                    selectedProduct={selectedProduct}
                   />
                 </div>
 

@@ -30,6 +30,7 @@ interface Supplier {
   id: number;
   name: string;
   code: string;
+  default_tax_rate?: number;
 }
 
 interface Warehouse {
@@ -65,10 +66,10 @@ interface PurchasesCreateProps {
   suppliers: Supplier[];
   warehouses: Warehouse[];
   products: Product[];
-  taxRate: number;
+  defaultTaxRate: number;
 }
 
-export default function PurchasesCreate({ suppliers, warehouses, products, taxRate }: PurchasesCreateProps) {
+export default function PurchasesCreate({ suppliers, warehouses, products, defaultTaxRate }: PurchasesCreateProps) {
   const { data: formData, setData: setFormData, post, processing, errors } = useForm({
     supplier_id: '',
     warehouse_id: '',
@@ -77,6 +78,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
     notes: '',
     items: [] as PurchaseItem[],
     subtotal: 0,
+    tax_rate: defaultTaxRate,
     tax_amount: 0,
     discount_amount: 0,
     total_amount: 0,
@@ -138,7 +140,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
 
   const calculateTotals = () => {
     const subtotal = items.reduce((sum, item) => sum + item.total_price, 0);
-    const taxAmount = (subtotal * taxRate) / 100;
+    const taxAmount = (subtotal * formData.tax_rate) / 100;
     
     // Calculate discount
     let discountAmount = 0;
@@ -220,7 +222,14 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                     <div className="flex-1">
                       <SupplierCombobox
                         value={formData.supplier_id}
-                        onValueChange={(value) => setFormData('supplier_id', value)}
+                        onValueChange={(value) => {
+                          setFormData('supplier_id', value);
+                          // Auto-fill tax rate from supplier if selected
+                          const supplier = suppliers.find(s => s.id.toString() === value);
+                          if (supplier && supplier.default_tax_rate !== undefined) {
+                            setFormData('tax_rate', supplier.default_tax_rate);
+                          }
+                        }}
                         placeholder="Select a supplier"
                         showAllOption={false}
                         error={!!errors.supplier_id}
@@ -314,6 +323,7 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                     }}
                     placeholder="Select product..."
                     showAllOption={false}
+                    selectedProduct={selectedProduct}
                   />
                 </div>
 
@@ -508,8 +518,24 @@ export default function PurchasesCreate({ suppliers, warehouses, products, taxRa
                     <span>Subtotal:</span>
                     <span>${totals.subtotal.toFixed(2)}</span>
                   </div>
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="tax_rate" className="text-sm font-normal">Tax Rate (%):</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="tax_rate"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        value={formData.tax_rate}
+                        onChange={(e) => setFormData('tax_rate', parseFloat(e.target.value) || 0)}
+                        className="w-20 h-8 text-right"
+                      />
+                      <span className="text-muted-foreground">%</span>
+                    </div>
+                  </div>
                   <div className="flex justify-between">
-                    <span>Tax ({taxRate}%):</span>
+                    <span>Tax Amount:</span>
                     <span>${totals.taxAmount.toFixed(2)}</span>
                   </div>
                   {totals.discountAmount > 0 && (

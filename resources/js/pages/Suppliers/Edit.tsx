@@ -20,6 +20,7 @@ interface Supplier {
   email?: string;
   address?: string;
   tax_number?: string;
+  default_tax_rate: number;
   credit_limit: number;
   outstanding_amount: number;
   is_active: boolean;
@@ -38,6 +39,7 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
     email: supplier.email || '',
     address: supplier.address || '',
     tax_number: supplier.tax_number || '',
+    default_tax_rate: supplier.default_tax_rate || 10,
     credit_limit: supplier.credit_limit,
     outstanding_amount: supplier.outstanding_amount,
     is_active: supplier.is_active,
@@ -224,6 +226,25 @@ export default function SuppliersEdit({ supplier }: SuppliersEditProps) {
               <CardTitle>Financial Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="default_tax_rate">Default Tax Rate (%)</Label>
+                <Input
+                  id="default_tax_rate"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  value={formData.default_tax_rate}
+                  onChange={(e) => handleChange('default_tax_rate', parseFloat(e.target.value) || 0)}
+                  className={errors.default_tax_rate ? 'border-destructive' : ''}
+                />
+                <p className="text-sm text-muted-foreground">
+                  This tax rate will be auto-applied when creating purchases from this supplier
+                </p>
+                {errors.default_tax_rate && (
+                  <p className="text-sm text-destructive">{errors.default_tax_rate}</p>
+                )}
+              </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="credit_limit">Credit Limit</Label>

@@ -12,6 +12,8 @@ use App\Models\SaleItem;
 use App\Services\SaleService;
 use App\Services\TaxService;
 use App\Models\CompanySetting;
+use App\Http\Requests\StoreQuotationRequest;
+use App\Http\Requests\UpdateQuotationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -92,23 +94,9 @@ class QuotationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreQuotationRequest $request)
     {
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
-            'quotation_date' => 'required|date',
-            'valid_until' => 'required|date|after:quotation_date',
-            'notes' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.batch' => 'nullable|string',
-            'items.*.expiry_date' => 'nullable|date',
-            'discount_type' => 'nullable|in:percentage,fixed',
-            'discount_value' => 'nullable|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         DB::transaction(function () use ($validated) {
             // Generate quotation number
@@ -207,28 +195,14 @@ class QuotationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Quotation $quotation)
+    public function update(UpdateQuotationRequest $request, Quotation $quotation)
     {
         if ($quotation->status !== 'draft') {
             return redirect()->route('quotations.show', $quotation)
                 ->with('error', 'Only draft quotations can be edited.');
         }
 
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
-            'quotation_date' => 'required|date',
-            'valid_until' => 'required|date|after:quotation_date',
-            'notes' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.batch' => 'nullable|string',
-            'items.*.expiry_date' => 'nullable|date',
-            'discount_type' => 'nullable|in:percentage,fixed',
-            'discount_value' => 'nullable|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         DB::transaction(function () use ($quotation, $validated) {
             // Calculate totals

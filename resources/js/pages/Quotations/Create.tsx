@@ -315,6 +315,7 @@ export default function QuotationsCreate({ customers, warehouses, products, taxR
                     }}
                     placeholder="Select product..."
                     showAllOption={false}
+                    selectedProduct={selectedProduct}
                   />
                 </div>
 

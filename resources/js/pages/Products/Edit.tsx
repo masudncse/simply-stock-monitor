@@ -26,6 +26,7 @@ interface Product {
   name: string;
   description?: string;
   category_id: number;
+  category?: Category;
   unit: string;
   min_stock: number;
   price: number;
@@ -190,6 +191,7 @@ export default function ProductEdit({ product, categories }: ProductEditProps) {
                     placeholder="Select a category"
                     showAllOption={false}
                     error={!!errors.category_id}
+                    selectedCategory={product.category}
                   />
                   {errors.category_id && (
                     <p className="text-sm text-destructive">{errors.category_id}</p>

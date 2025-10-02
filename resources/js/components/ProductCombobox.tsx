@@ -25,6 +25,7 @@ interface ProductComboboxProps {
   disabled?: boolean;
   showAllOption?: boolean;
   error?: boolean;
+  selectedProduct?: { id: number; name: string; sku: string } | null;
 }
 
 /**
@@ -63,6 +64,7 @@ export function ProductCombobox({
   disabled = false,
   showAllOption = true,
   error = false,
+  selectedProduct: selectedProductProp,
 }: ProductComboboxProps) {
   const [open, setOpen] = useState(false);
   const { products, loading, searchTerm, setSearchTerm, fetchProducts } = useProductSearch();
@@ -74,12 +76,12 @@ export function ProductCombobox({
     }
   }, [open]);
 
-  // Find selected product for display
-  const selectedProduct = products.find((prod) => prod.id.toString() === value);
+  // Use the selected product from props, or find it in the current products list
+  const displayProduct = selectedProductProp || products.find((prod) => prod.id.toString() === value);
   
   const getDisplayValue = () => {
-    if (value && selectedProduct) {
-      return `${selectedProduct.name} (${selectedProduct.sku})`;
+    if (value && displayProduct) {
+      return `${displayProduct.name} (${displayProduct.sku})`;
     }
     if (showAllOption && !value) {
       return 'All Products';

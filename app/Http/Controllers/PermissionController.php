@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePermissionRequest;
+use App\Http\Requests\UpdatePermissionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -43,24 +45,17 @@ class PermissionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePermissionRequest $request)
     {
-        $this->authorize('view-users');
-
-        $request->validate([
-            'name' => 'required|string|max:255|unique:permissions,name',
-            'guard_name' => 'nullable|string|max:255',
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,name',
-        ]);
+        $validated = $request->validated();
 
         $permission = Permission::create([
-            'name' => $request->name,
-            'guard_name' => $request->guard_name ?? 'web',
+            'name' => $validated['name'],
+            'guard_name' => $validated['guard_name'] ?? 'web',
         ]);
 
-        if ($request->roles) {
-            $permission->assignRole($request->roles);
+        if (!empty($validated['roles'])) {
+            $permission->assignRole($validated['roles']);
         }
 
         return redirect()->route('permissions.index')
@@ -100,24 +95,17 @@ class PermissionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Permission $permission)
+    public function update(UpdatePermissionRequest $request, Permission $permission)
     {
-        $this->authorize('view-users');
-
-        $request->validate([
-            'name' => 'required|string|max:255|unique:permissions,name,' . $permission->id,
-            'guard_name' => 'nullable|string|max:255',
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,name',
-        ]);
+        $validated = $request->validated();
 
         $permission->update([
-            'name' => $request->name,
-            'guard_name' => $request->guard_name ?? 'web',
+            'name' => $validated['name'],
+            'guard_name' => $validated['guard_name'] ?? 'web',
         ]);
 
-        if ($request->has('roles')) {
-            $permission->syncRoles($request->roles);
+        if (isset($validated['roles'])) {
+            $permission->syncRoles($validated['roles']);
         }
 
         return redirect()->route('permissions.index')

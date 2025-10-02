@@ -99,7 +99,7 @@ class SaleController extends Controller
             'customers' => $customers,
             'warehouses' => $warehouses,
             'products' => $products,
-            'taxRate' => TaxService::getTaxRate(),
+            'defaultTaxRate' => TaxService::getTaxRate(),
         ]);
     }
 

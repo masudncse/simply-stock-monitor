@@ -6,6 +6,8 @@ use App\Models\Shipment;
 use App\Models\Sale;
 use App\Models\Customer;
 use App\Models\Courier;
+use App\Http\Requests\StoreShipmentRequest;
+use App\Http\Requests\UpdateShipmentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -83,30 +85,9 @@ class ShipmentController extends Controller
     /**
      * Store a newly created shipment.
      */
-    public function store(Request $request)
+    public function store(StoreShipmentRequest $request)
     {
-        $this->authorize('create-shipments');
-
-        $validated = $request->validate([
-            'sale_id' => 'required|exists:sales,id',
-            'courier_id' => 'nullable|exists:couriers,id',
-            'courier_service' => 'nullable|string|max:255',
-            'tracking_number' => 'nullable|string|max:255',
-            'shipping_date' => 'required|date',
-            'expected_delivery_date' => 'nullable|date|after_or_equal:shipping_date',
-            'recipient_name' => 'required|string|max:255',
-            'recipient_phone' => 'required|string|max:20',
-            'recipient_address' => 'required|string',
-            'recipient_city' => 'nullable|string|max:100',
-            'recipient_district' => 'nullable|string|max:100',
-            'recipient_postal_code' => 'nullable|string|max:20',
-            'number_of_packages' => 'required|integer|min:1',
-            'total_weight' => 'nullable|numeric|min:0',
-            'package_dimensions' => 'nullable|string|max:100',
-            'shipping_cost' => 'required|numeric|min:0',
-            'notes' => 'nullable|string',
-            'special_instructions' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $sale = Sale::with('customer')->findOrFail($validated['sale_id']);
         
@@ -137,14 +118,9 @@ class ShipmentController extends Controller
     /**
      * Update shipment status.
      */
-    public function updateStatus(Request $request, Shipment $shipment)
+    public function updateStatus(UpdateShipmentRequest $request, Shipment $shipment)
     {
-        $this->authorize('edit-shipments');
-
-        $validated = $request->validate([
-            'status' => 'required|in:pending,picked_up,in_transit,out_for_delivery,delivered,cancelled,returned',
-            'actual_delivery_date' => 'nullable|date',
-        ]);
+        $validated = $request->validated();
 
         $shipment->update($validated);
 
@@ -159,29 +135,9 @@ class ShipmentController extends Controller
     /**
      * Update the specified shipment.
      */
-    public function update(Request $request, Shipment $shipment)
+    public function update(UpdateShipmentRequest $request, Shipment $shipment)
     {
-        $this->authorize('edit-shipments');
-
-        $validated = $request->validate([
-            'courier_service' => 'required|string|max:255',
-            'tracking_number' => 'nullable|string|max:255',
-            'shipping_date' => 'required|date',
-            'expected_delivery_date' => 'nullable|date|after_or_equal:shipping_date',
-            'status' => 'required|in:pending,picked_up,in_transit,out_for_delivery,delivered,cancelled,returned',
-            'recipient_name' => 'required|string|max:255',
-            'recipient_phone' => 'required|string|max:20',
-            'recipient_address' => 'required|string',
-            'recipient_city' => 'nullable|string|max:100',
-            'recipient_district' => 'nullable|string|max:100',
-            'recipient_postal_code' => 'nullable|string|max:20',
-            'number_of_packages' => 'required|integer|min:1',
-            'total_weight' => 'nullable|numeric|min:0',
-            'package_dimensions' => 'nullable|string|max:100',
-            'shipping_cost' => 'required|numeric|min:0',
-            'notes' => 'nullable|string',
-            'special_instructions' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $shipment->update($validated);
 

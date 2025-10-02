@@ -30,14 +30,20 @@ class PurchaseSeeder extends Seeder
             return;
         }
 
-        $purchases = Purchase::factory(25)->create([
-            'supplier_id' => fn() => $suppliers->random()->id,
-            'warehouse_id' => fn() => $warehouses->random()->id,
-            'created_by' => fn() => $users->random()->id,
-        ]);
+        // Create purchases with supplier's default tax rate
+        foreach (range(1, 25) as $index) {
+            $supplier = $suppliers->random();
+            $warehouse = $warehouses->random();
+            $user = $users->random();
+            
+            $purchase = Purchase::factory()->create([
+                'supplier_id' => $supplier->id,
+                'warehouse_id' => $warehouse->id,
+                'tax_rate' => $supplier->default_tax_rate, // Use supplier's default tax rate
+                'created_by' => $user->id,
+            ]);
 
-        // Create purchase items
-        foreach ($purchases as $purchase) {
+            // Create purchase items
             $itemCount = rand(1, 4);
             $selectedProducts = $products->random($itemCount);
             

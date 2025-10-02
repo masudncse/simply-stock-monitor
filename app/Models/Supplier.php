@@ -18,12 +18,14 @@ class Supplier extends Model
         'email',
         'address',
         'tax_number',
+        'default_tax_rate',
         'credit_limit',
         'outstanding_amount',
         'is_active',
     ];
 
     protected $casts = [
+        'default_tax_rate' => 'float',
         'credit_limit' => 'float',
         'outstanding_amount' => 'float',
         'is_active' => 'boolean',

@@ -31,6 +31,7 @@ interface Customer {
   email?: string;
   address?: string;
   tax_number?: string;
+  default_tax_rate: number;
   credit_limit: number;
   outstanding_amount: number;
   is_active: boolean;
@@ -147,6 +148,13 @@ export default function CustomersShow({ customer }: CustomersShowProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">Default Tax Rate</p>
+                <p className="font-semibold text-lg text-primary">{customer.default_tax_rate}%</p>
+              </div>
+              <p className="text-xs text-muted-foreground -mt-2">
+                Applied automatically when creating sales for this customer
+              </p>
+              <div className="flex items-center justify-between pt-2 border-t">
                 <div className="flex items-center gap-2">
                   <CreditCardIcon className="h-5 w-5 text-primary" />
                   <p className="text-sm text-muted-foreground">Credit Limit</p>

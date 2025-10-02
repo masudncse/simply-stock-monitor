@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
             $table->date('sale_date');
             $table->decimal('subtotal', 10, 2);
+            $table->decimal('tax_rate', 5, 2)->default(0); // Tax rate percentage for this sale (e.g., 10 for 10%)
             $table->decimal('tax_amount', 10, 2)->default(0);
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2);

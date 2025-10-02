@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('purchase_date');
             $table->date('due_date')->nullable();
             $table->decimal('subtotal', 10, 2);
+            $table->decimal('tax_rate', 5, 2)->default(0); // Tax rate percentage (e.g., 10 for 10%)
             $table->decimal('tax_amount', 10, 2)->default(0);
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2);

@@ -20,6 +20,10 @@ class SupplierFactory extends Factory
         $creditLimit = rand(100000, 5000000) / 100; // 1000.00 to 50000.00
         $outstandingAmount = rand(0, $creditLimit * 80) / 100; // Max 80% of credit limit
         
+        // Random default tax rate: 0%, 4%, 8%, or 10%
+        $taxRates = [0, 4, 8, 10];
+        $defaultTaxRate = $taxRates[array_rand($taxRates)];
+        
         return [
             'name' => 'Supplier ' . rand(1, 1000),
             'code' => 'SUP' . strtoupper(uniqid()),
@@ -28,6 +32,7 @@ class SupplierFactory extends Factory
             'email' => 'supplier' . rand(1, 1000) . '@example.com',
             'address' => 'Address ' . rand(1, 1000),
             'tax_number' => rand(0, 10) < 7 ? 'TAX' . rand(100000000, 999999999) : null,
+            'default_tax_rate' => $defaultTaxRate,
             'credit_limit' => $creditLimit,
             'outstanding_amount' => $outstandingAmount,
             'is_active' => rand(0, 10) < 9, // 90% chance

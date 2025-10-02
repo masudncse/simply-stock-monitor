@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BankTransaction;
 use App\Models\Account;
 use App\Services\BankTransactionService;
+use App\Http\Requests\StoreBankTransactionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -64,20 +65,9 @@ class BankTransactionController extends Controller
     /**
      * Store a newly created bank transaction
      */
-    public function store(Request $request)
+    public function store(StoreBankTransactionRequest $request)
     {
-        $this->authorize('create-bank-transactions');
-
-        $validated = $request->validate([
-            'transaction_type' => 'required|in:deposit,withdraw,transfer',
-            'from_account_id' => 'required|exists:accounts,id',
-            'to_account_id' => 'required|exists:accounts,id',
-            'transaction_date' => 'required|date',
-            'amount' => 'required|numeric|min:0.01',
-            'reference_number' => 'nullable|string|max:100',
-            'description' => 'nullable|string',
-            'notes' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $this->bankTransactionService->createBankTransaction($validated, $request->user()->id);
 

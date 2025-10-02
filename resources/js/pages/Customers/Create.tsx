@@ -21,6 +21,7 @@ export default function CustomersCreate() {
     email: '',
     address: '',
     tax_number: '',
+    default_tax_rate: 0,
     credit_limit: 0,
     outstanding_amount: 0,
     is_active: true,
@@ -176,6 +177,25 @@ export default function CustomersCreate() {
               <CardTitle>Financial Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="default_tax_rate">Default Tax Rate (%)</Label>
+                <Input
+                  id="default_tax_rate"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  value={formData.default_tax_rate}
+                  onChange={(e) => handleChange('default_tax_rate', parseFloat(e.target.value) || 0)}
+                  className={errors.default_tax_rate ? 'border-destructive' : ''}
+                />
+                <p className="text-sm text-muted-foreground">
+                  This tax rate will be auto-applied when creating sales for this customer
+                </p>
+                {errors.default_tax_rate && (
+                  <p className="text-sm text-destructive">{errors.default_tax_rate}</p>
+                )}
+              </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="credit_limit">Credit Limit</Label>

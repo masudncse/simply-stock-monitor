@@ -97,7 +97,7 @@ class PurchaseController extends Controller
             'suppliers' => $suppliers,
             'warehouses' => $warehouses,
             'products' => $products,
-            'taxRate' => TaxService::getTaxRate(),
+            'defaultTaxRate' => TaxService::getTaxRate(),
         ]);
     }
 
@@ -120,10 +120,13 @@ class PurchaseController extends Controller
         }
         
         // Calculate totals
-        $totals = $this->purchaseService->calculateTotals($items);
+        $taxRate = $validated['tax_rate'] ?? TaxService::getTaxRate();
+        $discountAmount = $validated['discount_amount'] ?? 0;
+        $totals = $this->purchaseService->calculateTotals($items, $taxRate, $discountAmount);
         
         // Add calculated totals to purchase data
         $validated['subtotal'] = $totals['subtotal'];
+        $validated['tax_rate'] = $taxRate;
         $validated['tax_amount'] = $totals['tax_amount'];
         $validated['discount_amount'] = $totals['discount_amount'];
         $validated['total_amount'] = $totals['total_amount'];
@@ -192,10 +195,13 @@ class PurchaseController extends Controller
             }
             
             // Calculate totals for updated items
-            $totals = $this->purchaseService->calculateTotals($items);
+            $taxRate = $validated['tax_rate'] ?? $purchase->tax_rate ?? TaxService::getTaxRate();
+            $discountAmount = $validated['discount_amount'] ?? $purchase->discount_amount ?? 0;
+            $totals = $this->purchaseService->calculateTotals($items, $taxRate, $discountAmount);
             
             // Add calculated totals to purchase data
             $validated['subtotal'] = $totals['subtotal'];
+            $validated['tax_rate'] = $taxRate;
             $validated['tax_amount'] = $totals['tax_amount'];
             $validated['discount_amount'] = $totals['discount_amount'];
             $validated['total_amount'] = $totals['total_amount'];
