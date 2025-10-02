@@ -91,6 +91,11 @@ class RolePermissionSeeder extends Seeder
             'edit-expenses',
             'delete-expenses',
             
+            // Bank Transaction permissions
+            'view-bank-transactions',
+            'create-bank-transactions',
+            'delete-bank-transactions',
+            
             // Report permissions
             'view-reports',
             'export-reports',
@@ -174,6 +179,8 @@ class RolePermissionSeeder extends Seeder
             'view-expenses',
             'create-expenses',
             'edit-expenses',
+            'view-bank-transactions',
+            'create-bank-transactions',
             'view-reports',
             'export-reports',
         ]);

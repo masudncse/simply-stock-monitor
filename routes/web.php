@@ -23,6 +23,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\PurchaseReturnController;
+use App\Http\Controllers\BankTransactionController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -103,8 +104,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Payments
     Route::resource('payments', PaymentController::class);
     
-        // Expenses
-        Route::resource('expenses', ExpenseController::class);
+    // Expenses
+    Route::resource('expenses', ExpenseController::class);
+    
+    // Bank Transactions
+    Route::get('bank-transactions', [BankTransactionController::class, 'index'])->name('bank-transactions.index');
+    Route::post('bank-transactions', [BankTransactionController::class, 'store'])->name('bank-transactions.store');
+    Route::delete('bank-transactions/{bankTransaction}', [BankTransactionController::class, 'destroy'])->name('bank-transactions.destroy');
         
         // Reports
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');

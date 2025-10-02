@@ -167,22 +167,6 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
     });
   };
 
-  const handlePageChange = (page: number) => {
-    router.get(indexRoute.url(), {
-      search: searchTerm,
-      status: statusFilter,
-      supplier_id: supplierFilter,
-      date_from: dateFrom,
-      date_to: dateTo,
-      sort_by: sortBy,
-      sort_direction: sortDirection,
-      page,
-    }, {
-      preserveState: true,
-      replace: true,
-    });
-  };
-
   const getSortIcon = (column: string) => {
     if (sortBy !== column) {
       return <SortIcon className="h-4 w-4 text-muted-foreground" />;

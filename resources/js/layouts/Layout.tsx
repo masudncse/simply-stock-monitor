@@ -43,6 +43,10 @@ import {
   PanelLeftOpen,
   AlertTriangle,
   AlertCircle,
+  Undo2 as ReturnIcon,
+  Receipt as ExpenseIcon,
+  Wallet as PaymentIcon,
+  Landmark as BankIcon,
 } from 'lucide-react';
 
 const drawerWidth = 240;
@@ -54,19 +58,35 @@ interface LayoutProps {
 }
 
 const menuItems = [
-  { text: 'Dashboard', icon: <DashboardIcon className="h-5 w-5" />, href: '/dashboard' },
-  { text: 'POS', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/pos' },
-  { text: 'Products', icon: <InventoryIcon className="h-5 w-5" />, href: '/products' },
-  { text: 'Stock', icon: <StoreIcon className="h-5 w-5" />, href: '/stock' },
-  { text: 'Warehouses', icon: <StoreIcon className="h-5 w-5" />, href: '/warehouses' },
-  { text: 'Purchases', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/purchases' },
-  { text: 'Sales', icon: <AddIcon className="h-5 w-5" />, href: '/sales' },
-  { text: 'Quotations', icon: <FileTextIcon className="h-5 w-5" />, href: '/quotations' },
-  { text: 'Customers', icon: <PeopleIcon className="h-5 w-5" />, href: '/customers' },
-  { text: 'Suppliers', icon: <PeopleIcon className="h-5 w-5" />, href: '/suppliers' },
-  { text: 'Accounts', icon: <AccountBalanceIcon className="h-5 w-5" />, href: '/accounts' },
-  { text: 'Reports', icon: <AssessmentIcon className="h-5 w-5" />, href: '/reports' },
-  { text: 'Settings', icon: <SettingsIcon className="h-5 w-5" />, href: '/settings' },
+  // Main
+  { text: 'Dashboard', icon: <DashboardIcon className="h-5 w-5" />, href: '/dashboard', section: 'main' },
+  { text: 'POS', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/pos', section: 'main' },
+  
+  // Inventory
+  { text: 'Products', icon: <InventoryIcon className="h-5 w-5" />, href: '/products', section: 'Inventory' },
+  { text: 'Stock', icon: <StoreIcon className="h-5 w-5" />, href: '/stock', section: 'Inventory' },
+  { text: 'Warehouses', icon: <StoreIcon className="h-5 w-5" />, href: '/warehouses', section: 'Inventory' },
+  
+  // Transactions
+  { text: 'Purchases', icon: <ShoppingCartIcon className="h-5 w-5" />, href: '/purchases', section: 'Transactions' },
+  { text: 'Sales', icon: <AddIcon className="h-5 w-5" />, href: '/sales', section: 'Transactions' },
+  { text: 'Quotations', icon: <FileTextIcon className="h-5 w-5" />, href: '/quotations', section: 'Transactions' },
+  { text: 'Sale Returns', icon: <ReturnIcon className="h-5 w-5" />, href: '/sale-returns', section: 'Transactions' },
+  { text: 'Purchase Returns', icon: <ReturnIcon className="h-5 w-5" />, href: '/purchase-returns', section: 'Transactions' },
+  
+  // Contacts
+  { text: 'Customers', icon: <PeopleIcon className="h-5 w-5" />, href: '/customers', section: 'Contacts' },
+  { text: 'Suppliers', icon: <PeopleIcon className="h-5 w-5" />, href: '/suppliers', section: 'Contacts' },
+  
+  // Accounting
+  { text: 'Accounts', icon: <AccountBalanceIcon className="h-5 w-5" />, href: '/accounts', section: 'Accounting' },
+  { text: 'Payments', icon: <PaymentIcon className="h-5 w-5" />, href: '/payments', section: 'Accounting' },
+  { text: 'Expenses', icon: <ExpenseIcon className="h-5 w-5" />, href: '/expenses', section: 'Accounting' },
+  { text: 'Bank Transactions', icon: <BankIcon className="h-5 w-5" />, href: '/bank-transactions', section: 'Accounting' },
+  
+  // Reports & Settings
+  { text: 'Reports', icon: <AssessmentIcon className="h-5 w-5" />, href: '/reports', section: 'System' },
+  { text: 'Settings', icon: <SettingsIcon className="h-5 w-5" />, href: '/settings', section: 'System' },
 ];
 
 function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] }: LayoutProps) {
@@ -303,25 +323,41 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
       
       {/* Navigation */}
       <nav className={cn(
-        "flex-1 py-4 space-y-2",
+        "flex-1 py-4",
         collapsed ? "px-2" : "px-4"
       )}>
-        {menuItems.map((item) => (
-          <Link
-            key={item.text}
-            href={item.href}
-            className={cn(
-              "flex items-center rounded-lg text-sm font-medium transition-colors",
-              "hover:bg-accent hover:text-accent-foreground",
-              "focus:bg-accent focus:text-accent-foreground focus:outline-none",
-              collapsed ? "px-2 py-2 justify-center" : "px-3 py-2 space-x-3"
-            )}
-            title={collapsed ? item.text : undefined}
-          >
-            {item.icon}
-            {!collapsed && <span>{item.text}</span>}
-          </Link>
-        ))}
+        {(() => {
+          const sections = ['main', 'Inventory', 'Transactions', 'Contacts', 'Accounting', 'System'];
+          let currentSection = '';
+          
+          return menuItems.map((item, index) => {
+            const showSectionHeader = item.section !== currentSection && item.section !== 'main' && !collapsed;
+            currentSection = item.section;
+            
+            return (
+              <div key={item.text}>
+                {showSectionHeader && (
+                  <div className="px-3 py-2 mt-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    {item.section}
+                  </div>
+                )}
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center rounded-lg text-sm font-medium transition-colors",
+                    "hover:bg-accent hover:text-accent-foreground",
+                    "focus:bg-accent focus:text-accent-foreground focus:outline-none",
+                    collapsed ? "px-2 py-2 justify-center mb-1" : "px-3 py-2 space-x-3 mb-1"
+                  )}
+                  title={collapsed ? item.text : undefined}
+                >
+                  {item.icon}
+                  {!collapsed && <span>{item.text}</span>}
+                </Link>
+              </div>
+            );
+          });
+        })()}
       </nav>
     </div>
   );
