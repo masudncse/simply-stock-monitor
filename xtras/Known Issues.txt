@@ -22,7 +22,6 @@ Export CSV Issue
 
 Backup & Maintenance not Working
 SMTP Email configuration, test direct email and queue email and option to set email address before test
-Job management
 
 Every business action creates accounting entries:
 Sale → Records revenue & reduces inventory

@@ -13,6 +13,7 @@ import {
   Palette as PaletteIcon,
   Mail as MailIcon,
   Telescope as TelescopeIcon,
+  ListTodo as JobIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
@@ -59,6 +60,13 @@ const SettingsIndex: React.FC = () => {
       icon: <BackupIcon className="h-10 w-10" />,
       href: '/settings/backup',
       color: 'text-indigo-600',
+    },
+    {
+      title: 'Job Management',
+      description: 'Monitor queue jobs, view failed jobs, and retry operations',
+      icon: <JobIcon className="h-10 w-10" />,
+      href: '/settings/jobs',
+      color: 'text-teal-600',
     },
     {
       title: 'Application Monitoring',

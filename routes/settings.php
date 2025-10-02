@@ -3,6 +3,7 @@
 use App\Http\Controllers\Settings\AppearanceController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\JobManagementController;
 use App\Http\Controllers\Settings\CompanyController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
@@ -74,4 +75,14 @@ Route::middleware('auth')->group(function () {
     Route::get('settings/backup/{filename}/download', [BackupController::class, 'download'])->name('settings.backup.download');
     Route::post('settings/backup/restore', [BackupController::class, 'restore'])->name('settings.backup.restore');
     Route::delete('settings/backup/{filename}', [BackupController::class, 'destroy'])->name('settings.backup.destroy');
+
+    // Job Management
+    Route::get('settings/jobs', [JobManagementController::class, 'index'])->name('settings.jobs');
+    Route::get('settings/jobs/failed', [JobManagementController::class, 'failed'])->name('settings.jobs.failed');
+    Route::delete('settings/jobs/{job}', [JobManagementController::class, 'destroy'])->name('settings.jobs.destroy');
+    Route::delete('settings/jobs/failed/{job}', [JobManagementController::class, 'destroyFailed'])->name('settings.jobs.failed.destroy');
+    Route::post('settings/jobs/failed/{job}/retry', [JobManagementController::class, 'retry'])->name('settings.jobs.failed.retry');
+    Route::post('settings/jobs/failed/retry-all', [JobManagementController::class, 'retryAll'])->name('settings.jobs.failed.retry-all');
+    Route::post('settings/jobs/failed/clear', [JobManagementController::class, 'clearFailed'])->name('settings.jobs.failed.clear');
+    Route::post('settings/jobs/purge', [JobManagementController::class, 'purgeAll'])->name('settings.jobs.purge');
 });

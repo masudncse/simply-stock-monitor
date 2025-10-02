@@ -323,7 +323,7 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
       
       {/* Navigation */}
       <nav className={cn(
-        "flex-1 py-4",
+        "flex-1 py-4 overflow-y-auto",
         collapsed ? "px-2" : "px-4"
       )}>
         {(() => {
@@ -369,7 +369,7 @@ function LayoutContent({ children, title = 'Stock Management', breadcrumbs = [] 
         "md:flex md:flex-col md:fixed md:inset-y-0 transition-all duration-300",
         sidebarCollapsed ? "md:w-16" : "md:w-60"
       )}>
-        <div className="flex flex-col flex-grow border-r bg-card">
+        <div className="flex flex-col h-full border-r bg-card">
           <SidebarContent collapsed={sidebarCollapsed} />
         </div>
       </div>
