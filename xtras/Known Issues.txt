@@ -30,10 +30,6 @@ Cash expense income managment missing
 
 Bank transaction missing 
 
-Pagination show special charctter
-
-Add Search by Dropdown cateogry Product, Sales, Quotation, Purchase, Customer, Supplier, Expense, Income, etc
-
 Return sales, purchase management
 
 Every business action creates accounting entries:
@@ -64,8 +60,6 @@ Add schedule in sales screen
 - Integration with existing barcode scanning
 
 Generate bill for due amount by customer and daily, weekly, monthly billing system 
-
-Product variants system and customizable (Size, Color)
 
 
 Partial Payments & Payment Plans 💰

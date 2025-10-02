@@ -40,8 +40,17 @@ interface Account {
 interface AccountsIndexProps {
   accounts: {
     data: Account[];
-    links: Array<{ url: string | null; label: string; active: boolean }>;
-    meta: { current_page: number; last_page: number; per_page: number; total: number };
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from?: number;
+    to?: number;
+    links?: Array<{
+      url: string | null;
+      label: string;
+      active: boolean;
+    }>;
   };
   filters: {
     search?: string;
@@ -49,6 +58,7 @@ interface AccountsIndexProps {
     sub_type?: string;
     sort_by?: string;
     sort_direction?: string;
+    page?: number;
     per_page?: number;
   };
 }
@@ -63,18 +73,23 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
 
-  const handleSearch = () => {
+  const handleSearch = (page: number = 1) => {
     router.get(indexRoute.url(), {
-      search: searchTerm,
-      type: typeFilter,
-      sub_type: subTypeFilter,
+      search: searchTerm || undefined,
+      type: typeFilter || undefined,
+      sub_type: subTypeFilter || undefined,
       per_page: perPage,
       sort_by: sortBy,
       sort_direction: sortDirection,
+      page: page,
     }, {
       preserveState: true,
       replace: true,
     });
+  };
+
+  const handlePageChange = (page: number) => {
+    handleSearch(page);
   };
 
   const handleDelete = (account: Account) => {
@@ -241,7 +256,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
               <div className="space-y-2">
                 <Label>&nbsp;</Label>
                 <div className="flex gap-2">
-                  <Button variant="default" onClick={handleSearch} className="flex-1">
+                  <Button variant="default" onClick={() => handleSearch()} className="flex-1">
                     <SearchIcon className="mr-2 h-4 w-4" />
                     Apply Filters
                   </Button>
@@ -262,7 +277,7 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
         {/* Accounts Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Accounts ({accounts?.meta?.total || 0})</CardTitle>
+            <CardTitle>Accounts ({accounts?.total || 0})</CardTitle>
           </CardHeader>
           <CardContent>
             {accounts?.data?.length === 0 ? (
@@ -404,24 +419,16 @@ export default function AccountsIndex({ accounts, filters }: AccountsIndexProps)
               </div>
             )}
 
-            {/* Pagination */}
-            {accounts?.links && (
-              <div className="flex justify-center mt-4">
-                <div className="flex gap-1">
-                  {accounts?.links?.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
-                    <Button
-                      key={index}
-                      variant={link.active ? "default" : "outline"}
-                      onClick={() => link.url && router.visit(link.url)}
-                      disabled={!link.url}
-                      size="sm"
-                    >
-                      {link.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Custom Pagination */}
+            <CustomPagination
+              className="mt-6"
+              pagination={accounts}
+              onPageChange={handlePageChange}
+              showPerPageOptions={false}
+              showInfo={true}
+              showFirstLast={true}
+              maxVisiblePages={5}
+            />
           </CardContent>
         </Card>
 
