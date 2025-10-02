@@ -7,36 +7,39 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Sale extends Model
+class SaleReturn extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'invoice_number',
+        'return_number',
+        'sale_id',
         'customer_id',
         'warehouse_id',
-        'sale_date',
+        'return_date',
         'subtotal',
         'tax_amount',
-        'discount_amount',
         'total_amount',
-        'paid_amount',
         'status',
-        'payment_status',
+        'reason',
         'notes',
         'created_by',
     ];
 
     protected $casts = [
+        'sale_id' => 'integer',
         'customer_id' => 'integer',
         'warehouse_id' => 'integer',
-        'sale_date' => 'date',
+        'return_date' => 'date',
         'subtotal' => 'float',
         'tax_amount' => 'float',
-        'discount_amount' => 'float',
         'total_amount' => 'float',
-        'paid_amount' => 'float',
     ];
+
+    public function sale(): BelongsTo
+    {
+        return $this->belongsTo(Sale::class);
+    }
 
     public function customer(): BelongsTo
     {
@@ -50,22 +53,11 @@ class Sale extends Model
 
     public function items(): HasMany
     {
-        return $this->hasMany(SaleItem::class);
+        return $this->hasMany(SaleReturnItem::class);
     }
 
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class, 'reference_id')
-            ->where('reference_type', 'sale');
-    }
-
-    public function returns(): HasMany
-    {
-        return $this->hasMany(SaleReturn::class);
     }
 }

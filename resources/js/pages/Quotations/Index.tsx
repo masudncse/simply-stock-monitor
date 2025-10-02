@@ -112,6 +112,22 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
     });
   };
 
+  const handlePageChange = (page: number) => {
+    router.get('/quotations', {
+      search: searchTerm || undefined,
+      status: statusFilter === 'all' ? undefined : statusFilter,
+      date_from: dateFrom || undefined,
+      date_to: dateTo || undefined,
+      per_page: perPage,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
+      page,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
   const handleSort = (column: string) => {
     let newDirection = 'asc';
     
@@ -462,6 +478,17 @@ export default function QuotationsIndex({ quotations, filters = {} }: Quotations
                 </TableBody>
               </Table>
             )}
+
+            {/* Pagination */}
+            <CustomPagination
+              className="mt-6"
+              pagination={quotations}
+              onPageChange={handlePageChange}
+              showPerPageOptions={false}
+              showInfo={true}
+              showFirstLast={true}
+              maxVisiblePages={5}
+            />
           </CardContent>
         </Card>
       </div>

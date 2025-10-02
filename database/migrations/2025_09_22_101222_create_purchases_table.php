@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2);
             $table->decimal('paid_amount', 10, 2)->default(0);
-            $table->enum('status', ['draft', 'pending', 'completed', 'cancelled'])->default('draft');
+            $table->enum('status', ['draft', 'pending', 'approved', 'completed', 'cancelled'])->default('draft');
             $table->text('notes')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();

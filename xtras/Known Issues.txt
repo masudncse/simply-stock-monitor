@@ -26,9 +26,7 @@ Job management
 
 Cash expense income managment missing
 
-Bank transaction missing 
-
-Return sales, purchase management
+Bank transaction missing
 
 Every business action creates accounting entries:
 Sale → Records revenue & reduces inventory

@@ -157,6 +157,23 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
       supplier_id: supplierFilter,
       date_from: dateFrom,
       date_to: dateTo,
+      per_page: perPage,
+      sort_by: sortBy,
+      sort_direction: sortDirection,
+      page,
+    }, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    router.get(indexRoute.url(), {
+      search: searchTerm,
+      status: statusFilter,
+      supplier_id: supplierFilter,
+      date_from: dateFrom,
+      date_to: dateTo,
       sort_by: sortBy,
       sort_direction: sortDirection,
       page,
@@ -463,23 +480,15 @@ export default function PurchasesIndex({ purchases, suppliers, filters }: Purcha
             )}
 
             {/* Pagination */}
-            {purchases.links && (
-              <div className="flex justify-center mt-4">
-                <div className="flex gap-1">
-                  {purchases.links.map((link: { url: string | null; label: string; active: boolean }, index: number) => (
-                    <Button
-                      key={index}
-                      variant={link.active ? "default" : "outline"}
-                      onClick={() => link.url && router.visit(link.url)}
-                      disabled={!link.url}
-                      size="sm"
-                    >
-                      {link.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <CustomPagination
+              className="mt-6"
+              pagination={purchases}
+              onPageChange={handlePageChange}
+              showPerPageOptions={false}
+              showInfo={true}
+              showFirstLast={true}
+              maxVisiblePages={5}
+            />
           </CardContent>
         </Card>
 

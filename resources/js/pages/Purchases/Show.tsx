@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,10 +8,12 @@ import {
   Edit as EditIcon,
   CheckCircle as ApproveIcon,
   ArrowLeft as BackIcon,
+  Undo2 as ReturnIcon,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as indexRoute, edit as editRoute } from '@/routes/purchases';
+import CreatePurchaseReturnModal from '@/components/CreatePurchaseReturnModal';
 
 interface Supplier {
   id: number;
@@ -78,6 +80,7 @@ interface PurchasesShowProps {
 }
 
 export default function PurchasesShow({ purchase }: PurchasesShowProps) {
+  const [returnModalOpen, setReturnModalOpen] = useState(false);
   const getStatusVariant = (status: string) => {
     switch (status) {
       case 'pending':
@@ -121,6 +124,15 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
                   Approve
                 </Button>
               </>
+            )}
+            {purchase.status === 'approved' && (
+              <Button
+                variant="outline"
+                onClick={() => setReturnModalOpen(true)}
+              >
+                <ReturnIcon className="mr-2 h-4 w-4" />
+                Create Return
+              </Button>
             )}
           </div>
         </div>
@@ -313,6 +325,13 @@ export default function PurchasesShow({ purchase }: PurchasesShowProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Create Return Modal */}
+      <CreatePurchaseReturnModal
+        open={returnModalOpen}
+        onClose={() => setReturnModalOpen(false)}
+        purchase={purchase}
+      />
     </Layout>
   );
 }

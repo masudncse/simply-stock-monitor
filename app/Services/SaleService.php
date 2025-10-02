@@ -72,8 +72,8 @@ class SaleService
         return DB::transaction(function () use ($saleId) {
             $sale = Sale::with('items')->findOrFail($saleId);
 
-            if ($sale->status !== 'draft') {
-                throw new \Exception('Sale is not in draft status');
+            if (!in_array($sale->status, ['draft', 'approved'])) {
+                throw new \Exception('Only draft or approved sales can be processed');
             }
 
             // Check stock availability and reduce stock

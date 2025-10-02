@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +9,12 @@ import {
   ArrowLeft,
   Printer,
   Check,
+  Undo2,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { index as indexRoute, edit as editRoute, process as processRoute, approve as approveRoute } from '@/routes/sales';
+import CreateSaleReturnModal from '@/components/CreateSaleReturnModal';
 
 interface Customer {
   id: number;
@@ -78,6 +80,8 @@ interface SalesShowProps {
 }
 
 export default function SalesShow({ sale }: SalesShowProps) {
+  const [returnModalOpen, setReturnModalOpen] = useState(false);
+  
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
@@ -129,23 +133,6 @@ export default function SalesShow({ sale }: SalesShowProps) {
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
-            {sale.status === 'pending' && (
-              <>
-                <Button
-                  onClick={() => router.visit(editRoute.url({ sale: sale.id }))}
-                >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-                </Button>
-                <Button
-                  onClick={handleApprove}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  <Check className="mr-2 h-4 w-4" />
-                  Approve
-                </Button>
-              </>
-            )}
             {sale.status === 'draft' && (
               <>
                 <Button
@@ -162,6 +149,26 @@ export default function SalesShow({ sale }: SalesShowProps) {
                   Process Sale
                 </Button>
               </>
+            )}
+            {sale.status === 'pending' && (
+              <>
+                <Button
+                  onClick={handleApprove}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  Approve Sale
+                </Button>
+              </>
+            )}
+            {(sale.status === 'approved' || sale.status === 'completed') && (
+              <Button
+                variant="outline"
+                onClick={() => setReturnModalOpen(true)}
+              >
+                <Undo2 className="mr-2 h-4 w-4" />
+                Create Return
+              </Button>
             )}
             <Button
               variant="outline"
@@ -354,6 +361,13 @@ export default function SalesShow({ sale }: SalesShowProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Create Return Modal */}
+      <CreateSaleReturnModal
+        open={returnModalOpen}
+        onClose={() => setReturnModalOpen(false)}
+        sale={sale}
+      />
     </Layout>
   );
 }

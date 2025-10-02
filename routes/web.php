@@ -21,6 +21,8 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\SaleReturnController;
+use App\Http\Controllers\PurchaseReturnController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -63,6 +65,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('sales/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');
     Route::post('sales/{sale}/approve', [SaleController::class, 'approve'])->name('sales.approve');
     Route::post('sales/{sale}/process', [SaleController::class, 'process'])->name('sales.process');
+    
+    // Sale Returns
+    Route::resource('sale-returns', SaleReturnController::class);
+    Route::post('sale-returns/{saleReturn}/approve', [SaleReturnController::class, 'approve'])->name('sale-returns.approve');
+    Route::get('sale-returns/{saleReturn}/print', [SaleReturnController::class, 'print'])->name('sale-returns.print');
+    
+    // Purchase Returns
+    Route::resource('purchase-returns', PurchaseReturnController::class);
+    Route::post('purchase-returns/{purchaseReturn}/approve', [PurchaseReturnController::class, 'approve'])->name('purchase-returns.approve');
+    Route::get('purchase-returns/{purchaseReturn}/print', [PurchaseReturnController::class, 'print'])->name('purchase-returns.print');
     
     // Quotations
     Route::resource('quotations', QuotationController::class);

@@ -43,6 +43,18 @@ class RolePermissionSeeder extends Seeder
             'approve-sales',
             'process-sales',
             
+            // Sale Return permissions
+            'view-sale-returns',
+            'create-sale-returns',
+            'delete-sale-returns',
+            'approve-sale-returns',
+            
+            // Purchase Return permissions
+            'view-purchase-returns',
+            'create-purchase-returns',
+            'delete-purchase-returns',
+            'approve-purchase-returns',
+            
             // Customer permissions
             'view-customers',
             'create-customers',
@@ -117,6 +129,9 @@ class RolePermissionSeeder extends Seeder
             'edit-sales',
             'approve-sales',
             'process-sales',
+            'view-sale-returns',
+            'create-sale-returns',
+            'approve-sale-returns',
             'view-customers',
             'create-customers',
             'edit-customers',
@@ -136,6 +151,9 @@ class RolePermissionSeeder extends Seeder
             'create-purchases',
             'edit-purchases',
             'approve-purchases',
+            'view-purchase-returns',
+            'create-purchase-returns',
+            'approve-purchase-returns',
             'view-suppliers',
             'create-suppliers',
             'edit-suppliers',

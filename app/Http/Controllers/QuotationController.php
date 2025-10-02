@@ -350,9 +350,9 @@ class QuotationController extends Controller
                 ->with('error', 'This quotation cannot be converted to a sale.');
         }
 
-        DB::transaction(function () use ($quotation) {
-            // Create sale
-            $sale = Sale::create([
+        $sale = DB::transaction(function () use ($quotation) {
+            // Prepare sale data
+            $saleData = [
                 'customer_id' => $quotation->customer_id,
                 'warehouse_id' => $quotation->warehouse_id,
                 'sale_date' => now()->toDateString(),
@@ -360,30 +360,29 @@ class QuotationController extends Controller
                 'tax_amount' => $quotation->tax_amount,
                 'discount_amount' => $quotation->discount_amount,
                 'total_amount' => $quotation->total_amount,
-                'paid_amount' => 0,
-                'status' => 'pending',
-                'payment_status' => 'pending',
                 'notes' => "Converted from Quotation: {$quotation->quotation_number}",
-                'created_by' => auth()->id(),
-            ]);
+            ];
 
-            // Create sale items
-            foreach ($quotation->items as $item) {
-                SaleItem::create([
-                    'sale_id' => $sale->id,
+            // Prepare items
+            $items = $quotation->items->map(function ($item) {
+                return [
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
                     'unit_price' => $item->unit_price,
                     'total_price' => $item->total_price,
                     'batch' => $item->batch,
-                    'expiry_date' => $item->expiry_date,
-                ]);
-            }
+                ];
+            })->toArray();
 
-            // Update quotation
+            // Create sale using service (generates invoice_number automatically)
+            $sale = $this->saleService->createSale($saleData, $items, auth()->id());
+
+            // Mark quotation as converted
             $quotation->update([
                 'converted_to_sale_id' => $sale->id,
             ]);
+
+            return $sale;
         });
 
         return redirect()->route('quotations.show', $quotation)

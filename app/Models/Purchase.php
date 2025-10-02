@@ -64,4 +64,9 @@ class Purchase extends Model
         return $this->hasMany(Payment::class, 'reference_id')
             ->where('reference_type', 'purchase');
     }
+
+    public function returns(): HasMany
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
 }
