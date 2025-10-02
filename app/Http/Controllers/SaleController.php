@@ -12,6 +12,8 @@ use App\Services\TaxService;
 use App\Http\Requests\StoreSaleRequest;
 use App\Models\CompanySetting;
 use App\Http\Requests\UpdateSaleRequest;
+use App\Mail\SaleInvoiceMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -245,5 +247,27 @@ class SaleController extends Controller
             'taxRate' => TaxService::getTaxRate(),
             'company' => CompanySetting::getSettings(),
         ]);
+    }
+
+    /**
+     * Send invoice email to customer
+     */
+    public function sendEmail(Sale $sale)
+    {
+        $this->authorize('view-sales');
+
+        $sale->load(['customer', 'items.product']);
+
+        if (!$sale->customer->email) {
+            return back()->with('error', 'Customer does not have an email address.');
+        }
+
+        try {
+            Mail::to($sale->customer->email)->send(new SaleInvoiceMail($sale));
+            
+            return back()->with('success', 'Invoice emailed to ' . $sale->customer->email . ' successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to send email: ' . $e->getMessage());
+        }
     }
 }

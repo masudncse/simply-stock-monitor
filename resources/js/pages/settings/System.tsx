@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Settings, Save, AlertTriangle } from 'lucide-react';
+import { Settings, Save, AlertTriangle, ArrowLeft as BackIcon } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 import { update as updateRoute } from '@/routes/settings/system';
-import { type BreadcrumbItem, type SharedData } from '@/types';
+import { index as settingsIndexRoute } from '@/routes/settings';
+import { type SharedData } from '@/types';
 
 interface SystemSettingsProps {
   settings: {
@@ -83,16 +84,19 @@ const SystemSettings: React.FC<SystemSettingsProps> = ({ settings }) => {
   ];
 
   return (
-    <Layout title="System Settings - Configure system behavior and operational settings" breadcrumbs={breadcrumbs}>
+    <Layout title="System Settings - Configure system behavior and operational settings">
       <div className="space-y-6">
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Settings className="h-8 w-8 text-primary" />
+        <div className="flex justify-between items-center">
+          <div>
             <h1 className="text-3xl font-bold tracking-tight">System Settings</h1>
+            <p className="text-muted-foreground">
+              Configure system behavior and operational settings
+            </p>
           </div>
-          <p className="text-muted-foreground">
-            Configure system behavior and operational settings
-          </p>
+          <Button variant="outline" onClick={() => router.visit(settingsIndexRoute.url())}>
+            <BackIcon className="mr-2 h-4 w-4" />
+            Back to Settings
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

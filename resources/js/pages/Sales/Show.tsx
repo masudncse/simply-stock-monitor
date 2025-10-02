@@ -11,6 +11,7 @@ import {
   Check,
   Undo2,
   Truck as ShipmentIcon,
+  Mail as EmailIcon,
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
@@ -120,6 +121,12 @@ export default function SalesShow({ sale }: SalesShowProps) {
     router.post(processRoute.url({ sale: sale.id }));
   };
 
+  const handleSendEmail = () => {
+    if (confirm(`Send invoice to ${sale.customer.email}?`)) {
+      router.post(`/sales/${sale.id}/send-email`);
+    }
+  };
+
   return (
     <Layout>
       <div className="p-6">
@@ -188,6 +195,16 @@ export default function SalesShow({ sale }: SalesShowProps) {
               <Printer className="mr-2 h-4 w-4" />
               Print
             </Button>
+            {sale.customer.email && (
+              <Button
+                variant="outline"
+                onClick={handleSendEmail}
+                className="bg-green-50 hover:bg-green-100"
+              >
+                <EmailIcon className="mr-2 h-4 w-4" />
+                Email Invoice
+              </Button>
+            )}
           </div>
         </div>
 

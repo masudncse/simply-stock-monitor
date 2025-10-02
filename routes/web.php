@@ -88,6 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Print Routes
     Route::get('sales/{sale}/print', [SaleController::class, 'print'])->name('sales.print');
+    Route::post('sales/{sale}/send-email', [SaleController::class, 'sendEmail'])->name('sales.send-email');
     Route::get('purchases/{purchase}/print', [PurchaseController::class, 'print'])->name('purchases.print');
     Route::get('quotations/{quotation}/print', [QuotationController::class, 'print'])->name('quotations.print');
     
