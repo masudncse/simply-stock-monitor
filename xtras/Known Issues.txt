@@ -44,8 +44,6 @@ Expense → Records cost & reduces cash
 
 Add delivery service like SA Poribahon, Redex etc...
 
-Telescope with all service log, exception, request, cron, mail etc.
-
 Email Invoicing & Automated Reminders 📧
 What: Send invoices directly to customers via email with payment reminders
 Add schedule in sales screen

@@ -29,5 +29,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability) {
             return $user->hasRole('Admin') ? true : null;
         });
+
+        // Telescope authorization - only Admin role can access
+        Gate::define('viewTelescope', function ($user) {
+            return $user->hasRole('Admin');
+        });
     }
 }

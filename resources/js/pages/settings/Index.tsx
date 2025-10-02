@@ -12,6 +12,7 @@ import {
   Database as BackupIcon,
   Palette as PaletteIcon,
   Mail as MailIcon,
+  Telescope as TelescopeIcon,
 } from 'lucide-react';
 import Layout from '../../layouts/Layout';
 
@@ -58,6 +59,13 @@ const SettingsIndex: React.FC = () => {
       icon: <BackupIcon className="h-10 w-10" />,
       href: '/settings/backup',
       color: 'text-indigo-600',
+    },
+    {
+      title: 'Application Monitoring',
+      description: 'Monitor requests, logs, queues, emails, and notifications',
+      icon: <TelescopeIcon className="h-10 w-10" />,
+      href: '/telescope',
+      color: 'text-cyan-600',
     },
     {
       title: 'Appearance',
