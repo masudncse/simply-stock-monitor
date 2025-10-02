@@ -47,6 +47,7 @@ import {
   Receipt as ExpenseIcon,
   Wallet as PaymentIcon,
   Landmark as BankIcon,
+  ArrowLeftRight as TransactionIcon,
 } from 'lucide-react';
 
 const drawerWidth = 240;
@@ -82,6 +83,7 @@ const menuItems = [
   { text: 'Accounts', icon: <AccountBalanceIcon className="h-5 w-5" />, href: '/accounts', section: 'Accounting' },
   { text: 'Payments', icon: <PaymentIcon className="h-5 w-5" />, href: '/payments', section: 'Accounting' },
   { text: 'Expenses', icon: <ExpenseIcon className="h-5 w-5" />, href: '/expenses', section: 'Accounting' },
+  { text: 'Transactions', icon: <TransactionIcon className="h-5 w-5" />, href: '/transactions', section: 'Accounting' },
   { text: 'Bank Transactions', icon: <BankIcon className="h-5 w-5" />, href: '/bank-transactions', section: 'Accounting' },
   
   // Reports & Settings

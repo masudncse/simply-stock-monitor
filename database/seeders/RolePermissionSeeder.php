@@ -79,6 +79,9 @@ class RolePermissionSeeder extends Seeder
             'edit-accounts',
             'delete-accounts',
             
+            // Transaction permissions
+            'view-transactions',
+            
             // Payment permissions
             'view-payments',
             'create-payments',
@@ -173,6 +176,7 @@ class RolePermissionSeeder extends Seeder
             'view-accounts',
             'create-accounts',
             'edit-accounts',
+            'view-transactions',
             'view-payments',
             'create-payments',
             'edit-payments',

@@ -24,6 +24,7 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\BankTransactionController;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -107,6 +108,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Expenses
     Route::resource('expenses', ExpenseController::class);
+    
+    // Transactions (Accounting)
+    Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
     
     // Bank Transactions
     Route::get('bank-transactions', [BankTransactionController::class, 'index'])->name('bank-transactions.index');
