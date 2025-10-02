@@ -86,6 +86,7 @@ class SettingsController extends Controller
             'default_tax_rate' => SystemSetting::get('default_tax_rate', 0),
             'default_currency' => SystemSetting::get('default_currency', 'USD'),
             'backup_frequency' => SystemSetting::get('backup_frequency', 'daily'),
+            'barcode_format' => SystemSetting::get('barcode_format', 'CODE128'),
         ];
 
         return Inertia::render('Settings/System', [

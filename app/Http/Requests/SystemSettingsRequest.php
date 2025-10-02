@@ -32,6 +32,7 @@ class SystemSettingsRequest extends FormRequest
             'default_tax_rate' => 'required|numeric|min:0|max:100',
             'default_currency' => 'required|string|max:3',
             'backup_frequency' => 'required|in:daily,weekly,monthly',
+            'barcode_format' => 'required|in:CODE128,EAN13,QR',
         ];
     }
 

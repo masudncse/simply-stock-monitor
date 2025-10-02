@@ -8,6 +8,7 @@ import { Edit as EditIcon, ArrowLeft as ArrowBackIcon } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
 import { edit as editRoute } from '@/routes/products';
+import { BarcodeDisplay } from '@/components/BarcodeDisplay';
 
 interface Warehouse {
   id: number;

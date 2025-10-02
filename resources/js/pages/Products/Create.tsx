@@ -121,10 +121,14 @@ export default function ProductCreate({ categories }: ProductCreateProps) {
                     value={data.barcode}
                     onChange={(e) => setData('barcode', e.target.value)}
                     className={errors.barcode ? 'border-destructive' : ''}
+                    placeholder="Leave empty to auto-generate from SKU"
                   />
                   {errors.barcode && (
                     <p className="text-sm text-destructive">{errors.barcode}</p>
                   )}
+                  <p className="text-xs text-muted-foreground">
+                    Barcode format is configured in System Settings
+                  </p>
                 </div>
               </div>
 

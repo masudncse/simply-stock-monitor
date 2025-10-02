@@ -42,6 +42,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('product-images/{productImage}', [ProductController::class, 'deleteImage'])->name('products.images.delete');
     Route::patch('product-images/{productImage}/set-primary', [ProductController::class, 'setPrimaryImage'])->name('products.images.set-primary');
     
+    // Barcode Routes
+    Route::post('products/{product}/generate-barcode', [ProductController::class, 'generateBarcode'])->name('products.generate-barcode');
+    Route::get('products/{product}/barcode-image', [ProductController::class, 'getBarcodeImage'])->name('products.barcode-image');
+    Route::post('products/print-barcode-labels', [ProductController::class, 'printBarcodeLabels'])->name('products.print-barcode-labels');
+    Route::get('barcode-formats', [ProductController::class, 'getBarcodeFormats'])->name('barcode-formats');
+    
     // Warehouses
     Route::resource('warehouses', WarehouseController::class);
     

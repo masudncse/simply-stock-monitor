@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\ProductImage;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Services\BarcodeService;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
@@ -305,5 +306,82 @@ class ProductController extends Controller
                 'is_primary' => !$hasPrimary && $sortOrder === 1, // First image is primary if none exists
             ]);
         }
+    }
+
+    /**
+     * Generate barcode for a product
+     */
+    public function generateBarcode(Product $product, BarcodeService $barcodeService)
+    {
+        $this->authorize('edit-products');
+
+        $barcode = $barcodeService->generateBarcodeFromSku($product);
+
+        return response()->json([
+            'success' => true,
+            'barcode' => $barcode,
+            'message' => 'Barcode generated successfully',
+        ]);
+    }
+
+    /**
+     * Get barcode image for a product
+     */
+    public function getBarcodeImage(Product $product, Request $request, BarcodeService $barcodeService)
+    {
+        $this->authorize('view-products');
+
+        $format = $request->get('format', 'png');
+        
+        try {
+            $barcodeImage = $format === 'svg' 
+                ? $barcodeService->generateBarcodeSVG($product)
+                : $barcodeService->generateBarcodePNG($product);
+
+            return response()->json([
+                'success' => true,
+                'barcode_image' => $barcodeImage,
+                'barcode' => $product->barcode,
+                'barcode_format' => \App\Models\SystemSetting::get('barcode_format', 'CODE128'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to generate barcode: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Print barcode labels (individual or bulk)
+     */
+    public function printBarcodeLabels(Request $request, BarcodeService $barcodeService)
+    {
+        $this->authorize('view-products');
+
+        $request->validate([
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'exists:products,id',
+            'format' => 'nullable|in:png,svg',
+        ]);
+
+        $labels = $barcodeService->generateBarcodeLabels(
+            $request->product_ids,
+            $request->get('format', 'png')
+        );
+
+        return Inertia::render('Products/PrintBarcodeLabels', [
+            'labels' => $labels,
+        ]);
+    }
+
+    /**
+     * Get available barcode formats
+     */
+    public function getBarcodeFormats()
+    {
+        return response()->json([
+            'formats' => BarcodeService::getAvailableFormats(),
+        ]);
     }
 }

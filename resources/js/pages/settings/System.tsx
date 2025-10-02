@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Settings, Save, AlertTriangle, ArrowLeft as BackIcon } from 'lucide-react';
 import Layout from '../../layouts/Layout';
@@ -24,6 +25,7 @@ interface SystemSettingsProps {
     default_tax_rate: number;
     default_currency: string;
     backup_frequency: string;
+    barcode_format: string;
   };
 }
 
@@ -51,6 +53,7 @@ const SystemSettings: React.FC<SystemSettingsProps> = ({ settings }) => {
     default_tax_rate: settings.default_tax_rate || 0,
     default_currency: settings.default_currency || 'USD',
     backup_frequency: settings.backup_frequency || 'daily',
+    barcode_format: settings.barcode_format || 'CODE128',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -199,6 +202,28 @@ const SystemSettings: React.FC<SystemSettingsProps> = ({ settings }) => {
                     onCheckedChange={(checked) => handleChange('enable_barcode_scanning', checked)}
                   />
                   <Label htmlFor="enable_barcode_scanning">Enable Barcode Scanning</Label>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="barcode_format">Default Barcode Format</Label>
+                  <Select 
+                    value={formData.barcode_format} 
+                    onValueChange={(value) => handleChange('barcode_format', value)}
+                  >
+                    <SelectTrigger id="barcode_format">
+                      <SelectValue placeholder="Select barcode format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="CODE128">Code 128</SelectItem>
+                      <SelectItem value="EAN13">EAN-13</SelectItem>
+                      <SelectItem value="QR">QR Code</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.barcode_format && (
+                    <p className="text-sm text-destructive">{errors.barcode_format}</p>
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    Select the default barcode format for all products
+                  </p>
                 </div>
               </div>
             </CardContent>

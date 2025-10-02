@@ -24,17 +24,8 @@ Backup & Maintenance not Working
 SMTP Email configuration, test direct email and queue email and option to set email address before test
 
 Email Invoicing & Automated Reminders 📧
-What: Send invoices directly to customers via email with payment reminders
-Add schedule in sales screen
-- Email invoice to customer from sales screen
 - Scheduled reminders (3 days before due, on due date, 3 days after)
-- Attach PDF invoice automatically
 
-// Add to existing notification system:
-- Real-time alerts when stock < min_stock
-- Email/SMS notifications to managers
-- Suggested reorder quantity based on sales velocity
-- Weekly low stock summary email
 
 // Add to Product module:
 - Auto-generate barcode from SKU

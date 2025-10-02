@@ -17,10 +17,16 @@ import {
   ArrowUpDown as SortIcon,
   ArrowUp as SortAscIcon,
   ArrowDown as SortDescIcon,
+  Printer as PrintIcon,
+  QrCode as QueueIcon,
+  BookmarkPlus as AddToQueueIcon,
 } from 'lucide-react';
 import { Link, router } from '@inertiajs/react';
 import Layout from '../../layouts/Layout';
-import { create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute } from '@/routes/products';
+import { create as createRoute, show as showRoute, edit as editRoute, destroy as destroyRoute, index as indexRoute } from '@/routes/products';
+import { Checkbox } from '@/components/ui/checkbox';
+import { BarcodeQueueModal } from '@/components/BarcodeQueueModal';
+import { useBarcodeQueue } from '@/hooks/useBarcodeQueue';
 
 interface Product {
   id: number;
@@ -79,6 +85,9 @@ export default function ProductsIndex({ products, categories, filters }: Product
   const [perPage, setPerPage] = useState(filters.per_page || 15);
   const [sortBy, setSortBy] = useState(filters.sort_by || 'name');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'asc');
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+  const [isQueueModalOpen, setIsQueueModalOpen] = useState(false);
+  const { addToQueue, queueCount, isInQueue } = useBarcodeQueue();
 
   const handleSearch = (page: number = 1) => {
     router.get('/products', {
@@ -140,6 +149,46 @@ export default function ProductsIndex({ products, categories, filters }: Product
       : <SortDescIcon className="h-4 w-4 text-primary" />;
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedProducts(products.data.map(p => p.id));
+    } else {
+      setSelectedProducts([]);
+    }
+  };
+
+  const handleSelectProduct = (productId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedProducts([...selectedProducts, productId]);
+    } else {
+      setSelectedProducts(selectedProducts.filter(id => id !== productId));
+    }
+  };
+
+  const handlePrintBarcodes = (productIds: number[]) => {
+    if (productIds.length === 0) {
+      alert('Please select at least one product to print barcodes');
+      return;
+    }
+    
+    router.post('/products/print-barcode-labels', {
+      product_ids: productIds,
+      format: 'png'
+    });
+  };
+
+  const handleAddToQueue = (product: Product) => {
+    addToQueue({
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      price: product.price,
+      barcode: product.barcode,
+    });
+  };
+
+  const isAllSelected = products.data.length > 0 && selectedProducts.length === products.data.length;
+
   return (
     <Layout title="Products">
       <div className="space-y-6">
@@ -150,13 +199,45 @@ export default function ProductsIndex({ products, categories, filters }: Product
               Manage your product inventory
             </p>
           </div>
-          <Button asChild>
-            <Link href={createRoute.url()}>
-              <AddIcon className="mr-2 h-4 w-4" />
-              Add Product
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsQueueModalOpen(true)}
+              className="relative"
+            >
+              <QueueIcon className="mr-2 h-4 w-4" />
+              Print Queue
+              {queueCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                >
+                  {queueCount}
+                </Badge>
+              )}
+            </Button>
+            {selectedProducts.length > 0 && (
+              <Button
+                variant="outline"
+                onClick={() => handlePrintBarcodes(selectedProducts)}
+              >
+                <PrintIcon className="mr-2 h-4 w-4" />
+                Print Barcodes ({selectedProducts.length})
+              </Button>
+            )}
+            <Button asChild>
+              <Link href={createRoute.url()}>
+                <AddIcon className="mr-2 h-4 w-4" />
+                Add Product
+              </Link>
+            </Button>
+          </div>
         </div>
+
+        <BarcodeQueueModal 
+          isOpen={isQueueModalOpen} 
+          onClose={() => setIsQueueModalOpen(false)}
+        />
 
         {/* Filters */}
         <Card>
@@ -291,6 +372,13 @@ export default function ProductsIndex({ products, categories, filters }: Product
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-12">
+                        <Checkbox
+                          checked={isAllSelected}
+                          onCheckedChange={handleSelectAll}
+                          aria-label="Select all products"
+                        />
+                      </TableHead>
                       <TableHead>Image</TableHead>
                       <TableHead>
                         <Button
@@ -372,6 +460,13 @@ export default function ProductsIndex({ products, categories, filters }: Product
                     {products.data.map((product) => (
                       <TableRow key={product.id}>
                         <TableCell>
+                          <Checkbox
+                            checked={selectedProducts.includes(product.id)}
+                            onCheckedChange={(checked) => handleSelectProduct(product.id, checked as boolean)}
+                            aria-label={`Select ${product.name}`}
+                          />
+                        </TableCell>
+                        <TableCell>
                           {product.images && product.images.length > 0 ? (
                             <div className="w-12 h-12 rounded-lg overflow-hidden border">
                               <img
@@ -418,6 +513,25 @@ export default function ProductsIndex({ products, categories, filters }: Product
                               <Link href={editRoute.url({ product: product.id })}>
                                 <EditIcon className="h-4 w-4" />
                               </Link>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => handleAddToQueue(product)}
+                              title="Add to Print Queue"
+                              disabled={isInQueue(product.id)}
+                            >
+                              <AddToQueueIcon className={`h-4 w-4 ${isInQueue(product.id) ? 'text-green-600' : ''}`} />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => handlePrintBarcodes([product.id])}
+                              title="Print Barcode Now"
+                            >
+                              <PrintIcon className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="outline"
